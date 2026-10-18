@@ -1,0 +1,27 @@
+{
+  "name": "montador-paineis-cloud",
+  "version": "1.0.0",
+  "description": "Montador de painéis elétricos — versão em nuvem com banco de dados (PostgreSQL ou SQLite)",
+  "main": "src/server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=22.5"
+  },
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node build.js && DATABASE_URL=sqlite:./data/dev.db SESSION_SECRET=dev-secret-change-me-please node src/server.js",
+    "migrate": "node src/migrate.js",
+    "build": "node build.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "three": "0.128.0",
+    "jspdf": "2.5.1",
+    "jspdf-autotable": "3.8.2",
+    "exceljs": "4.4.0",
+    "pdfjs-dist": "3.11.174"
+  }
+}
