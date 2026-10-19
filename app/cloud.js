@@ -25,6 +25,9 @@ const css=document.createElement('style');css.textContent=`
 .cl-row{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:9px 11px;background:var(--surface);margin-bottom:6px}
 .cl-row small{display:block;color:var(--muted);font-size:12px}.cl-row .a{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
 .cl-row.cur{border-color:color-mix(in srgb,var(--neutral) 55%,var(--line))}
+.cl-pw{display:flex;gap:6px}.cl-pw input{flex:1}.cl-eye{border:1px solid var(--line);background:var(--surface2);border-radius:8px;padding:0 10px;font-size:12.5px;cursor:pointer;color:var(--ink)}
+.cl-caps{color:var(--warn);font-size:13px;font-weight:600;margin:-4px 0 6px}.cl-link{border:0;background:none;color:var(--neutral);text-decoration:underline;cursor:pointer;font-size:13.5px}
+.cl-help{margin-top:10px;font-size:13px;line-height:1.45;background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}.cl-help ol{margin:6px 0 0;padding-left:18px}.cl-help li{margin-bottom:6px}.cl-help code{font-size:12px}
 .cl-code{font:700 18px/1 ui-monospace,Consolas,monospace;letter-spacing:.12em;padding:8px 12px;border:1px dashed var(--line);border-radius:8px;background:var(--surface2)}`;
 document.head.appendChild(css);
 
@@ -71,9 +74,10 @@ async function history(id){const d=dlg();try{const r=await api(`/projects/${id}/
   d.querySelector('.db').innerHTML=`<p><button class="btn small" data-act="clback">← Voltar</button></p><h3>Histórico · ${esc(p.name)}</h3>${r.versions.map(v=>`<div class="cl-row"><div><b>${esc(v.note||'Versão')}</b><small>${fmtD(v.created_at)}${v.by_name?' · '+esc(v.by_name):''}</small></div><div class="a"><button class="btn small" data-act="clrestore" data-v="${id}" data-w="${v.id}">Restaurar</button></div></div>`).join('')}`}catch(e){say(e.message)}}
 async function userMenu(){const d=dlg();let org=null;try{org=await api('/org')}catch(e){}
   d.innerHTML=`<div class="dh"><h2>Conta</h2><button class="x" data-act="clclose" aria-label="Fechar">×</button></div><div class="db">
-  <fieldset><legend>Você</legend><p style="margin:4px 0"><b>${esc(C.user.name)}</b> · ${esc(C.user.email)}</p><p class="cap" style="margin:0">Perfil: ${C.user.role==='admin'?'administrador':'membro'} · Empresa: ${esc(C.user.org.name)}</p></fieldset>
+  <fieldset><legend>Você</legend><p style="margin:4px 0"><b>${esc(C.user.name)}</b> · ${esc(C.user.email)}</p><p class="cap" style="margin:0 0 8px">Perfil: ${C.user.role==='admin'?'administrador':'membro'} · Empresa: ${esc(C.user.org.name)}</p>
+    <div class="g2"><label class="f"><span>Senha atual</span><input type="password" id="clPwCur" autocomplete="current-password"></label><label class="f"><span>Nova senha (mín. 8)</span><input type="password" id="clPwNew" autocomplete="new-password"></label></div><button class="btn small" data-act="clpw">Trocar senha</button></fieldset>
   ${org&&org.org.invite_code?`<fieldset><legend>Convidar a equipe</legend><p class="cap">Quem criar conta com este código entra na sua empresa e vê os mesmos projetos.</p><div class="rowb"><span class="cl-code">${esc(org.org.invite_code)}</span><button class="btn small" data-act="clcopy" data-v="${esc(org.org.invite_code)}">Copiar</button><button class="btn small" data-act="clrotate">Gerar novo código</button></div></fieldset>`:''}
-  ${org?`<fieldset><legend>Equipe (${org.members.length})</legend>${org.members.map(m=>`<div class="cl-row"><div><b>${esc(m.name)}</b><small>${esc(m.email)} · ${m.role==='admin'?'administrador':'membro'}${m.last_login?' · último acesso '+fmtD(m.last_login):''}</small></div><div class="a">${C.user.role==='admin'&&m.id!==C.user.id?`<button class="btn small" data-act="clrole" data-v="${m.id}" data-w="${m.role==='admin'?'membro':'admin'}">${m.role==='admin'?'Tornar membro':'Tornar administrador'}</button><button class="btn small" data-act="clrm" data-v="${m.id}">Remover</button>`:''}</div></div>`).join('')}</fieldset>`:''}
+  ${org?`<fieldset><legend>Equipe (${org.members.length})</legend>${org.members.map(m=>`<div class="cl-row"><div><b>${esc(m.name)}</b><small>${esc(m.email)} · ${m.role==='admin'?'administrador':'membro'}${m.last_login?' · último acesso '+fmtD(m.last_login):''}</small></div><div class="a">${C.user.role==='admin'&&m.id!==C.user.id?`<button class="btn small" data-act="clreset" data-v="${m.id}" data-w="${esc(m.name)}">Gerar senha provisória</button><button class="btn small" data-act="clrole" data-v="${m.id}" data-w="${m.role==='admin'?'membro':'admin'}">${m.role==='admin'?'Tornar membro':'Tornar administrador'}</button><button class="btn small" data-act="clrm" data-v="${m.id}">Remover</button>`:''}</div></div>`).join('')}</fieldset>`:''}
   </div><div class="df"><button class="btn" data-act="cllogout">Sair da conta</button></div>`;if(!d.open)d.showModal()}
 
 document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]');if(!b||!C.user)return;const a=b.dataset.act;
@@ -88,6 +92,9 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]
     case 'clup':{const p=PROJS[v];const data=JSON.parse(JSON.stringify(p.data));delete data.cloudId;await api('/projects',{method:'POST',body:{name:p.name,data}});say(`"${p.name}" enviado para a nuvem.`);await openProjects();break}
     case 'clacct':userMenu();break;case 'clcopy':navigator.clipboard&&navigator.clipboard.writeText(v);say('Código copiado.');break;
     case 'clrotate':await api('/org/invite/rotate',{method:'POST',body:{}});userMenu();break;
+    case 'clpw':{const cur=$('#clPwCur').value,nw=$('#clPwNew').value;await api('/me/password',{method:'PUT',body:{current:cur,password:nw}});$('#clPwCur').value='';$('#clPwNew').value='';say('Senha alterada.');break}
+    case 'clreset':{if(b.dataset.c!=='1'){b.dataset.c='1';b.textContent='Confirmar: gerar senha';return}const r=await api(`/org/members/${v}/reset-password`,{method:'POST',body:{}});b.dataset.c='';
+      b.outerHTML=`<span class="cl-code" title="Senha provisória">${esc(r.temp_password)}</span>`;say(`Senha provisória de ${b.dataset.w} gerada. Envie para a pessoa e peça que troque ao entrar.`);break}
     case 'clrole':await api('/org/members/'+v,{method:'PUT',body:{role:b.dataset.w}});userMenu();break;
     case 'clrm':if(b.dataset.c!=='1'){b.dataset.c='1';b.textContent='Confirmar remoção';return}await api('/org/members/'+v,{method:'DELETE'});userMenu();break;
     case 'cllogout':await api('/auth/logout',{method:'POST',body:{}});C.applying=true;['qc-state-v1','qc-cloud-settings-at'].forEach(k=>rawRemove.call(localStorage,k));location.reload();break}}
@@ -99,11 +106,18 @@ function gate(mode){C.user=null;let g=$('#clGate');if(!g){g=document.createEleme
   <div class="cl-tabs" role="tablist"><button type="button" role="tab" aria-selected="${mode==='login'}" data-m="login">Entrar</button><button type="button" role="tab" aria-selected="${mode==='reg'}" data-m="reg">Criar conta</button></div>
   ${mode==='reg'?'<label>Seu nome<input name="name" autocomplete="name" required></label>':''}
   <label>E-mail<input name="email" type="email" autocomplete="email" required></label>
-  <label>Senha${mode==='reg'?' (mínimo 8 caracteres)':''}<input name="password" type="password" autocomplete="${mode==='login'?'current-password':'new-password'}" required minlength="8"></label>
+  <label>Senha${mode==='reg'?' (mínimo 8 caracteres)':''}<span class="cl-pw"><input name="password" type="password" autocomplete="${mode==='login'?'current-password':'new-password'}" required minlength="8"><button type="button" class="cl-eye" data-eye aria-label="Mostrar senha">Mostrar</button></span></label>
+  ${mode==='reg'?'<label>Repita a senha<span class="cl-pw"><input name="password2" type="password" autocomplete="new-password" required minlength="8"><button type="button" class="cl-eye" data-eye aria-label="Mostrar senha">Mostrar</button></span></label>':''}
+  <p class="cl-caps" id="clCaps" hidden>Caps Lock está ligado.</p>
   ${mode==='reg'?'<label>Nome da empresa (nova empresa)<input name="org_name" autocomplete="organization"></label><label>ou código de convite<input name="invite_code" autocomplete="off" style="text-transform:uppercase"></label>':''}
-  <div class="cl-err" id="clErr" role="alert"></div><button class="btn primary block" type="submit">${mode==='login'?'Entrar':'Criar conta e entrar'}</button></form>`;
+  <div class="cl-err" id="clErr" role="alert"></div><button class="btn primary block" type="submit">${mode==='login'?'Entrar':'Criar conta e entrar'}</button>
+  ${mode==='login'?'<p style="margin:12px 0 0;text-align:center"><button type="button" class="cl-link" data-forgot>Esqueci minha senha</button></p><div class="cl-help" id="clHelp" hidden><b>Como recuperar o acesso</b><ol><li><b>Se outra pessoa da empresa é administradora:</b> peça para ela entrar, clicar no nome dela no topo › <i>Equipe</i> › <i>Gerar senha provisória</i> ao lado do seu nome. Entre com essa senha e troque-a em seguida no seu menu de conta.</li><li><b>Se você é o único administrador:</b> no painel do servidor (por exemplo, Render › seu serviço › <i>Environment</i>), crie as variáveis <code>RESET_PASSWORD_EMAIL</code> (seu e-mail) e <code>RESET_PASSWORD_NEW</code> (a nova senha, mínimo 8 caracteres) e salve. Depois que o serviço reiniciar, entre com a nova senha e <b>apague as duas variáveis</b>.</li></ol></div>':''}</form>`;
   g.querySelectorAll('[data-m]').forEach(x=>x.onclick=()=>gate(x.dataset.m));
+  g.querySelectorAll('[data-eye]').forEach(x=>x.onclick=()=>{const i=x.previousElementSibling;const show=i.type==='password';i.type=show?'text':'password';x.textContent=show?'Ocultar':'Mostrar';x.setAttribute('aria-label',show?'Ocultar senha':'Mostrar senha')});
+  const fg=g.querySelector('[data-forgot]');if(fg)fg.onclick=()=>{const h=$('#clHelp');h.hidden=!h.hidden};
+  g.addEventListener('keyup',ev=>{if(ev.getModifierState){const c=$('#clCaps');if(c)c.hidden=!ev.getModifierState('CapsLock')}});
   g.querySelector('#clForm').onsubmit=async ev=>{ev.preventDefault();const f=Object.fromEntries(new FormData(ev.target));const btn=ev.target.querySelector('[type=submit]');btn.disabled=true;$('#clErr').textContent='';
+    if(mode==='reg'&&f.password!==f.password2){$('#clErr').textContent='As senhas digitadas não são iguais.';btn.disabled=false;return}delete f.password2;f.email=(f.email||'').trim();
     try{const r=await api(mode==='login'?'/auth/login':'/auth/register',{method:'POST',body:f});C.user=r.user;await syncDown(true)}catch(e){$('#clErr').textContent=e.message;btn.disabled=false}};
   setTimeout(()=>{const i=g.querySelector('input');if(i)i.focus()},50)}
 
