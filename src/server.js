@@ -93,7 +93,7 @@ app.post('/api/auth/register', limiter(10, 15 * 60e3), wrap(async (req, res) => 
 app.post('/api/auth/login', limiter(12, 10 * 60e3), wrap(async (req, res) => {
   const email = str(req.body.email, 160).toLowerCase(), pw = String(req.body.password || '');
   const row = await db.get('SELECT u.*,o.name AS org_name FROM users u JOIN orgs o ON o.id=u.org_id WHERE u.email=?', [email]);
-  if (!row || !auth.checkPassword(pw, row.pass_hash)) return res.status(401).json({ error: 'E-mail ou senha incorretos.' });
+  if (!row || !auth.checkPassword(pw, row.pass_hash)) return res.status(401).json({ error: 'E-mail ou senha incorretos. Confira se o Caps Lock está desligado ou use "Esqueci minha senha".' });
   await db.run('UPDATE users SET last_login=NOW() WHERE id=?', [row.id]);
   auth.setSession(res, { uid: row.id }, SECURE); await audit(row, 'login'); res.json({ user: pubUser(row) });
 }));
@@ -121,6 +121,12 @@ app.post('/api/org/invite/rotate', need('admin'), wrap(async (req, res) => { con
 app.put('/api/org/members/:uid', need('admin'), wrap(async (req, res) => {
   const role = req.body.role === 'admin' ? 'admin' : 'membro';
   const r = await db.run('UPDATE users SET role=? WHERE id=? AND org_id=?', [role, req.params.uid, req.user.org_id]); res.json({ ok: r.changes > 0 });
+}));
+app.post('/api/org/members/:uid/reset-password', need('admin'), wrap(async (req, res) => {
+  const tmp = crypto.randomBytes(9).toString('base64url').replace(/[-_]/g, 'x').slice(0, 10);
+  const r = await db.run('UPDATE users SET pass_hash=? WHERE id=? AND org_id=?', [auth.hashPassword(tmp), req.params.uid, req.user.org_id]);
+  if (!r.changes) return res.status(404).json({ error: 'Usuário não encontrado.' });
+  await audit(req.user, 'password.reset', req.params.uid); res.json({ temp_password: tmp });
 }));
 app.delete('/api/org/members/:uid', need('admin'), wrap(async (req, res) => {
   if (req.params.uid === req.user.id) return res.status(400).json({ error: 'Você não pode remover a si mesmo.' });
@@ -212,6 +218,13 @@ app.use(express.static(pub, { index: 'index.html', maxAge: '5m' }));
 app.use('/api', (req, res) => res.status(404).json({ error: 'Rota não encontrada.' }));
 app.use((err, req, res, next) => { console.error('[erro]', err); res.status(err.type === 'entity.too.large' ? 413 : 500).json({ error: err.type === 'entity.too.large' ? 'Arquivo grande demais.' : 'Erro interno.' }); });
 
-migrate().then(() => app.listen(PORT, () => console.log(`[app] Montador de painéis em http://localhost:${PORT} (banco: ${db.kind})`)))
+async function emergencyReset() {
+  const email = (process.env.RESET_PASSWORD_EMAIL || '').trim().toLowerCase(), pw = process.env.RESET_PASSWORD_NEW || '';
+  if (!email) return;
+  if (pw.length < 8) { console.warn('[auth] RESET_PASSWORD_NEW precisa ter pelo menos 8 caracteres'); return; }
+  const r = await db.run('UPDATE users SET pass_hash=? WHERE email=?', [auth.hashPassword(pw), email]);
+  console.warn(r.changes ? `[auth] senha de ${email} redefinida pelas variáveis RESET_PASSWORD_*. REMOVA essas variáveis agora.` : `[auth] RESET_PASSWORD_EMAIL: e-mail ${email} não encontrado`);
+}
+migrate().then(emergencyReset).then(() => app.listen(PORT, () => console.log(`[app] Montador de painéis em http://localhost:${PORT} (banco: ${db.kind})`)))
   .catch((e) => { console.error('[db] falha ao iniciar', e); process.exit(1); });
 module.exports = app;
