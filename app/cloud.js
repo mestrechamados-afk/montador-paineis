@@ -28,6 +28,7 @@ const css=document.createElement('style');css.textContent=`
 .cl-pw{display:flex;gap:6px}.cl-pw input{flex:1}.cl-eye{border:1px solid var(--line);background:var(--surface2);border-radius:8px;padding:0 10px;font-size:12.5px;cursor:pointer;color:var(--ink)}
 .cl-caps{color:var(--warn);font-size:13px;font-weight:600;margin:-4px 0 6px}.cl-link{border:0;background:none;color:var(--neutral);text-decoration:underline;cursor:pointer;font-size:13.5px}
 .cl-help{margin-top:10px;font-size:13px;line-height:1.45;background:var(--surface2);border:1px solid var(--line);border-radius:10px;padding:10px 12px}.cl-help ol{margin:6px 0 0;padding-left:18px}.cl-help li{margin-bottom:6px}.cl-help code{font-size:12px}
+.cl-who{display:flex;flex-direction:column;gap:2px;padding:8px 10px 6px;font-size:12.5px;color:var(--muted)}.cl-who b{color:var(--ink);font-size:14px}
 .cl-code{font:700 18px/1 ui-monospace,Consolas,monospace;letter-spacing:.12em;padding:8px 12px;border:1px dashed var(--line);border-radius:8px;background:var(--surface2)}`;
 document.head.appendChild(css);
 
@@ -72,6 +73,14 @@ async function loadCloud(id){try{const r=await api('/projects/'+id);const data=r
   api('/me/prefs',{method:'PUT',body:{lastProject:id}}).catch(()=>{});setStatus('ok','Salvo na nuvem');say(`Projeto "${r.name}" aberto.`);dlg().close()}catch(e){say(e.message)}}
 async function history(id){const d=dlg();try{const r=await api(`/projects/${id}/versions`);const p=C.list.find(x=>x.id===id)||{name:''};
   d.querySelector('.db').innerHTML=`<p><button class="btn small" data-act="clback">← Voltar</button></p><h3>Histórico · ${esc(p.name)}</h3>${r.versions.map(v=>`<div class="cl-row"><div><b>${esc(v.note||'Versão')}</b><small>${fmtD(v.created_at)}${v.by_name?' · '+esc(v.by_name):''}</small></div><div class="a"><button class="btn small" data-act="clrestore" data-v="${id}" data-w="${v.id}">Restaurar</button></div></div>`).join('')}`}catch(e){say(e.message)}}
+function pwDialog(){const d=dlg();const f=(id,lab,ac)=>`<label class="f"><span>${lab}</span><span class="cl-pw"><input type="password" id="${id}" autocomplete="${ac}" minlength="8"><button type="button" class="cl-eye" data-eye2 aria-label="Mostrar senha">Mostrar</button></span></label>`;
+  d.innerHTML=`<div class="dh"><h2>Alterar senha</h2><button class="x" data-act="clclose" aria-label="Fechar">×</button></div><div class="db" style="max-width:440px">
+  <p class="cap">Conta: <b>${esc(C.user.email)}</b></p>${f('clPa','Senha atual','current-password')}${f('clPb','Nova senha (mínimo 8 caracteres)','new-password')}${f('clPc','Repita a nova senha','new-password')}
+  <p class="cl-caps" id="clCaps2" hidden>Caps Lock está ligado.</p><div class="cl-err" id="clPwErr" role="alert"></div></div>
+  <div class="df"><button class="btn" data-act="clclose">Cancelar</button><button class="btn primary" data-act="clpwsave">Salvar nova senha</button></div>`;
+  d.querySelectorAll('[data-eye2]').forEach(x=>x.onclick=()=>{const i=x.previousElementSibling;const sh=i.type==='password';i.type=sh?'text':'password';x.textContent=sh?'Ocultar':'Mostrar'});
+  d.onkeyup=ev=>{const c=$('#clCaps2');if(c&&ev.getModifierState)c.hidden=!ev.getModifierState('CapsLock');if(ev.key==='Enter'&&ev.target.tagName==='INPUT'){const b=d.querySelector('[data-act=clpwsave]');if(b)b.click()}};
+  if(!d.open)d.showModal();setTimeout(()=>{const i=$('#clPa');if(i)i.focus()},50)}
 async function userMenu(){const d=dlg();let org=null;try{org=await api('/org')}catch(e){}
   d.innerHTML=`<div class="dh"><h2>Conta</h2><button class="x" data-act="clclose" aria-label="Fechar">×</button></div><div class="db">
   <fieldset><legend>Você</legend><p style="margin:4px 0"><b>${esc(C.user.name)}</b> · ${esc(C.user.email)}</p><p class="cap" style="margin:0 0 8px">Perfil: ${C.user.role==='admin'?'administrador':'membro'} · Empresa: ${esc(C.user.org.name)}</p>
@@ -92,6 +101,10 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]
     case 'clup':{const p=PROJS[v];const data=JSON.parse(JSON.stringify(p.data));delete data.cloudId;await api('/projects',{method:'POST',body:{name:p.name,data}});say(`"${p.name}" enviado para a nuvem.`);await openProjects();break}
     case 'clacct':userMenu();break;case 'clcopy':navigator.clipboard&&navigator.clipboard.writeText(v);say('Código copiado.');break;
     case 'clrotate':await api('/org/invite/rotate',{method:'POST',body:{}});userMenu();break;
+    case 'clpwdlg':pwDialog();break;
+    case 'clpwsave':{const a1=$('#clPa').value,b1=$('#clPb').value,c1=$('#clPc').value,er=$('#clPwErr');er.textContent='';
+      if(!a1){er.textContent='Digite a senha atual.';return}if(b1.length<8){er.textContent='A nova senha precisa ter pelo menos 8 caracteres.';return}if(b1!==c1){er.textContent='As duas novas senhas não são iguais.';return}if(b1===a1){er.textContent='A nova senha precisa ser diferente da atual.';return}
+      b.disabled=true;try{await api('/me/password',{method:'PUT',body:{current:a1,password:b1}});dlg().close();say('Senha alterada. Use a nova senha no próximo acesso.')}catch(err){er.textContent=err.message}finally{b.disabled=false}break}
     case 'clpw':{const cur=$('#clPwCur').value,nw=$('#clPwNew').value;await api('/me/password',{method:'PUT',body:{current:cur,password:nw}});$('#clPwCur').value='';$('#clPwNew').value='';say('Senha alterada.');break}
     case 'clreset':{if(b.dataset.c!=='1'){b.dataset.c='1';b.textContent='Confirmar: gerar senha';return}const r=await api(`/org/members/${v}/reset-password`,{method:'POST',body:{}});b.dataset.c='';
       b.outerHTML=`<span class="cl-code" title="Senha provisória">${esc(r.temp_password)}</span>`;say(`Senha provisória de ${b.dataset.w} gerada. Envie para a pessoa e peça que troque ao entrar.`);break}
@@ -137,7 +150,13 @@ async function syncDown(fromLogin){
   else if(fromLogin&&state&&state.cloudId){C.applying=true;delete state.cloudId;delete state._cloudAt;rawSet.call(localStorage,'qc-state-v1',JSON.stringify(state));C.applying=false}
   ready()}
 function ready(){if(state&&state.cloudId&&!C.last)C.last=snap();const g=$('#clGate');if(g)g.remove();const hr=$('.hdr-r');if(hr&&!$('#clChip')){const chip=document.createElement('span');chip.id='clChip';chip.className='cl-chip';hr.prepend(chip);
-    const ub=document.createElement('button');ub.className='btn small';ub.dataset.act='clacct';ub.innerHTML=(typeof ICS!=='undefined'?'<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>':'')+esc(C.user.name.split(' ')[0]);ub.title=`${C.user.name} · ${C.user.org.name}`;hr.appendChild(ub)}
+    const ui='<svg class="ic" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>',chev=(typeof ICS!=='undefined'?ICS.chev:'▾');
+    const m=document.createElement('div');m.className='menu';m.id='clUserMenu';
+    m.innerHTML=`<button class="btn small mbtn" data-menu aria-haspopup="menu" aria-expanded="false" title="${esc(C.user.name)} · ${esc(C.user.org.name)}">${ui}${esc(C.user.name.split(' ')[0])}${chev}</button>
+      <div class="mlist right" role="menu" hidden><div class="cl-who"><b>${esc(C.user.name)}</b><span>${esc(C.user.email)}</span><span>${esc(C.user.org.name)} · ${C.user.role==='admin'?'administrador':'membro'}</span></div><hr>
+      <button role="menuitem" data-act="clpwdlg"><svg class="ic" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Alterar senha</button>
+      <button role="menuitem" data-act="clacct"><svg class="ic" viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0 1 13 0"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14a6 6 0 0 1 3.5 6"/></svg>Conta e equipe…</button><hr>
+      <button role="menuitem" data-act="cllogout"><svg class="ic" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5M21 12H9"/></svg>Sair da conta</button></div>`;hr.appendChild(m)}
   setStatus('ok',state&&state.cloudId?'Salvo na nuvem':'Projeto local · use "Salvar projeto"')}
 
 /* ---------- início ---------- */
