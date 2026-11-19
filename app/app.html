@@ -392,6 +392,16 @@ dl.sum{gap:6px 12px;font-size:14px}
 .impbusy{display:flex;align-items:center;gap:10px;margin:12px 0;padding:10px 12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
 .impbusy .spin{width:18px;height:18px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--neutral);animation:spin 0.9s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+.imppgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px;max-height:46vh;overflow:auto;padding:2px}
+.imppg{position:relative;display:flex;flex-direction:column;gap:3px;border:1.5px solid var(--line);border-radius:10px;padding:6px;background:var(--surface);cursor:pointer;font-size:12px}
+.imppg.on{border-color:var(--neutral);box-shadow:0 0 0 2px color-mix(in srgb,var(--neutral) 22%,transparent)}
+.imppg input{position:absolute;top:8px;left:8px;width:18px;height:18px}
+.imppg img{width:100%;aspect-ratio:1.414;object-fit:contain;background:#fff;border:1px solid var(--line);border-radius:6px}
+.imppg .nothumb{display:grid;place-items:center;aspect-ratio:1.414;background:var(--surface2);border-radius:6px;color:var(--muted)}
+.imppg .pgn{font-weight:700}.imppg .pgb{color:var(--muted)}.imppg.img .pgb{color:var(--warn);font-weight:600}.imppg .pgf{color:var(--run);font-weight:600}
+.addmenu{display:block;width:100%}.addmenu>.mbtn{width:100%;justify-content:center}.addmenu .mlist{width:100%;max-height:min(420px,60vh);overflow:auto}
+.addmenu .mlist button{align-items:flex-start}.addmenu .mlist .mi{width:22px;text-align:center;font-size:16px;line-height:1.2;flex:0 0 auto}.addmenu .mlist small{display:block;color:var(--muted);font-size:12px;font-weight:500;margin-top:2px}
+.xrow header{display:grid;grid-template-columns:90px minmax(0,1fr) auto;gap:6px;align-items:center}.xrow .xtag{font-weight:700}
 .imptab{width:100%;border-collapse:collapse;font-size:13px}.imptab th{text-align:left;color:var(--muted);font-weight:600;padding:4px}.imptab td{padding:3px 4px;border-top:1px solid var(--line)}
 .imptab input,.imptab select{height:30px;font-size:13px;padding:2px 6px}.imptab td:first-child{font-weight:700;white-space:nowrap}
 
@@ -439,6 +449,62 @@ aside .btn.block,aside .row2 .btn{white-space:normal;line-height:1.2}
 @media (prefers-reduced-motion: reduce){#toast,details.sec>summary>.ic{transition:none}}
 @media (max-width:640px){.icbtn span,.hdr-r .btn:not(.mbtn):not(.icbtn){font-size:0;gap:0}.hdr-r .btn .ic{margin:0}}
 
+
+
+/* ===================== Celular ===================== */
+.mnav{display:none}
+@media (max-width:760px){
+  html,body{height:auto;-webkit-text-size-adjust:100%}
+  .app{height:auto;min-height:100dvh;grid-template-columns:minmax(0,1fr);max-width:100vw;overflow-x:clip}
+  .app>*,main>*,.center>*{min-width:0;max-width:100%}
+  .app>header{position:sticky;top:0;z-index:30;gap:8px;padding:calc(8px + env(safe-area-inset-top,0px)) 10px 8px;flex-wrap:nowrap;background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(10px)}
+  .app>header h1{font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+  .app>header #hdrSub{display:none}
+  .brand{width:30px;height:30px;border-radius:9px}.brand .ic{width:17px;height:17px}
+  .hdr-r{gap:4px;flex:0 0 auto}
+  .hdr-r .btn{font-size:0;gap:0;padding:0 10px;min-width:40px;height:40px}
+  .hdr-r .btn .ic{margin:0;width:18px;height:18px}.hdr-r .mbtn .ic:last-child{display:none}
+  .icbtn span{display:none}
+  #clChip{display:none}
+  main{display:block;padding:8px 8px calc(78px + env(safe-area-inset-bottom,0px));gap:0}
+  body:not([data-mtab="left"]) #left,body:not([data-mtab="right"]) #right{display:none}
+  body[data-mtab="left"] .center,body[data-mtab="right"] .center{display:none}
+  aside{border-radius:16px;padding:6px 14px 14px;box-shadow:var(--sh-1)}
+  .center{display:flex;flex-direction:column;border-radius:16px;overflow:hidden}
+  .center .toolbar{gap:8px}
+  .center .toolbar::-webkit-scrollbar{display:none}
+  .center .toolbar .sp{display:none}
+  .center .toolbar{flex-wrap:wrap;overflow:visible;padding:8px 8px 6px;row-gap:6px}
+  .center .seg{flex-wrap:nowrap !important;width:100%;overflow-x:auto;scrollbar-width:none}
+  .center .seg::-webkit-scrollbar,.tgroup::-webkit-scrollbar{display:none}
+  .center .seg button{white-space:nowrap;padding:8px 12px;flex:0 0 auto}
+  .tgroup{flex-wrap:nowrap;width:100%;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+  .tgroup>*{flex:0 0 auto}
+  #left .seg{flex-wrap:wrap}
+  .toolbar .btn{white-space:nowrap}
+  .viewer{height:56dvh;min-height:300px;flex:0 0 auto}
+  .viewer .hint{display:none}
+  .tele{width:auto;max-width:62%;font-size:11px}
+  .pick{left:8px;right:8px;max-width:none;bottom:8px}
+  .sim{padding:10px}
+  #dia,#wir,#full{max-height:none}
+  .mlist{max-width:calc(100vw - 20px)}
+  .menu .mlist{position:fixed;top:auto;left:10px !important;right:10px !important;bottom:calc(84px + env(safe-area-inset-bottom,0px));max-height:60dvh;overflow:auto;min-width:0}
+  input,select,textarea{font-size:16px !important}
+  .btn{min-height:38px}
+  .dlg{width:100vw;max-width:100vw;height:100dvh;max-height:100dvh;margin:0;border-radius:0;border:0}
+  .dlg .db{padding-bottom:calc(16px + env(safe-area-inset-bottom,0px))}
+  .dlg .df{position:sticky;bottom:0;background:var(--surface);padding-bottom:calc(10px + env(safe-area-inset-bottom,0px))}
+  .imppgs{grid-template-columns:repeat(auto-fill,minmax(96px,1fr))}
+  .ded-bar{flex-wrap:nowrap;overflow-x:auto}
+  #toast{bottom:calc(86px + env(safe-area-inset-bottom,0px));max-width:calc(100vw - 32px)}
+  .mnav{display:grid;grid-template-columns:repeat(3,1fr);position:fixed;left:0;right:0;bottom:0;z-index:35;padding:6px 8px calc(6px + env(safe-area-inset-bottom,0px));background:color-mix(in srgb,var(--surface) 94%,transparent);backdrop-filter:blur(12px);border-top:1px solid var(--line);box-shadow:0 -4px 18px rgba(16,32,48,.08)}
+  .mnav button{display:flex;flex-direction:column;align-items:center;gap:3px;border:0;background:none;padding:6px 4px;border-radius:12px;font:600 12px/1.1 Barlow,sans-serif;color:var(--muted);cursor:pointer;min-height:52px;position:relative}
+  .mnav button .ic{width:22px;height:22px}
+  .mnav button[aria-selected="true"]{color:var(--neutral);background:color-mix(in srgb,var(--neutral) 10%,transparent)}
+  .mnav .bd{position:absolute;top:4px;left:calc(50% + 8px);min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:var(--stop);color:#fff;font-size:10.5px;line-height:17px;text-align:center}
+}
+@media (max-width:760px) and (orientation:landscape){.viewer{height:78dvh}}
 </style>
 </head>
 <body>
@@ -466,6 +532,11 @@ aside .btn.block,aside .row2 .btn{white-space:normal;line-height:1.2}
   </header>
   <dialog id="projDlg" class="dlg" aria-labelledby="projTitle"></dialog>
   <dialog id="cfgDlg" class="dlg" aria-labelledby="cfgTitle"></dialog>
+  <nav class="mnav" role="tablist" aria-label="Seções do app">
+    <button role="tab" data-act="mtab" data-v="left" aria-selected="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Configurar</button>
+    <button role="tab" data-act="mtab" data-v="center" aria-selected="true"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 9 5v10l-9 5-9-5V7z"/><path d="m3 7 9 5 9-5"/><path d="M12 12v10"/></svg>Visualizar</button>
+    <button role="tab" data-act="mtab" data-v="right" aria-selected="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>Resumo<span class="bd" id="mnavBd" hidden></span></button>
+  </nav>
   <main>
     <aside class="left" id="left"></aside>
 
@@ -603,6 +674,34 @@ function applyBrand(c){
   c.brand=c.brandOpts.includes(pref)?pref:pl||(FAM_DEF[c.kind]||c.brandOpts[0]);
   const r=f[c.brand](c);c.model=r.m;c.mx=r.x||'';
 }
+const MDEF={
+  bomba:{name:'Bomba centrífuga',kw:5.5,start:'direta',ic:'💧'},
+  tanque_v:{name:'Bomba de recalque do tanque',kw:7.5,start:'direta',ic:'🛢'},
+  tanque_comb:{name:'Transferência de diesel',kw:2.2,start:'direta',ic:'⛽'},
+  ibc:{name:'Bomba dosadora de cloro',kw:0.37,start:'inversor',ic:'🧪'},
+  compressor:{name:'Compressor de ar',kw:15,start:'estrela',ic:'🌀'},
+  esteira:{name:'Esteira transportadora',kw:3,start:'inversor',ic:'📦'},
+  ventilador:{name:'Exaustor',kw:4,start:'direta',ic:'💨'},
+  misturador:{name:'Misturador',kw:5.5,start:'soft',ic:'🥣'},
+  rosca:{name:'Rosca transportadora',kw:2.2,start:'inversor',ic:'🔩'},
+  eixo:{name:'Eixo linear',kw:0.75,start:'servo',ic:'↔'},
+  redutor:{name:'Redutor com tambor',kw:3,start:'direta',ic:'⚙'}};
+const XDEF={
+  rele:{pre:'K',desc:'Relé auxiliar com base',spec:'24 Vcc · 2 reversíveis',local:'placa',ic:'⎍'},
+  fusivel:{pre:'F',desc:'Fusível com porta-fusível seccionável',spec:'2 A',local:'placa',ic:'▭'},
+  disjuntor:{pre:'Q',desc:'Disjuntor termomagnético',spec:'10 A · curva C',local:'placa',ic:'⏻'},
+  fonte:{pre:'T',desc:'Fonte chaveada',spec:'24 Vcc · 5 A',local:'placa',ic:'⎓'},
+  controlador:{pre:'A',desc:'Controlador / relé de nível',spec:'24 Vcc',local:'placa',ic:'📟'},
+  temporizador:{pre:'KT',desc:'Temporizador multifunção',spec:'24 Vcc',local:'placa',ic:'⏱'},
+  contator:{pre:'K',desc:'Contator auxiliar',spec:'9 A · 24 Vcc',local:'placa',ic:'⧉'},
+  clp:{pre:'A',desc:'CLP compacto / módulo de E/S',spec:'',local:'placa',ic:'🖥'},
+  transmissor:{pre:'U',desc:'Transmissor / conversor de sinal',spec:'4-20 mA',local:'placa',ic:'〰'},
+  sinaleiro:{pre:'H',desc:'Sinaleiro LED 22 mm',spec:'24 Vcc · verde',local:'porta',ic:'💡'},
+  botao:{pre:'S',desc:'Botão / chave 22 mm',spec:'1NA + 1NF',local:'porta',ic:'🔘'},
+  sensor:{pre:'B',desc:'Sensor de nível / eletrodo',spec:'24 Vcc PNP',local:'campo',ic:'📡'},
+  borne:{pre:'X',desc:'Borne de passagem',spec:'2,5 mm²',local:'placa',ic:'▤'},
+  outro:{pre:'A',desc:'Outro componente',spec:'',local:'placa',ic:'＋'}};
+const XTYPE={rele:'Relé auxiliar',fusivel:'Fusível / porta-fusível',disjuntor:'Disjuntor',fonte:'Fonte',controlador:'Controlador / instrumento',temporizador:'Temporizador',contator:'Contator',clp:'CLP / módulo',transmissor:'Transmissor / conversor',sinaleiro:'Sinaleiro',botao:'Botão / chave',sensor:'Sensor',borne:'Borne',outro:'Outro'};
 const PB={cliente:'WEG CSW',weg:'WEG CSW',schneider:'Harmony XB5',siemens:'SIRIUS ACT 3SU1'};
 const HMI={cliente:'Unitronics UniStream 7"',weg:'IHM 7" touch',schneider:'Harmony GTO 7"',siemens:'SIMATIC KTP700 Basic'};
 const FIELD={pilz:{g:'Pilz PSENcode',c:'Pilz PSENopt II',b:'Pilz PSENmlock / bimanual PNOZ s6 (monitoramento)'},schneider:{g:'Schneider Preventa XCSR',c:'Schneider Preventa XUSL4E',b:'Schneider Preventa XY2SB'},siemens:{g:'Siemens SIRIUS 3SE63',c:'cortina tipo 4 (ex.: SICK deTec4)',b:'Siemens SIRIUS ACT 3SU1 bimanual'}};
@@ -633,6 +732,8 @@ const PRESETS={
  simples:()=>({loads:[{id:uid(),name:'Esteira',kw:2.2,start:'direta',tp:0}],encl:'600x500x250',hmi:false}),
  linha:()=>({loads:[{id:uid(),name:'Misturador',kw:7.5,start:'soft',tp:6},{id:uid(),name:'Esteira de saída',kw:1.5,start:'direta',tp:0,guard:false,curtain:true},{id:uid(),name:'Rosca dosadora',kw:2.2,start:'inversor',tp:5,twohand:true,guard:false},{id:uid(),name:'Exaustor de pó',kw:4,start:'direta',tp:0}],encl:'1200x800x300',hmi:true}),
  celula:()=>({loads:[{id:uid(),name:'Eixo X',kw:0.75,start:'servo',tp:0.5,guard:true},{id:uid(),name:'Eixo Y',kw:0.75,start:'servo',tp:0.5,guard:true},{id:uid(),name:'Eixo Z',kw:0.4,start:'servo',tp:0.5,guard:true},{id:uid(),name:'Bomba de refrigeração',kw:0.75,start:'direta',tp:0,guard:true},{id:uid(),name:'Transportador de cavacos',kw:0.37,start:'direta',tp:0,guard:true},{id:uid(),name:'Exaustor',kw:0.55,start:'direta',tp:0,guard:true},{id:uid(),name:'Fuso principal',kw:7.5,start:'inversor',tp:3,guard:true}],encl:'1200x800x300',hmi:true,plate:'laranja'}),
+ util:()=>({loads:[{id:uid(),name:'Bomba de recalque do tanque',kw:7.5,start:'direta',tp:0,mtype:'tanque_v'},{id:uid(),name:'Transferência de diesel',kw:2.2,start:'direta',tp:0,mtype:'tanque_comb'},{id:uid(),name:'Bomba dosadora de cloro',kw:0.37,start:'inversor',tp:0.5,mtype:'ibc'},{id:uid(),name:'Compressor de ar',kw:15,start:'estrela',tp:5,mtype:'compressor'}],encl:'1200x800x300',hmi:true}),
+ nivel:()=>({loads:[],plc:false,hmi:false,nr12:{...defaultState().nr12,on:false},extras:[...[1,2,3].map(n=>({id:uid(),tag:'-F'+n,tipo:'fusivel',desc:'Fusível do controle de nível TQ 0'+n,spec:'2 A',qty:1,local:'placa'})),...[1,2,3].map(n=>({id:uid(),tag:'-A'+n,tipo:'controlador',desc:'Controlador de nível TQ 0'+n,spec:'24 Vcc',qty:1,local:'placa'})),...[1,2,3].map(n=>({id:uid(),tag:'-K'+n,tipo:'rele',desc:'Relé de sinal de nível TQ 0'+n,spec:'24 Vcc',qty:1,local:'placa'})),{id:uid(),tag:'-B1',tipo:'sensor',desc:'Eletrodos de nível (3 hastes)',spec:'',qty:3,local:'campo'}],extraTerms:33,encl:'600x500x250'}),
  bomba:()=>({loads:[{id:uid(),name:'Bomba principal',kw:22,start:'estrela',tp:5},{id:uid(),name:'Bomba reserva',kw:22,start:'estrela',tp:5},{id:uid(),name:'Ventilador torre',kw:5.5,start:'inversor',tp:8}],encl:'1800x800x500',hmi:true})
 };
 let state;
@@ -672,6 +773,7 @@ function dims(c){
     case 'dps': return {w:72,h:90,d:70};
     case 'safe': return c.ctrl?{w:45*(1+(c.exp||0)),h:100,d:115}:{w:22.5,h:100,d:115};
     case 'term': return {w:c.count*5.2,h:55,d:45};
+    case 'gen': return ({fusivel:{w:18,h:85,d:70},rele:{w:18,h:90,d:75},disjuntor:{w:36,h:90,d:75},fonte:{w:60,h:125,d:100},controlador:{w:45,h:90,d:70},temporizador:{w:22.5,h:90,d:70},contator:{w:45,h:85,d:95},clp:{w:110,h:100,d:75},transmissor:{w:17.5,h:90,d:60},borne:{w:6,h:55,d:45},sinaleiro:{w:22,h:60,d:50},botao:{w:22,h:60,d:50}})[c.sub]||{w:36,h:90,d:70};
     default: return {w:0,h:0,d:0};
   }
 }
@@ -688,6 +790,7 @@ function heatOf(c,load){
     case 'rlyb': return c.ch*0.4;
     case 'soft': return (load?load.In:v)*0.5;
     case 'psu': return v*24*0.12;
+    case 'gen': return ({fonte:6,controlador:2,rele:0.6,contator:1.5,clp:8,temporizador:1})[c.sub]||0.5;
     case 'plc': return 10+(c.exp||0)*2;
     case 'tx': return 1;
     case 'dps': return 0.3;
@@ -778,6 +881,10 @@ function build(){
     mk({key:'A1',tag:'-A1',kind:'plc',group:'Comando',desc:`CLP ${DI} ED / ${DO} SD${AO+AI?` / ${AO+AI} E/S analógicas`:''}`,exp,expDI,expDO,expAO,DI,DO,AO,AI});
     if(DO>=4){const ch=DO<=8?8:16;mk({key:'K100',tag:'-K100',kind:'rlyb',ch,group:'Comando',desc:`Módulo de relés de interface ${ch} canais 24 Vcc (saídas do CLP)`})}
   }
+  // Componentes adicionais (cadastrados à mão ou vindos de um diagrama importado)
+  (state.extras||[]).forEach(x=>{const n=Math.max(1,Math.round(+x.qty||1));const t0=String(x.tag||'').trim();const tag=t0?(t0.startsWith('-')?t0:'-'+t0):'-?';
+    if(x.local==='campo'||x.local==='porta'){acc.push({tag,desc:`${x.desc||XTYPE[x.tipo]||'Componente'}${x.spec?' — '+x.spec:''} (${x.local==='campo'?'campo':'porta'})`,qty:n});return}
+    for(let i=0;i<n;i++)mk({key:`EX:${x.id}:${i}`,tag:n>1?`${tag}.${i+1}`:tag,kind:'gen',sub:x.tipo||'outro',group:'Componentes adicionais',desc:x.desc||XTYPE[x.tipo]||'Componente',model:x.spec||'',label:x.spec||'',ext:true,xid:x.id})});
   // Interface de segurança NR-12
   let safeInfo=null;
   if(state.nr12.on){
@@ -790,7 +897,7 @@ function build(){
   }
   // Bornes
   const nT=(safeInfo?safeInfo.fn.length*4+2:0)+loads.reduce((a,l)=>a+(l.start==='estrela'?7:4),0)+6+(state.plc?loads.length*2:0);
-  const count=Math.ceil(nT*1.1);
+  const count=Math.ceil((nT+(+state.extraTerms||0))*1.1);
   mk({key:'X1',tag:'-X1',kind:'term',group:'Bornes',desc:`Bornes de passagem (inclui 10% de reserva)`,count,newRow:true});
 
   // Layout na placa
@@ -1157,13 +1264,24 @@ function renderLeft(){
       <label>Emergências <select data-lf="estop" style="width:auto;padding:2px 4px">${opt([0,1,2,3,4],l.estop)}</select></label>
     </div>`:''}
   </div>`).join('')}
-  <button class="btn primary block" data-act="add">Adicionar máquina</button>
+  <div class="menu addmenu"><button class="btn primary block mbtn" data-menu aria-haspopup="menu" aria-expanded="false">+ Adicionar máquina ▾</button>
+    <div class="mlist" role="menu" hidden>${Object.keys(MDEF).map(k=>`<button role="menuitem" data-act="addm" data-v="${k}"><span class="mi">${MDEF[k].ic}</span><span><b>${esc(MTYPES[k])}</b><small>${esc(MDEF[k].name)} · ${fmt(MDEF[k].kw,2)} kW · ${esc(START[MDEF[k].start]||'')}</small></span></button>`).join('')}</div></div>
+  <h2>Componentes adicionais</h2>
+  <p class="cap" style="margin:0 0 8px">Relés, fusíveis, controladores, temporizadores e outros itens que não dependem das máquinas. Os itens da placa entram no 3D e na lista de materiais; os de porta e de campo, só na lista.</p>
+  ${state.extras.map(x=>`<div class="load xrow" data-xid="${x.id}"><header><input type="text" class="xtag" value="${esc(x.tag||'')}" data-xf="tag" aria-label="Tag" placeholder="Tag"><select data-xf="tipo" aria-label="Tipo">${opt(Object.keys(XTYPE),x.tipo||'outro',k=>XTYPE[k])}</select><button class="x" data-act="xrm" data-id="${x.id}" aria-label="Remover componente">×</button></header>
+    <label class="f"><span>Descrição</span><input type="text" value="${esc(x.desc||'')}" data-xf="desc"></label>
+    <div class="row2"><label class="f"><span>Especificação</span><input type="text" value="${esc(x.spec||'')}" data-xf="spec" placeholder="ex.: 24 Vcc, 5 A"></label>
+    <label class="f"><span>Qtd. · local</span><span style="display:flex;gap:6px"><input type="number" min="1" step="1" value="${x.qty||1}" data-xf="qty" style="width:64px"><select data-xf="local">${opt(['placa','porta','campo'],x.local||'placa',v=>({placa:'Placa',porta:'Porta',campo:'Campo'})[v])}</select></span></label></div></div>`).join('')}
+  <div class="row2"><div class="menu addmenu"><button class="btn block mbtn" data-menu aria-haspopup="menu" aria-expanded="false">+ Adicionar componente ▾</button>
+    <div class="mlist" role="menu" hidden>${Object.keys(XDEF).map(k=>`<button role="menuitem" data-act="xadd" data-v="${k}"><span class="mi">${XDEF[k].ic}</span><span><b>${esc(XTYPE[k])}</b><small>${esc(XDEF[k].desc)}${XDEF[k].spec?' · '+esc(XDEF[k].spec):''} · ${({placa:'placa',porta:'porta',campo:'campo'})[XDEF[k].local]}</small></span></button>`).join('')}</div></div><label class="f" style="margin:0"><span>Bornes extras</span><input type="number" min="0" step="1" value="${state.extraTerms||0}" data-xterms aria-label="Bornes extras"></label></div>
   <h3>Carregar exemplo</h3>
   <div class="presets">
     <button class="btn small" data-act="preset" data-v="simples">Esteira simples</button>
     <button class="btn small" data-act="preset" data-v="linha">Linha com 4 motores</button>
     <button class="btn small" data-act="preset" data-v="bomba">Estação de bombas</button>
     <button class="btn small" data-act="preset" data-v="celula">Máquina CNC com servos</button>
+    <button class="btn small" data-act="preset" data-v="util">Tanques e utilidades</button>
+    <button class="btn small" data-act="preset" data-v="nivel">Controle de nível (sem motores)</button>
   </div>`;
 }
 
@@ -2227,7 +2345,31 @@ const STARTS={direta:'direta',estrela:'estrela',soft:'soft',inversor:'inversor',
 function snapKW(kw){if(!(kw>0))return 3;return KW.find(v=>v>=kw*0.97)||KW[KW.length-1]}
 function snapKVA(v){return KVA.find(x=>x>=v*0.97)||KVA[KVA.length-1]}
 function parseNum(s){return parseFloat(String(s).replace(/\./g,'').replace(',','.'))}
+/* ---------- texto de CAD: letras espaçadas, carimbo e componentes ---------- */
+const DESPACE_WORDS=['INTERLIGACAO','INTERLIGAÇÃO','ALIMENTACAO','ALIMENTAÇÃO','CONTROLE','RESERVA','TANQUES','TANQUE','ENTRADA','SINAL','NIVEL','NÍVEL','TERRA','FASE','DIAGRAMA','ELETRICO','ELÉTRICO','COMANDO','FORCA','FORÇA','BOMBA','MOTOR','BORNE','BORNES','REGUA','RÉGUA','RELE','RELÉ','FUSIVEL','FUSÍVEL','FONTE','DISJUNTOR','CONTATOR','PAINEL','QUADRO','VCC','VCA','DOS','DAS','DE','DO','DA','E','TQS','TQ','NO','NC'];
+function despaceLine(line){const toks=line.trim().split(/\s+/);if(toks.length>=2&&toks.length<4&&toks.every(t=>/^[A-Za-zÀ-ú]$/.test(t)))return toks.join('');if(toks.length<4)return line;const short=toks.filter(t=>t.length<=2).length;if(short/toks.length<0.55)return line;
+  const glued=toks.join('');let out='',i=0;const up=glued.toUpperCase();
+  while(i<glued.length){let hit='';if(/[A-ZÀ-Ú]/i.test(glued[i]))for(const w of DESPACE_WORDS){if(w.length>hit.length&&up.startsWith(w,i))hit=w}
+    if(hit){out+=(out&&!/\s$/.test(out)?' ':'')+glued.substr(i,hit.length)+' ';i+=hit.length}else{const c=glued[i];if(/[0-9(+.\-]/.test(c)&&out&&/[A-ZÀ-Ú]$/i.test(out.trimEnd())&&!/\s$/.test(out))out+=' ';out+=c;i++}}
+  return out.replace(/\s+/g,' ').trim()}
+function despaceText(t){return String(t||'').split('\n').map(despaceLine).join('\n')}
+function cadCarimbo(t){const c={};const T=String(t||'');
+  const d=T.match(/\b(\d{2})\/(\d{2})\/(\d{4})\b/);if(d)c.data=`${d[1]}/${d[2]}/${d[3]}`;
+  const e=T.match(/\bEng(?:º|\.|enheir[oa])\s*\.?\s*([A-ZÀ-Ú][a-zà-ú]+(?:\s+(?:de|da|do|dos|das|[A-ZÀ-Ú][a-zà-ú]+))+)/);if(e)c.responsavel='Eng. '+e[1].trim();
+  const l=T.match(/([A-ZÀ-Úa-zà-ú0-9 .&\-]{4,80}?\b(?:LTDA|Ltda|S\/?A|S\.A\.|EIRELI|ME)\b\.?)/);if(l)c.cliente=l[1].trim();
+  const pj=T.match(/Projeto\s*:\s*([^\n]{3,60})/i);if(pj)c.projeto=pj[1].trim();
+  const rv=T.match(/Rev(?:is[aã]o)?\.?\s*:?\s*(\d{1,2})\b/i);if(rv)c.revisao=rv[1];
+  const fo=T.match(/Fone\s*:?\s*(\(?\d{2}\)?\s*\d{4,5}-?\d{4})/i);if(fo)c.cliente_telefone=fo[1];
+  return c}
+function cadComponents(T){const comps=[];const up=T.toUpperCase().replace(/\s+/g,' ');
+  const nCN=(up.match(/CONTROLE DE N[IÍ]VEL/g)||[]).length;
+  if(nCN){const names=[...T.matchAll(/CONTROLE DE N[IÍ]VEL\s*\n?\s*([A-ZÀ-Ú]+\s*0?\d+)/gi)].map(m=>m[1].replace(/\s+/g,' ').trim());
+    comps.push({tag:'CN',tipo:'controlador',descricao:'Controlador / relé de nível'+(names.length?` (${names.join(', ')})`:''),especificacao:/24\s*V\s*CC/i.test(up)?'24 Vcc':'',qtd:Math.max(nCN-((up.match(/DIAGRAMA EL[ÉE]TRICO CONTROLE DE N[IÍ]VEL/g)||[]).length),1),local:'placa'})}
+  return comps}
+function cadBornes(T){const page=String(T||'');if(!/(BORNE|ENTRADA ALIMENTA|0 ?VCC|24 ?VCC)/i.test(page))return 0;const nums=new Set((page.match(/(?<![\d,.\/])\b\d{1,3}\b(?![\d,.\/])/g)||[]).map(Number).filter(n=>n<300));const letters=(page.match(/\b[TRS]\b/g)||[]).length?3:0;return nums.size>=8?nums.size+letters:0}
+
 function parseDiagramText(txt){
+  txt=despaceText(txt);
   const T=txt.replace(/\r/g,'').replace(/[ \t]+/g,' ');const low=T.toLowerCase();
   const vv=(low.match(/\b(220|380|440)\s*v\b/g)||[]).map(x=>parseInt(x));const V=vv.length?[220,380,440].map(v=>[v,vv.filter(x=>x===v).length]).sort((a,b)=>b[1]-a[1])[0][0]:380;
   const kvM=low.match(/(13[.,]8|23[.,]1|23|34[.,]5)\s*kv/),kvaM=low.match(/(\d{2,4}(?:[.,]\d)?)\s*kva/);
@@ -2240,28 +2382,44 @@ function parseDiagramText(txt){
   const cand={};const re=/\bM(\d{1,2})\b\s*[·:\-–]?\s*([^\n]{0,60})/g;let m;const tags=[];
   while((m=re.exec(T)))tags.push({i:m.index,n:m[1],after:m[2]||'',end:re.lastIndex});
   tags.forEach((t,k)=>{const nxt=tags.slice(k+1).find(x=>x.n!==t.n);const win=T.slice(t.i,Math.min(nxt?nxt.i:t.i+220,t.i+220));const pw=win.match(/(\d+(?:[.,]\d+)?)\s*(kw|cv|hp)\b/i);if(!pw)return;
-    let kw=parseNum(pw[1]);if(/cv|hp/i.test(pw[2]))kw=kw*0.7355;let name=t.after.split(/\s*[·|]\s*|\s{2,}|\d+(?:[.,]\d+)?\s*(?:kw|cv|hp)\b/i)[0].trim();const good=name&&!/^[\d(]/.test(name)&&name.length>1;
+    let kw=parseNum(pw[1]);if(/cv|hp/i.test(pw[2]))kw=kw*0.7355;let name=t.after.split(/\s*[·|]\s*|\s{2,}|\d+(?:[.,]\d+)?\s*(?:kw|cv|hp)\b/i)[0].trim();const good=name&&!/^[\d(]/.test(name)&&!/^-?[A-Z]{1,3}\d+\b/.test(name)&&name.length>2;
     const hasSt=/estrela|tri[âa]ngulo|soft|servo|inversor|cfw|atv|vfd|frequ|direta/i.test(win);const sc=(good?2:0)+(hasSt?1:0);const tag='M'+t.n;
     if(!cand[tag]||sc>cand[tag].sc)cand[tag]={sc,tag,nome:good?name.slice(0,40):'Máquina '+t.n,kw:+kw.toFixed(2),partida:startOf(win),maquina:'auto'}});
   Object.values(cand).sort((a,b)=>parseInt(a.tag.slice(1))-parseInt(b.tag.slice(1))).forEach(c=>{delete c.sc;res.maquinas.push(c)});
   if(!res.maquinas.length){const re2=/([A-Za-zÀ-ú][^\n\d]{2,40}?)\s*[-–:·]?\s*(\d+(?:[.,]\d+)?)\s*(kW|cv|CV|HP)\b/g;let k=0;while((m=re2.exec(T))&&k<20){let kw=parseNum(m[2]);if(/cv|hp/i.test(m[3]))kw*=0.7355;k++;
     if(kind==='forca')res.circuitos.push({nome:m[1].trim().slice(0,40),kw:+kw.toFixed(2),fases:/monof|f\+n|127|220v mono/i.test(m[0])?'mono':'tri',fp:0.9});
     else res.maquinas.push({tag:'M'+k,nome:m[1].trim().slice(0,40),kw:+kw.toFixed(2),partida:startOf(T.slice(m.index,m.index+160)),maquina:'auto'})}}
+  {const cb=cadCarimbo(txt);res.carimbo=cb;if(cb.cliente&&!res.cliente)res.cliente=cb.cliente;if(cb.projeto&&!res.nome_projeto)res.nome_projeto=cb.projeto;
+    res.componentes=cadComponents(txt);res.bornes={quantidade:cadBornes(txt)};if(/24\s*V\s*CC/i.test(txt))res.comando='24Vcc'}
   return res}
 const IMP_PROMPT=`Você é um engenheiro eletricista. Analise o diagrama elétrico (imagem e/ou texto extraído) e extraia os dados para criar um projeto de painel.
 Responda SOMENTE com um JSON válido, sem comentários e sem texto fora do JSON, neste formato:
 {"tipo":"comando|forca|primaria","tensao_V":380,"frequencia_Hz":60,"comando":"24Vcc|220Vca","nome_projeto":"","cliente":"",
-"maquinas":[{"tag":"M1","nome":"Esteira","kw":5.5,"partida":"direta|estrela|soft|inversor|servo","maquina":"bomba|esteira|ventilador|misturador|rosca|eixo|redutor|auto"}],
+"maquinas":[{"tag":"M1","nome":"Esteira","kw":5.5,"partida":"direta|estrela|soft|inversor|servo","maquina":"bomba|tanque_v|tanque_comb|ibc|compressor|esteira|ventilador|misturador|rosca|eixo|redutor|auto"}],
 "circuitos":[{"nome":"Iluminação","kw":4,"fases":"tri|mono","fp":0.9}],
 "cabine":{"kV":13.8,"kVA":500,"Vs":380,"trafo":"oleo|seco"},
 "opcoes":{"clp":true,"nr12":true,"dps":true,"ihm":false},
+"componentes":[{"tag":"F1","tipo":"rele|fusivel|disjuntor|fonte|controlador|temporizador|contator|clp|transmissor|sinaleiro|botao|sensor|outro","descricao":"Fusível do controle de nível TQ 01","especificacao":"2 A","qtd":1,"local":"placa|porta|campo"}],
+"bornes":{"quantidade":0,"reguas":["X1"]},
+"carimbo":{"cliente":"","cliente_endereco":"","cliente_telefone":"","projeto":"","numero_desenho":"","revisao":"","data":"dd/mm/aaaa","responsavel":"","empresa_projetista":""},
 "observacoes":"o que não foi possível identificar"}
 Regras: "comando" = quadro com motores e partidas; "forca" = quadro de distribuição com circuitos de saída; "primaria" = cabine/subestação de média tensão com transformador.
-Converta cv/HP para kW (1 cv = 0,7355 kW). Estrela-triângulo = "estrela"; inversor de frequência = "inversor". Liste somente o que aparece no diagrama: não invente cargas; use null para valores desconhecidos e listas vazias quando não houver. Use os nomes/tags do diagrama.`;
+Converta cv/HP para kW (1 cv = 0,7355 kW). Estrela-triângulo = "estrela"; inversor de frequência = "inversor". Liste somente o que aparece no diagrama: não invente cargas; use null para valores desconhecidos e listas vazias quando não houver. Use os nomes/tags do diagrama.
+Em "componentes", liste TODOS os dispositivos que não são motores (relés, fusíveis, disjuntores, fontes, controladores de nível ou temperatura, temporizadores, CLP, sinaleiros, botões, sensores) com a tag, a especificação lida (corrente, tensão) e o local: "placa" (montado no painel), "porta" ou "campo" (instalado na máquina/tanque). Um mesmo dispositivo que aparece em várias folhas entra uma vez só. Um quadro pode não ter motores (ex.: controle de nível): nesse caso "maquinas" fica vazio e o tipo é "comando".
+Em "bornes", conte os bornes da régua (folha de bornes). Em "carimbo", leia o selo/carimbo das folhas: o cliente é a empresa dona da instalação; "empresa_projetista" é quem elaborou o desenho.
+Textos de CAD podem vir com letras separadas por espaço (ex.: "C ON T R OL E" = "CONTROLE").`;
 function impOpen(){let d=$('#impDlg');if(!d){d=document.createElement('dialog');d.id='impDlg';d.className='dlg';d.setAttribute('aria-labelledby','impTitle');document.body.appendChild(d);
   const f=document.createElement('input');f.type='file';f.id='impFile';f.hidden=true;f.accept='image/*,.pdf,.svg,.txt,.csv,.dxf,.json';document.body.appendChild(f);f.addEventListener('change',e=>{const x=e.target.files&&e.target.files[0];e.target.value='';if(x)impLoad(x)})}
   IMP.res=null;IMP.file=null;IMP.msg='';impRender();if(d.showModal&&!d.open)d.showModal()}
 function impClose(){const d=$('#impDlg');if(IMP.ctl)IMP.ctl.abort();if(d&&d.close)d.close()}
+function impCompsHTML(r){const C=r.componentes||(r.componentes=[]);const opt=(arr,cur,lab=x=>x)=>arr.map(v=>`<option value="${v}" ${String(v)===String(cur)?'selected':''}>${lab(v)}</option>`).join('');
+  return `<h3 style="margin:14px 0 6px">Outros componentes (${C.length})</h3>${C.length?`<table class="imptab"><thead><tr><th>Tag</th><th>Tipo</th><th>Descrição</th><th>Especificação</th><th>Qtd.</th><th>Local</th><th></th></tr></thead><tbody>${C.map((x,i)=>`<tr data-ci="${i}"><td><input type="text" data-impx="tag" value="${esc(x.tag||'')}" style="width:64px"></td>
+    <td><select data-impx="tipo">${opt(Object.keys(XTYPE),XTYPE[x.tipo]?x.tipo:'outro',k=>XTYPE[k])}</select></td><td><input type="text" data-impx="descricao" value="${esc(x.descricao||'')}"></td><td><input type="text" data-impx="especificacao" value="${esc(x.especificacao||'')}" style="width:96px"></td>
+    <td><input type="number" min="1" data-impx="qtd" value="${x.qtd||1}" style="width:56px"></td><td><select data-impx="local">${opt(['placa','porta','campo'],x.local||'placa',v=>({placa:'Placa',porta:'Porta',campo:'Campo'})[v])}</select></td><td><button class="x" data-act="impxrm" data-v="${i}" aria-label="Remover">×</button></td></tr>`).join('')}</tbody></table>`:'<p class="cap">Nenhum outro componente identificado.</p>'}
+    <div class="rowb" style="margin-top:6px"><button class="btn small" data-act="impxadd">Adicionar componente</button><label class="f" style="flex-direction:row;align-items:center;gap:8px;margin:0"><span>Bornes na régua</span><input type="number" min="0" data-impb value="${(r.bornes&&r.bornes.quantidade)||0}" style="width:80px"></label></div>
+    <p class="cap" style="margin:6px 0 0">Disjuntor geral e fonte 24 Vcc identificados aqui ajustam o -Q0 e o -T1 do projeto em vez de virar itens duplicados.</p>`}
+function impCarimboHTML(r){const c=r.carimbo||(r.carimbo={});const F=(k,l,w)=>`<label class="f"${w?` style="grid-column:span ${w}"`:''}><span>${l}</span><input type="text" data-impc2="${k}" value="${esc(c[k]||'')}"></label>`;
+  return `<h3 style="margin:14px 0 6px">Carimbo / dados do projeto</h3><div class="g3">${F('cliente','Cliente',2)}${F('cliente_telefone','Telefone do cliente')}${F('cliente_endereco','Endereço do cliente',3)}${F('numero_desenho','Nº do desenho')}${F('revisao','Revisão')}${F('data','Data')}${F('responsavel','Responsável técnico',2)}${F('empresa_projetista','Empresa projetista')}</div>`}
 function impRender(){const d=$('#impDlg');if(!d)return;const aiOk=!!SAMPLE,imgOk=!!SAMPLE_IMG;const r=IMP.res;
   const opt=(arr,cur,lab=x=>x)=>arr.map(v=>`<option value="${v}" ${String(v)===String(cur)?'selected':''}>${lab(v)}</option>`).join('');
   let body=`<p class="cap">Envie um diagrama elétrico e o app monta um novo projeto com o tipo de painel, a tensão e as cargas identificadas. Você revisa tudo antes de criar.</p>
@@ -2270,7 +2428,8 @@ function impRender(){const d=$('#impDlg');if(!d)return;const aiOk=!!SAMPLE,imgOk
   <p class="cap" style="margin:6px 0 0">${aiOk?`Leitura com IA disponível${imgOk?' (imagens e texto)':' (somente texto)'}: o diagrama é analisado pelo Claude usando a sua conta.`:'Leitura com IA indisponível aqui: o app lê o texto de PDF, SVG, DXF e TXT. Para fotos ou diagramas escaneados, use o app publicado no Claude.'}</p>`;
   if(IMP.busy)body+=`<div class="impbusy"><span class="spin"></span><span id="impMsg">${esc(IMP.msg||'Analisando o diagrama…')}</span><button class="btn small" data-act="impstop">Parar</button></div>`;
   else if(IMP.msg)body+=`<p class="ok" style="color:${/não|erro|falh|inválid/i.test(IMP.msg)?'var(--stop)':'var(--run)'}">${esc(IMP.msg)}</p>`;
-  if(r&&!IMP.busy){body+=`<fieldset><legend>Projeto identificado</legend><p class="cap" style="margin:0 0 8px">Fonte: ${esc(r.fonte||'')}${r.observacoes?` · ${esc(r.observacoes)}`:''}</p>
+  if(!r&&!IMP.busy&&IMP.pages&&IMP.pages.length)body+=impPagesHTML();
+  if(r&&!IMP.busy){body+=`<fieldset><legend>Projeto identificado</legend><p class="cap" style="margin:0 0 8px">Fonte: ${esc(r.fonte||'')}${r.observacoes?` · ${esc(r.observacoes)}`:''}</p>${impReadInfoHTML(r)}
     <div class="g3"><label class="f"><span>Tipo de painel</span><select data-imp="tipo">${opt(['comando','forca','primaria'],r.tipo,v=>({comando:'Quadro de comando',forca:'Quadro de força',primaria:'Cabine primária'})[v])}</select></label>
     <label class="f"><span>Tensão</span><select data-imp="tensao_V">${opt([220,380,440],r.tensao_V||380,v=>v+' V')}</select></label>
     <label class="f"><span>Frequência</span><select data-imp="frequencia_Hz">${opt([60,50],r.frequencia_Hz||60,v=>v+' Hz')}</select></label>
@@ -2278,8 +2437,8 @@ function impRender(){const d=$('#impDlg');if(!d)return;const aiOk=!!SAMPLE,imgOk
     <label class="f"><span>Cliente</span><input type="text" data-imp="cliente" value="${esc(r.cliente||'')}"></label>
     ${r.tipo==='comando'?`<label class="f"><span>Comando</span><select data-imp="comando">${opt(['24Vcc','220Vca'],r.comando||'24Vcc',v=>v==='24Vcc'?'24 Vcc':'220 Vca')}</select></label>`:''}</div>`;
     if(r.tipo==='comando'){body+=`<div class="checks" style="margin-bottom:8px">${['clp','nr12','dps','ihm'].map(k=>`<label><input type="checkbox" data-impo="${k}" ${r.opcoes&&r.opcoes[k]?'checked':''}> ${({clp:'CLP',nr12:'Adequação NR-12',dps:'DPS',ihm:'IHM'})[k]}</label>`).join('')}</div>
-      <table class="imptab"><thead><tr><th>Tag</th><th>Nome</th><th>kW</th><th>Partida</th><th>Máquina</th><th></th></tr></thead><tbody>${(r.maquinas||[]).map((x,i)=>`<tr data-i="${i}"><td>${esc(x.tag||'M'+(i+1))}</td><td><input type="text" data-impm="nome" value="${esc(x.nome||'')}"></td><td><input type="number" step="0.01" min="0.1" data-impm="kw" value="${x.kw||''}"></td>
-      <td><select data-impm="partida">${opt(Object.keys(START),STARTS[x.partida]||'direta',k=>START[k])}</select></td><td><select data-impm="maquina">${opt(Object.keys(MTYPES),MTYPES[x.maquina]?x.maquina:'auto',k=>k==='auto'?'Automático':MTYPES[k])}</select></td>
+      <table class="imptab"><thead><tr><th>Tag</th><th>Nome</th><th>kW</th><th>Partida</th><th>Máquina</th>${IMP.pages?'<th>Folhas</th>':''}<th></th></tr></thead><tbody>${(r.maquinas||[]).map((x,i)=>`<tr data-i="${i}"><td>${esc(x.tag||'M'+(i+1))}</td><td><input type="text" data-impm="nome" value="${esc(x.nome||'')}"></td><td><input type="number" step="0.01" min="0.1" data-impm="kw" value="${x.kw||''}"></td>
+      <td><select data-impm="partida">${opt(Object.keys(START),STARTS[x.partida]||'direta',k=>START[k])}</select></td><td><select data-impm="maquina">${opt(Object.keys(MTYPES),MTYPES[x.maquina]?x.maquina:'auto',k=>k==='auto'?'Automático':MTYPES[k])}</select></td>${IMP.pages?`<td class="cap" style="white-space:nowrap">${x.folhas&&x.folhas.length?fmtPages(x.folhas):'—'}</td>`:''}
       <td><button class="x" data-act="imprm" data-v="${i}" aria-label="Remover">×</button></td></tr>`).join('')||'<tr><td colspan="6" class="cap">Nenhuma máquina identificada: adicione abaixo.</td></tr>'}</tbody></table>
       <button class="btn small" data-act="impadd" style="margin-top:6px">Adicionar máquina</button>`}
     else if(r.tipo==='forca'){body+=`<table class="imptab"><thead><tr><th>#</th><th>Circuito</th><th>kW</th><th>Tipo</th><th>FP</th><th></th></tr></thead><tbody>${(r.circuitos||[]).map((x,i)=>`<tr data-i="${i}"><td>${i+1}</td><td><input type="text" data-impc="nome" value="${esc(x.nome||'')}"></td><td><input type="number" step="0.1" min="0.1" data-impc="kw" value="${x.kw||''}"></td>
@@ -2287,20 +2446,19 @@ function impRender(){const d=$('#impDlg');if(!d)return;const aiOk=!!SAMPLE,imgOk
       <button class="btn small" data-act="impadd" style="margin-top:6px">Adicionar circuito</button>`}
     else{const c=r.cabine||{};body+=`<div class="g3"><label class="f"><span>Média tensão</span><select data-impk="kV">${opt([13.8,23,34.5],c.kV>=30?34.5:c.kV>=20?23:13.8,v=>fmt(v,1)+' kV')}</select></label>
       <label class="f"><span>Transformador</span><select data-impk="kVA">${opt(KVA,snapKVA(c.kVA||500),v=>fmt(v,1)+' kVA')}</select></label><label class="f"><span>Tipo</span><select data-impk="trafo">${opt(['oleo','seco'],c.trafo==='seco'?'seco':'oleo',v=>v==='oleo'?'A óleo':'A seco')}</select></label></div>`}
-    body+=`</fieldset>`}
+    if(r.tipo==='comando')body+=impCompsHTML(r);
+    body+=impCarimboHTML(r)+`</fieldset>`}
   d.innerHTML=`<div class="dh"><h2 id="impTitle">Novo projeto a partir de diagrama</h2><button class="x" data-act="impclose" aria-label="Fechar">×</button></div><div class="db">${body}</div>
-  <div class="df">${r&&!IMP.busy?`${aiOk&&IMP.src==='local'&&IMP.text?'<button class="btn" data-act="impai">Analisar de novo com IA</button>':''}<button class="btn primary" data-act="impcreate">Criar projeto</button>`:'<button class="btn" data-act="impclose">Cancelar</button>'}</div>`;
+  <div class="df">${!r&&!IMP.busy&&IMP.pages&&IMP.pages.length?`<button class="btn" data-act="impclose">Cancelar</button><button class="btn primary" data-act="impanalyze">${aiOk?'Analisar com IA':'Ler'} ${IMP.pages.filter(p=>p.sel).length} folha(s)</button>`:r&&!IMP.busy?`${IMP.pages?'<button class="btn" data-act="imppages">Escolher outras folhas</button>':''}${aiOk&&IMP.src==='local'&&IMP.text?'<button class="btn" data-act="impai">Analisar de novo com IA</button>':''}<button class="btn primary" data-act="impcreate">Criar projeto</button>`:'<button class="btn" data-act="impclose">Cancelar</button>'}</div>`;
   const dz=$('#impDrop');if(dz){dz.onclick=()=>$('#impFile').click();dz.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();$('#impFile').click()}};
     dz.ondragover=e=>{e.preventDefault();dz.classList.add('over')};dz.ondragleave=()=>dz.classList.remove('over');dz.ondrop=e=>{e.preventDefault();dz.classList.remove('over');const f=e.dataTransfer.files&&e.dataTransfer.files[0];if(f)impLoad(f)}}}
 async function pdfLib(){if(window.pdfjsLib)return window.pdfjsLib;await loadScript('https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js');window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';return window.pdfjsLib}
-async function impLoad(f){IMP.file=f;IMP.res=null;IMP.busy=true;IMP.msg='Lendo o arquivo…';IMP.text='';IMP.imgs=[];impRender();
+async function impLoad(f){IMP.file=f;IMP.res=null;IMP.busy=true;IMP.msg='Lendo o arquivo…';IMP.text='';IMP.imgs=[];IMP.pages=null;IMP.pdf=null;IMP.stage='';impRender();
   try{const name=f.name.toLowerCase();
     if(/\.json$/.test(name)){const j=JSON.parse(await f.text());const data=j.projeto||j;if(!data||!Array.isArray(data.loads))throw new Error('Este .json não é um projeto do montador.');IMP.busy=false;impClose();loadProject(data);log('Projeto importado de '+f.name);return}
     if(/^image\//.test(f.type)&&!/\.svg$/.test(name)){IMP.imgs=[f]}
-    else if(/\.pdf$/.test(name)||f.type==='application/pdf'){IMP.msg='Extraindo texto e páginas do PDF…';impRender();const lib=await pdfLib();const pdf=await lib.getDocument({data:await f.arrayBuffer()}).promise;const n=Math.min(pdf.numPages,12);let txt='';
-      for(let i=1;i<=n;i++){const pg=await pdf.getPage(i);const tc=await pg.getTextContent();let lastY=null;tc.items.forEach(it=>{const y=Math.round(it.transform[5]);txt+=(lastY!==null&&Math.abs(y-lastY)>3?'\n':' ')+it.str;lastY=y});txt+='\n';
-        if(SAMPLE_IMG&&IMP.imgs.length<Math.min(3,SAMPLE_IMG.maxCount||3)){const vp=pg.getViewport({scale:Math.min(2,1800/pg.getViewport({scale:1}).width)});const c=document.createElement('canvas');c.width=vp.width;c.height=vp.height;await pg.render({canvasContext:c.getContext('2d'),viewport:vp}).promise;IMP.imgs.push(await new Promise(r=>c.toBlob(r,'image/png')))}}
-      IMP.text=txt}
+    else if(/\.pdf$/.test(name)||f.type==='application/pdf'){await impReadPdf(f);IMP.busy=false;IMP.msg='';
+      if(IMP.pages.length===1&&IMP.pages[0].hasText&&!SAMPLE){await impAnalyze(false);return}impRender();return}
     else if(/\.svg$/.test(name)){const doc=new DOMParser().parseFromString(await f.text(),'image/svg+xml');IMP.text=[...doc.querySelectorAll('text')].map(t=>t.textContent).join('\n')}
     else if(/\.dxf$/.test(name)){const lines=(await f.text()).split(/\r?\n/);const out=[];for(let i=0;i<lines.length-1;i++){if(lines[i].trim()==='1'&&i>0){out.push(lines[i+1].replace(/\\P/g,'\n').replace(/\{\\[^;]*;|\}/g,''))}}IMP.text=out.join('\n')}
     else IMP.text=await f.text();
@@ -2308,9 +2466,94 @@ async function impLoad(f){IMP.file=f;IMP.res=null;IMP.busy=true;IMP.msg='Lendo o
     if(useAI)await impAI();
     else{if(IMP.imgs.length&&!IMP.text)throw new Error('Para ler imagens é preciso a leitura com IA, que não está disponível nesta visualização. Use um PDF com texto, SVG ou DXF, ou abra o app publicado no Claude.');
       IMP.res=parseDiagramText(IMP.text);IMP.src='local';IMP.msg=impSummary(IMP.res)}}
-  catch(e){IMP.msg=(e&&e.message)||'Não foi possível ler o arquivo.';IMP.res=null}
-  IMP.busy=false;impRender()}
-async function impAI(){IMP.busy=true;IMP.msg='Analisando o diagrama com IA… pode levar até um minuto.';impRender();IMP.ctl=new AbortController();
+  catch(e){IMP.msg=(e&&e.code==='cancelled')?'Leitura interrompida.':(e&&e.message)||'Não foi possível ler o arquivo.';IMP.res=null;if(e&&e.code==='cancelled')IMP.pages=null}
+  IMP.busy=false;IMP.ctl=null;impRender()}
+/* ---------- PDF com várias folhas: leitura de todas, seleção, análise em lotes ---------- */
+function impProg(m){IMP.msg=m;const e=$('#impMsg');if(e)e.textContent=m}
+function pageRange(str,total){const set=new Set();String(str||'').split(/[,;\s]+/).forEach(t=>{const m=t.match(/^(\d+)(?:\s*[-–a]\s*(\d+))?$/);if(!m)return;let a=+m[1],b=m[2]?+m[2]:a;if(a>b)[a,b]=[b,a];for(let i=Math.max(1,a);i<=Math.min(total,b);i++)set.add(i)});return set}
+function fmtPages(arr){const a=[...new Set(arr)].sort((x,y)=>x-y);const out=[];for(let i=0;i<a.length;i++){let j=i;while(j+1<a.length&&a[j+1]===a[j]+1)j++;out.push(j>i+1?`${a[i]}–${a[j]}`:j===i+1?`${a[i]}, ${a[j]}`:`${a[i]}`);i=j}return out.join(', ')}
+async function impReadPdf(f){IMP.ctl=new AbortController();const sig=IMP.ctl.signal;impProg('Abrindo o PDF…');
+  const lib=await pdfLib();const pdf=await lib.getDocument({data:await f.arrayBuffer()}).promise;IMP.pdf=pdf;const N=pdf.numPages;IMP.pages=[];
+  for(let i=1;i<=N;i++){if(sig.aborted)throw Object.assign(new Error('Leitura interrompida.'),{code:'cancelled'});impProg(`Lendo folha ${i} de ${N}…`);
+    const pg=await pdf.getPage(i);const tc=await pg.getTextContent();let txt='',lastY=null;tc.items.forEach(it=>{const y=Math.round(it.transform[5]);txt+=(lastY!==null&&Math.abs(y-lastY)>3?'\n':' ')+it.str;lastY=y});
+    const clean=txt.replace(/\s+/g,' ').trim();const thumb='';
+    const title=(clean.match(/(?:Folha|Sheet|Página)\s*[:\-]?\s*\d+[^\n]{0,0}/i)?'':'')||'';
+    const toks=clean.split(' ').filter(Boolean),spaced=toks.length>8&&toks.filter(t=>t.length<=2).length/toks.length>0.55,partial=clean.length>=25&&(clean.length<260||spaced);
+    IMP.pages.push({n:i,text:txt,hasText:clean.length>=25,partial,sel:true,thumb,snippet:clean.slice(0,90),title})}
+  IMP.text=IMP.pages.map(p=>p.text).join('\n');IMP.stage='pages';impThumbs(pdf)}
+async function impThumbs(pdf){const P=IMP.pages;for(let i=0;i<Math.min(P.length,120);i++){if(IMP.pdf!==pdf)return;const p=P[i];if(p.thumb)continue;
+  try{const pg=await pdf.getPage(p.n);const v1=pg.getViewport({scale:1});const vp=pg.getViewport({scale:Math.min(0.5,150/v1.width)});const c=document.createElement('canvas');c.width=Math.ceil(vp.width);c.height=Math.ceil(vp.height);
+    const cx=c.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);await pg.render({canvasContext:cx,viewport:vp}).promise;p.thumb=c.toDataURL('image/jpeg',0.7);
+    const el=document.getElementById('impth'+i);if(el){const im=document.createElement('img');im.src=p.thumb;im.alt='Miniatura da folha '+p.n;im.id='impth'+i;el.replaceWith(im)}}catch(e){}
+  await new Promise(r=>setTimeout(r,0))}}
+function impPagesHTML(){const P=IMP.pages,N=P.length,sel=P.filter(p=>p.sel),wt=P.filter(p=>p.hasText).length,img=N-wt,ai=!!SAMPLE,imgAI=!!SAMPLE_IMG;
+  const per=imgAI?Math.max(1,Math.min(3,SAMPLE_IMG.maxCount||3)):8,steps=Math.ceil(sel.length/per);
+  return `<fieldset><legend>Folhas do PDF</legend>
+  <p style="margin:0 0 6px"><b>${N} folha${N>1?'s':''}</b> · ${wt} com texto${img?` · <b style="color:var(--warn)">${img} só imagem (escaneada${img>1?'s':''})</b>`:''}</p>
+  ${P.some(p=>p.partial)?`<p class="cap" style="margin:0 0 8px">Algumas folhas têm <b>texto parcial</b>: o desenho foi feito em CAD e parte dos textos (tags, carimbo, especificações) virou linha. ${imgAI?'A leitura com IA olha a imagem dessas folhas e recupera essas informações.':'Para ler tudo, use o Montador publicado no Claude (leitura de imagem por IA); aqui serão lidos só os textos disponíveis.'}</p>`:''}
+  ${img&&!imgAI?`<p class="cap" style="margin:0 0 8px;color:var(--warn)">As folhas só com imagem não podem ser lidas aqui${ai?' (a IA desta visualização lê apenas texto)':''}. Para ler diagramas escaneados, abra o Montador publicado no Claude, que tem leitura de imagem por IA.</p>`:''}
+  <div class="rowb" style="margin-bottom:8px"><button class="btn small" data-act="imppgall">Todas</button><button class="btn small" data-act="imppgnone">Nenhuma</button><button class="btn small" data-act="imppgtext">Só com texto</button>
+    <input type="text" id="impRange" placeholder="Ex.: 3-8, 12" aria-label="Folhas a analisar" style="width:140px"><button class="btn small" data-act="imppgrange">Selecionar estas</button></div>
+  <div class="imppgs">${P.map((p,i)=>`<label class="imppg ${p.sel?'on':''} ${p.hasText?'':'img'}"><input type="checkbox" data-imppg="${i}" ${p.sel?'checked':''}>
+    ${p.thumb?`<img id="impth${i}" src="${p.thumb}" alt="Miniatura da folha ${p.n}">`:`<span class="nothumb" id="impth${i}">${i<120?'carregando…':'sem miniatura'}</span>`}<span class="pgn">Folha ${p.n}</span><span class="pgb">${!p.hasText?'só imagem':p.partial?'texto parcial':'texto'}</span>${p.found&&p.found.length?`<span class="pgf">${esc(p.found.join(', '))}</span>`:''}</label>`).join('')}</div>
+  <p class="cap" style="margin:8px 0 0">${sel.length} folha${sel.length===1?'':'s'} selecionada${sel.length===1?'':'s'}${ai?` · análise com IA em ${steps} etapa${steps===1?'':'s'} de até ${per} folha${per>1?'s':''}`:' · leitura local do texto'}.</p></fieldset>`}
+function normTag(t){return String(t||'').toUpperCase().replace(/^[-=+]+/,'').replace(/\s+/g,'')}
+function modeOf(arr){const c={};arr.filter(v=>v!==null&&v!==undefined&&v!=='').forEach(v=>c[v]=(c[v]||0)+1);let b=null,n=0;for(const k in c)if(c[k]>n){n=c[k];b=k}return b}
+function mergeRes(list,info){const ok=list.filter(Boolean);const out={fonte:info.fonte,maquinas:[],circuitos:[],cabine:null,opcoes:{clp:false,nr12:false,dps:false,ihm:false},observacoes:''};
+  const weight=r=>(r.maquinas||[]).length*2+(r.circuitos||[]).length+(r.cabine&&r.cabine.kVA?3:0);const votes={};ok.forEach(r=>{if(r.tipo)votes[r.tipo]=(votes[r.tipo]||0)+1+weight(r)});
+  out.tipo=Object.keys(votes).sort((a,b)=>votes[b]-votes[a])[0]||'comando';
+  out.tensao_V=+modeOf(ok.map(r=>r.tensao_V))||380;out.frequencia_Hz=+modeOf(ok.map(r=>r.frequencia_Hz))||60;out.comando=modeOf(ok.map(r=>r.comando))||'24Vcc';
+  out.nome_projeto=(ok.find(r=>r.nome_projeto)||{}).nome_projeto||'';out.cliente=(ok.find(r=>r.cliente)||{}).cliente||'';
+  ok.forEach(r=>{for(const k in out.opcoes)if(r.opcoes&&r.opcoes[k])out.opcoes[k]=true});
+  const M=new Map();ok.forEach(r=>(r.maquinas||[]).forEach(x=>{if(!(x.kw>0))return;const key=x.tag?normTag(x.tag):'N:'+String(x.nome||'').toLowerCase().trim();const cur=M.get(key);
+    const fl=(x.folhas||[]).map(Number).filter(Boolean);
+    if(!cur)M.set(key,{tag:x.tag?normTag(x.tag):'',nome:x.nome||'',kws:[+x.kw],parts:[x.partida||'direta'],maquina:x.maquina||'auto',folhas:new Set(fl)});
+    else{cur.kws.push(+x.kw);cur.parts.push(x.partida||'direta');if((x.nome||'').length>cur.nome.length)cur.nome=x.nome;if(cur.maquina==='auto'&&x.maquina&&x.maquina!=='auto')cur.maquina=x.maquina;fl.forEach(f=>cur.folhas.add(f))}}));
+  out.maquinas=[...M.values()].map(m=>{const nd=m.parts.filter(p=>p&&p!=='direta');return {tag:m.tag,nome:m.nome,kw:+modeOf(m.kws)||Math.max(...m.kws),partida:nd.length?modeOf(nd):'direta',maquina:m.maquina,folhas:[...m.folhas].sort((a,b)=>a-b)}})
+    .sort((a,b)=>{const na=parseInt(a.tag.replace(/\D/g,''))||999,nb=parseInt(b.tag.replace(/\D/g,''))||999;return na-nb});
+  out.maquinas.forEach((m,i)=>{if(!m.tag)m.tag='M'+(i+1)});
+  const Cc=new Map();ok.forEach(r=>(r.circuitos||[]).forEach(x=>{if(!(x.kw>0))return;const k=String(x.nome||'').toLowerCase().trim();const cur=Cc.get(k);const fl=(x.folhas||[]).map(Number).filter(Boolean);
+    if(!cur)Cc.set(k,{...x,folhas:new Set(fl)});else fl.forEach(f=>cur.folhas.add(f))}));
+  out.circuitos=[...Cc.values()].map(c=>({...c,folhas:[...c.folhas].sort((a,b)=>a-b)}));
+  out.cabine=(ok.find(r=>r.cabine&&r.cabine.kVA)||{}).cabine||null;
+  out.observacoes=[...new Set(ok.map(r=>r.observacoes).filter(Boolean))].join(' · ').slice(0,400);
+  const CM=new Map();ok.forEach(r=>(r.componentes||[]).forEach(x=>{if(!x)return;const key=x.tag?normTag(x.tag):'D:'+(x.tipo||'')+':'+String(x.descricao||'').toLowerCase().slice(0,40);const cur=CM.get(key);
+    if(!cur)CM.set(key,{...x,qtd:Math.max(1,+x.qtd||1)});else{if(!cur.especificacao&&x.especificacao)cur.especificacao=x.especificacao;if((x.descricao||'').length>(cur.descricao||'').length)cur.descricao=x.descricao;if(!x.tag)cur.qtd=Math.max(cur.qtd,+x.qtd||1)}}));
+  out.componentes=[...CM.values()];
+  out.bornes={quantidade:Math.max(0,...ok.map(r=>+(r.bornes&&r.bornes.quantidade)||0))};
+  out.carimbo={};ok.forEach(r=>{const c=r.carimbo||{};for(const k in c)if(c[k]&&!out.carimbo[k])out.carimbo[k]=c[k]});
+  if(!out.cliente&&out.carimbo.cliente)out.cliente=out.carimbo.cliente;if(!out.nome_projeto&&out.carimbo.projeto)out.nome_projeto=out.carimbo.projeto;
+  out.leitura=info;return out}
+function foundLocal(res){const P=IMP.pages;(res.maquinas||[]).forEach(m=>{const re=new RegExp('(^|[^A-Z0-9])-?'+normTag(m.tag).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')+'(?![0-9])','i');m.folhas=P.filter(p=>p.sel&&re.test(p.text)).map(p=>p.n)});
+  P.forEach(p=>p.found=[]);(res.maquinas||[]).forEach(m=>(m.folhas||[]).forEach(n=>{const p=P[n-1];if(p&&!p.found.includes(normTag(m.tag)))p.found.push(normTag(m.tag))}));
+  (res.circuitos||[]).forEach(c=>{const k=String(c.nome||'').toLowerCase().slice(0,18);c.folhas=k?P.filter(p=>p.sel&&p.text.toLowerCase().includes(k)).map(p=>p.n):[]})}
+async function impAnalyze(forceAI){const P=IMP.pages,sel=P.filter(p=>p.sel);if(!sel.length){IMP.msg='Selecione pelo menos uma folha.';impRender();return}
+  IMP.busy=true;IMP.res=null;IMP.ctl=new AbortController();const sig=IMP.ctl.signal;impRender();
+  const withText=sel.filter(p=>p.hasText),imgOnly=sel.length-withText.length;const useAI=!!SAMPLE&&(forceAI||true)&&(SAMPLE_IMG||withText.length);
+  const info={total:P.length,lidas:sel.map(p=>p.n),comTexto:withText.length,soImagem:imgOnly,etapas:0,falhas:0,fonte:useAI?'leitura com IA':'leitura local de texto'};
+  try{
+    if(!useAI){if(!withText.length)throw new Error('As folhas selecionadas são só imagem (escaneadas) e não podem ser lidas aqui. Abra o Montador publicado no Claude para usar a leitura de imagem por IA.');
+      impProg(`Lendo o texto de ${withText.length} folha(s)…`);const r=parseDiagramText(withText.map(p=>`\n=== FOLHA ${p.n} ===\n`+p.text).join('\n'));r.bornes={quantidade:Math.max(0,...withText.map(p=>cadBornes(despaceText(p.text))))};foundLocal(r);r.fonte=info.fonte;r.leitura=info;IMP.res=r;IMP.src='local'}
+    else{const per=SAMPLE_IMG?Math.max(1,Math.min(3,SAMPLE_IMG.maxCount||3)):8;const list=SAMPLE_IMG?sel:withText;const batches=[];for(let i=0;i<list.length;i+=per)batches.push(list.slice(i,i+per));
+      const results=[];for(let b=0;b<batches.length;b++){if(sig.aborted)break;const bt=batches[b],nums=bt.map(p=>p.n);
+        impProg(`Analisando ${nums.length>1?'folhas '+fmtPages(nums):'folha '+nums[0]} de ${P.length} com IA (etapa ${b+1} de ${batches.length})…`);
+        let imgs;if(SAMPLE_IMG){imgs=[];for(const p of bt){const pg=await IMP.pdf.getPage(p.n);const v1=pg.getViewport({scale:1});const vp=pg.getViewport({scale:Math.min(2.2,1800/v1.width)});const c=document.createElement('canvas');c.width=Math.ceil(vp.width);c.height=Math.ceil(vp.height);
+          const cx=c.getContext('2d');cx.fillStyle='#fff';cx.fillRect(0,0,c.width,c.height);await pg.render({canvasContext:cx,viewport:vp}).promise;imgs.push(await new Promise(r=>c.toBlob(r,'image/jpeg',0.88)))}}
+        const txt=bt.map(p=>`=== FOLHA ${p.n} ===\n${p.text.slice(0,9000)}`).join('\n\n');
+        const prompt=IMP_PROMPT+`\n\nEstas são as folhas ${fmtPages(nums)} de um diagrama com ${P.length} folhas${imgs?' (as imagens seguem a mesma ordem)':''}. Em cada máquina e circuito inclua também "folhas": [números das folhas onde aparece]. Folhas sem cargas (capa, índice, legenda, bornes) devem gerar listas vazias. Use as mesmas tags do diagrama para que folhas diferentes possam ser unidas.\n\nTexto extraído:\n"""${txt}"""`;
+        try{const j=await SAMPLE.json(prompt,{images:imgs,modelTier:'complex',signal:sig});results.push(j);info.etapas++;
+          (j.maquinas||[]).forEach(m=>(m.folhas||[]).forEach(n=>{const p=P[n-1];if(p){p.found=p.found||[];const t=normTag(m.tag||m.nome);if(!p.found.includes(t))p.found.push(t)}}))}
+        catch(e){if(e&&e.code==='cancelled')break;info.falhas++;if(e&&e.code==='not_granted')throw e;if(e&&e.code==='rate_limited'){impProg('Muitas solicitações: aguardando 20 s para continuar…');await new Promise(r=>setTimeout(r,20000));b--;info.falhas--}}}
+      if(!results.length){if(sig.aborted)throw Object.assign(new Error('Análise interrompida.'),{code:'cancelled'});throw new Error('A IA não conseguiu analisar as folhas.')}
+      const r=mergeRes(results,info);if(!['comando','forca','primaria'].includes(r.tipo))r.tipo='comando';IMP.res=r;IMP.src='ai';if(sig.aborted)info.parcial=true}
+    IMP.msg=impSummary(IMP.res)}
+  catch(e){const c=e&&e.code;IMP.msg=c==='cancelled'?'Análise interrompida.':c==='not_granted'?'Leitura com IA não autorizada.':(e&&e.message)||'Não foi possível analisar.';
+    if(c!=='cancelled'&&c!=='not_granted'&&withText.length&&!IMP.res){const r=parseDiagramText(withText.map(p=>p.text).join('\n'));foundLocal(r);info.fonte='leitura local de texto';r.fonte=info.fonte;r.leitura=info;IMP.res=r;IMP.src='local';IMP.msg+=' Usei a leitura local do texto.'}}
+  IMP.busy=false;IMP.ctl=null;IMP.stage=IMP.res?'res':'pages';impRender()}
+function impReadInfoHTML(r){const L=r.leitura;if(!L)return '';return `<p class="cap" style="margin:0 0 8px">Folhas analisadas: <b>${fmtPages(L.lidas)}</b> de ${L.total}${L.soImagem?` · ${L.soImagem} só imagem`:''}${L.etapas?` · ${L.etapas} etapa(s) de IA`:''}${L.falhas?` · <span style="color:var(--stop)">${L.falhas} etapa(s) falharam</span>`:''}${L.parcial?' · <span style="color:var(--warn)">análise interrompida: resultado parcial</span>':''}</p>`}
+document.addEventListener('change',e=>{const t=e.target;if(t.dataset&&t.dataset.imppg!==undefined&&IMP.pages){IMP.pages[+t.dataset.imppg].sel=t.checked;impRender()}});
+
+async function impAI(){if(IMP.pages&&IMP.pages.length){return impAnalyze(true)}IMP.busy=true;IMP.msg='Analisando o diagrama com IA… pode levar até um minuto.';impRender();IMP.ctl=new AbortController();
   try{const txt=IMP.text?`\n\nTexto extraído do arquivo:\n"""${IMP.text.slice(0,30000)}"""`:'';
     const j=await SAMPLE.json(IMP_PROMPT+txt,{images:IMP.imgs.length&&SAMPLE_IMG?IMP.imgs.slice(0,SAMPLE_IMG.maxCount||3):undefined,modelTier:'complex',signal:IMP.ctl.signal});
     j.fonte='leitura com IA';j.maquinas=(j.maquinas||[]).filter(x=>x&&x.kw>0);j.circuitos=(j.circuitos||[]).filter(x=>x&&x.kw>0);if(!['comando','forca','primaria'].includes(j.tipo))j.tipo='comando';
@@ -2320,24 +2563,43 @@ async function impAI(){IMP.busy=true;IMP.msg='Analisando o diagrama com IA… po
   IMP.busy=false;IMP.ctl=null;impRender()}
 function impSummary(r){if(r.tipo==='primaria')return `Cabine primária identificada${r.cabine&&r.cabine.kVA?`: ${fmt(r.cabine.kVA,1)} kVA`:''}. Revise e clique em "Criar projeto".`;
   if(r.tipo==='forca')return `${(r.circuitos||[]).length} circuito(s) identificado(s). Revise e clique em "Criar projeto".`;
-  const n=(r.maquinas||[]).length;return n?`${n} máquina(s) identificada(s). Revise os dados e clique em "Criar projeto".`:'Nenhuma máquina identificada automaticamente: preencha a lista e clique em "Criar projeto".'}
+  const n=(r.maquinas||[]).length,k=(r.componentes||[]).length;return n||k?`${n} máquina(s) e ${k} outro(s) componente(s) identificado(s). Revise os dados e clique em "Criar projeto".`:'Nenhuma máquina ou componente identificado automaticamente: preencha as listas e clique em "Criar projeto".'}
 function impCreate(){const r=IMP.res;if(!r)return;const d=defaultState();d.v=2;d.brand=state.brand;d.bov={};delete d.pid;
   d.V=+r.tensao_V||380;d.Hz=+r.frequencia_Hz||60;d.kind=r.tipo;d.proj=undefined;
   if(r.tipo==='comando'){d.ctrl=r.comando==='220Vca'?'220Vca':'24Vcc';const o=r.opcoes||{};d.plc=o.clp!==false;d.dps=o.dps!==false;d.hmi=!!o.ihm;d.nr12={...d.nr12,on:o.nr12!==false};
     d.loads=(r.maquinas||[]).filter(x=>x.kw>0).map((x,i)=>{const st=STARTS[x.partida]||'direta';return {id:uid(),name:(x.nome||('Máquina '+(i+1))).slice(0,40),kw:snapKW(+x.kw),start:st,tp:TP_DEFAULT[st],mtype:MTYPES[x.maquina]?x.maquina:'auto',guard:true,curtain:false,twohand:false,estop:1,prox:0}});
-    if(!d.loads.length)d.loads=[{id:uid(),name:'Máquina 1',kw:3,start:'direta',tp:0,guard:true,curtain:false,twohand:false,estop:1,prox:0}]}
+    const comps=(r.componentes||[]).filter(x=>x&&(x.tag||x.descricao));d.ov=d.ov||{};d.extras=[];
+    const amp=sp=>{const m=String(sp||'').match(/(\d+(?:[.,]\d+)?)\s*A(?:mp)?\b/i);return m?parseFloat(m[1].replace(',','.')):0};
+    comps.forEach(x=>{const tp=XTYPE[x.tipo]?x.tipo:'outro',tag=String(x.tag||'').trim(),A=amp(x.especificacao);
+      if(tp==='disjuntor'&&/^(-?Q0|DJG|DG|QG|Q1)$/i.test(tag)&&A){if(BRK.includes(A))d.ov.Q0=A;return}
+      if(tp==='fonte'&&A&&d.ctrl==='24Vcc'){if(PSU.includes(A))d.ov.T1=A;return}
+      d.extras.push({id:uid(),tag:tag||('-'+(tp==='rele'?'K':tp==='fusivel'?'F':'A')+(d.extras.length+1)),tipo:tp,desc:(x.descricao||XTYPE[tp]).slice(0,80),spec:(x.especificacao||'').slice(0,40),qty:Math.max(1,Math.round(+x.qtd||1)),local:['placa','porta','campo'].includes(x.local)?x.local:'placa'})});
+    d.extraTerms=Math.max(0,Math.round(+(r.bornes&&r.bornes.quantidade)||0));
+    if(!d.loads.length&&!d.extras.length)d.loads=[{id:uid(),name:'Máquina 1',kw:3,start:'direta',tp:0,guard:true,curtain:false,twohand:false,estop:1,prox:0}];
+    if(!d.loads.length){d.nr12={...d.nr12,on:!!o.nr12};d.plc=!!o.clp}}
   else if(r.tipo==='forca'){d.forca={V:d.V,dem:0.8,dps:true,meter:true,feeders:(r.circuitos||[]).filter(x=>x.kw>0).map(x=>({id:uid(),name:(x.nome||'Circuito').slice(0,40),kw:+(+x.kw).toFixed(2),fase:x.fases==='mono'?'mono':'tri',fp:+x.fp||0.9,dist:25,curva:'C',dr:false}))};if(!d.forca.feeders.length)d.forca.feeders=[{id:uid(),name:'Circuito 1',kw:5,fase:'tri',fp:0.9,dist:25,curva:'C',dr:false}]}
   else{const c=r.cabine||{};d.prim={kV:c.kV>=30?34.5:c.kV>=20?23:13.8,kva:snapKVA(+c.kVA||500),Vs:[220,380,440].includes(+c.Vs)?+c.Vs:d.V,trafo:c.trafo==='seco'?'seco':'oleo',carga:70}}
-  impClose();loadProject(d);const pj=PJ();pj.projeto.nome=r.nome_projeto||'';pj.cliente.nome=r.cliente||'';pj.projeto.desc=`Criado a partir do diagrama ${IMP.file?IMP.file.name:''}`.trim();
+  impClose();loadProject(d);const pj=PJ(),cb=r.carimbo||{};pj.projeto.nome=r.nome_projeto||cb.projeto||'';pj.cliente.nome=r.cliente||cb.cliente||'';pj.projeto.desc=`Criado a partir do diagrama ${IMP.file?IMP.file.name:''}`.trim();
+  if(cb.cliente_endereco)pj.cliente.endereco=cb.cliente_endereco;if(cb.cliente_telefone)pj.cliente.contato=cb.cliente_telefone;if(cb.numero_desenho)pj.projeto.numero=cb.numero_desenho;if(cb.revisao)pj.projeto.rev=String(cb.revisao).padStart(2,'0');
+  {const m=String(cb.data||'').match(/(\d{1,2})\/(\d{1,2})\/(\d{2,4})/);if(m){const y=m[3].length===2?'20'+m[3]:m[3];pj.projeto.data=`${y}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`}}
+  if(cb.responsavel)pj.eng.nome=cb.responsavel;if(cb.empresa_projetista)pj.eng.empresa=cb.empresa_projetista;
   if(r.tipo==='comando'){try{autoSize()}catch(e){}}save();refresh(true);log(`Projeto criado a partir do diagrama ${IMP.file?IMP.file.name:''}`);if($('#cfgDlg')&&$('#cfgDlg').open)$('#cfgDlg').close()}
 document.addEventListener('change',e=>{const t=e.target;if(!IMP.res)return;const r=IMP.res;
+  if(t.dataset.impb!==undefined){r.bornes={quantidade:Math.max(0,Math.round(+t.value||0))};return}
+  if(t.dataset.impc2){r.carimbo=r.carimbo||{};r.carimbo[t.dataset.impc2]=t.value;return}
+  if(t.dataset.impx){const ri=t.closest('tr[data-ci]');if(!ri)return;const x=r.componentes[+ri.dataset.ci];x[t.dataset.impx]=t.dataset.impx==='qtd'?Math.max(1,+t.value||1):t.value;return}
   if(t.dataset.imp){const k=t.dataset.imp;r[k]=/tensao|frequencia/.test(k)?+t.value:t.value;if(k==='tipo')impRender();return}
   if(t.dataset.impo){r.opcoes=r.opcoes||{};r.opcoes[t.dataset.impo]=t.checked;return}
   if(t.dataset.impk){r.cabine=r.cabine||{};r.cabine[t.dataset.impk]=t.dataset.impk==='trafo'?t.value:+t.value;return}
   const tr=t.closest&&t.closest('tr[data-i]');if(!tr)return;const i=+tr.dataset.i;
   if(t.dataset.impm){const x=r.maquinas[i];x[t.dataset.impm]=t.dataset.impm==='kw'?+t.value:t.value}
   if(t.dataset.impc){const x=r.circuitos[i];x[t.dataset.impc]=t.dataset.impc==='kw'||t.dataset.impc==='fp'?+t.value:t.value}});
-function impAct(a,b){const r=IMP.res;if(a==='impclose')impClose();else if(a==='impstop'){if(IMP.ctl)IMP.ctl.abort()}else if(a==='impai')impAI();else if(a==='impcreate')impCreate();
+function impAct(a,b){const r=IMP.res,P=IMP.pages;
+  if(a==='impanalyze')return impAnalyze(false);if(a==='imppages'){IMP.res=null;IMP.msg='';impRender();return}
+  if(P&&/^imppg/.test(a)){if(a==='imppgall')P.forEach(p=>p.sel=true);else if(a==='imppgnone')P.forEach(p=>p.sel=false);else if(a==='imppgtext')P.forEach(p=>p.sel=p.hasText);else if(a==='imppgrange'){const set=pageRange($('#impRange').value,P.length);if(set.size)P.forEach(p=>p.sel=set.has(p.n));else{IMP.msg='Informe as folhas assim: 3-8, 12';}}impRender();return}
+  if(a==='impxadd'&&r){(r.componentes=r.componentes||[]).push({tag:'',tipo:'rele',descricao:'',especificacao:'',qtd:1,local:'placa'});impRender();return}
+  if(a==='impxrm'&&r){r.componentes.splice(+b.dataset.v,1);impRender();return}
+  if(a==='impclose')impClose();else if(a==='impstop'){if(IMP.ctl)IMP.ctl.abort()}else if(a==='impai')impAI();else if(a==='impcreate')impCreate();
   else if(a==='impadd'&&r){if(r.tipo==='forca')(r.circuitos=r.circuitos||[]).push({nome:'Circuito '+((r.circuitos||[]).length+1),kw:5,fases:'tri',fp:0.9});else (r.maquinas=r.maquinas||[]).push({tag:'M'+((r.maquinas||[]).length+1),nome:'Máquina '+((r.maquinas||[]).length+1),kw:3,partida:'direta',maquina:'auto'});impRender()}
   else if(a==='imprm'&&r){const i=+b.dataset.v;if(r.tipo==='forca')r.circuitos.splice(i,1);else{r.maquinas.splice(i,1);r.maquinas.forEach((x,j)=>x.tag='M'+(j+1))}impRender()}}
 
@@ -2370,6 +2632,7 @@ const KVA=[75,112.5,150,225,300,500,750,1000,1500,2000];
 function curE(){return isAlt()&&AM?AM.E:model.E}
 function altNorm(){
   if(!state.kind)state.kind='comando';
+  if(!Array.isArray(state.extras))state.extras=[];if(!(state.extraTerms>=0))state.extraTerms=0;
   if(!state.forca)state.forca={V:380,dem:0.8,dps:true,meter:true,feeders:[
     {id:uid(),name:'QD iluminação galpão',kw:12,fase:'tri',fp:0.95},{id:uid(),name:'QD tomadas',kw:8,fase:'tri',fp:0.9},
     {id:uid(),name:'Quadro de comando linha 1',kw:22,fase:'tri',fp:0.85},{id:uid(),name:'Compressor de ar',kw:15,fase:'tri',fp:0.85},
@@ -2935,7 +3198,38 @@ function canvasTex(wmm,hmm,draw,ppm=4){
   const c=document.createElement('canvas');c.width=cw;c.height=ch;const x=c.getContext('2d');draw(x,cw,ch);
   const t=new THREE.CanvasTexture(c);t.anisotropy=4;return{t,c,x,cw,ch};
 }
-const LOOK={brk:['#ECEDEA','#1d2327'],mpcb:['#D5D9D6','#1d2327'],cont:['#4A5258','#F2F2F2'],olr:['#5B636A','#F2F2F2'],timer:['#E6E7E4','#1d2327'],vfd:['#2E3B45','#E9EEF0'],soft:['#34434E','#E9EEF0'],psu:['#BCC2C5','#1d2327'],plc:['#353F48','#E9EEF0'],dps:['#E6E0CF','#1d2327'],safe:['#E3B81F','#1d2327'],servo:['#1E2226','#E9EEF0'],rlyb:['#2E8B3E','#F2F2F2'],tx:['#DADDD9','#1d2327'],term:['#9FA6AA','#1d2327']};
+const LOOK={gen:['#E6E7E4','#1d2327'],brk:['#ECEDEA','#1d2327'],mpcb:['#D5D9D6','#1d2327'],cont:['#4A5258','#F2F2F2'],olr:['#5B636A','#F2F2F2'],timer:['#E6E7E4','#1d2327'],vfd:['#2E3B45','#E9EEF0'],soft:['#34434E','#E9EEF0'],psu:['#BCC2C5','#1d2327'],plc:['#353F48','#E9EEF0'],dps:['#E6E0CF','#1d2327'],safe:['#E3B81F','#1d2327'],servo:['#1E2226','#E9EEF0'],rlyb:['#2E8B3E','#F2F2F2'],tx:['#DADDD9','#1d2327'],term:['#9FA6AA','#1d2327']};
+
+/* ---------- detalhes de realismo dos componentes da placa ---------- */
+const CDM={};function cdMat(k,o){return CDM[k]||(CDM[k]=o())}
+function compDetails(g,c,w,h,d,rec){
+  if(c.kind==='term')return;
+  const scrM=cdMat('scr',()=>new THREE.MeshStandardMaterial({color:'#b9bfc3',metalness:0.9,roughness:0.28})),slotM=cdMat('slot',()=>new THREE.MeshStandardMaterial({color:'#3a3f43',roughness:0.6}));
+  const band=Math.min(h*0.16,w*0.5),nsc=Math.max(1,Math.min(6,Math.round(w/15))),sr=Math.min(2.6,w/nsc*0.26,band*0.32);
+  if(c.kind!=='rlyb'&&!(c.kind==='gen'&&c.sub==='borne')){
+    const geo=cdMat('scrG'+sr.toFixed(1),()=>new THREE.CylinderGeometry(sr*S,sr*S,1.6*S,14)),sg=cdMat('slG'+sr.toFixed(1),()=>new THREE.BoxGeometry(sr*1.7*S,0.5*S,0.5*S));
+    for(let i=0;i<nsc;i++){const px=(-w/2+(i+0.5)*w/nsc)*S;[h/2-band/2,-(h/2-band/2)].forEach(py=>{const sc=new THREE.Mesh(geo,scrM);sc.rotation.x=Math.PI/2;sc.position.set(px,py*S,(d/2+0.6)*S);g.add(sc);const sl=new THREE.Mesh(sg,slotM);sl.position.set(px,py*S,(d/2+1.45)*S);sl.rotation.z=0.6;g.add(sl)})}}
+  const B=(bw,bh,bd,m,x,y,z)=>{const o=new THREE.Mesh(new THREE.BoxGeometry(bw*S,bh*S,bd*S),m);o.position.set(x*S,y*S,z*S);g.add(o);return o};
+  const led=(x,y,col)=>{const m=new THREE.MeshStandardMaterial({color:col,emissive:col,emissiveIntensity:0.9});const o=new THREE.Mesh(new THREE.SphereGeometry(1.4*S,10,8),m);o.position.set(x*S,y*S,(d/2+0.8)*S);g.add(o);return o};
+  const sub=c.kind==='gen'?c.sub:c.kind;
+  if(c.kind==='cont'){ // bloco de contatos auxiliares frontal e etiqueta
+    B(w*0.78,h*0.22,9,cdMat('aux',()=>new THREE.MeshStandardMaterial({color:'#3f474d',roughness:0.55})),0,h*0.14,d/2+4.5);
+    B(w*0.6,h*0.07,0.6,cdMat('lbl',()=>new THREE.MeshStandardMaterial({color:'#f4f4f1',roughness:0.7})),0,h*0.14,d/2+9.2)}
+  if(c.kind==='psu'){led(w/2-6,h/2-band-6,'#2ecc71');const tp=new THREE.Mesh(new THREE.CylinderGeometry(2*S,2*S,1.5*S,12),scrM);tp.rotation.x=Math.PI/2;tp.position.set((w/2-6)*S,(h/2-band-13)*S,(d/2+0.8)*S);g.add(tp);
+    for(let i=0;i<5;i++)B(w*0.55,1.2,0.4,slotM,-w*0.12,-h*0.1-i*3.2,d/2+0.2)}
+  if(sub==='rele'){ // relé em base com tampa transparente
+    const cov=new THREE.Mesh(new THREE.BoxGeometry((w-2)*S,h*0.5*S,16*S),cdMat('cov',()=>new THREE.MeshPhysicalMaterial({color:'#dfe9ef',transparent:true,opacity:0.35,roughness:0.08,depthWrite:false})));cov.position.set(0,h*0.06*S,(d/2+8)*S);g.add(cov);
+    B(w*0.6,h*0.22,9,cdMat('coil',()=>new THREE.MeshStandardMaterial({color:'#d4a017',roughness:0.5})),0,h*0.1,d/2+5);B(w*0.5,h*0.08,3,cdMat('arm',()=>new THREE.MeshStandardMaterial({color:'#c7cbce',metalness:0.7,roughness:0.3})),0,-h*0.06,d/2+10);
+    rec.led=led(w/2-4,-h*0.2,'#e53935')}
+  if(sub==='fusivel'){ // porta-fusível seccionável com alavanca
+    B(w*0.82,h*0.52,11,cdMat('fh',()=>new THREE.MeshStandardMaterial({color:'#2b3035',roughness:0.55})),0,0,d/2+5.5);B(w*0.5,h*0.1,2,cdMat('fw',()=>new THREE.MeshStandardMaterial({color:'#7a1f1f',roughness:0.4})),0,h*0.16,d/2+11.5)}
+  if(sub==='controlador'||sub==='temporizador'||c.kind==='timer'){
+    const ds=canvasTex(w*0.7,14,(x,cw,ch)=>{x.fillStyle='#0e1a12';x.fillRect(0,0,cw,ch);x.fillStyle='#5dff9a';x.font=`700 ${ch*0.72}px monospace`;x.textAlign='center';x.textBaseline='middle';x.fillText(sub==='controlador'?'OK':'10.0',cw/2,ch/2)},6);
+    const dp=new THREE.Mesh(new THREE.PlaneGeometry(w*0.7*S,14*S),new THREE.MeshStandardMaterial({map:ds.t,emissive:'#ffffff',emissiveMap:ds.t,emissiveIntensity:0.35}));dp.position.set(0,h*0.08*S,(d/2+0.4)*S);g.add(dp);
+    [-1,1].forEach(k=>{const kb=new THREE.Mesh(new THREE.CylinderGeometry(2.4*S,2.4*S,2*S,12),cdMat('kb',()=>new THREE.MeshStandardMaterial({color:'#566069',roughness:0.5})));kb.rotation.x=Math.PI/2;kb.position.set(k*w*0.2*S,-h*0.12*S,(d/2+1)*S);g.add(kb)});rec.led=led(w/2-5,h*0.08+9,'#2ecc71')}
+  if(c.kind==='vfd'||c.kind==='soft'||c.kind==='servo'){for(let i=0;i<6;i++)B(w*0.6,1.4,0.5,slotM,0,-h/2+band+6+i*4,d/2+0.25)}
+  if(c.kind==='brk'&&(c.poles||3)>1)B(w*0.94,2.2,6,cdMat('bar',()=>new THREE.MeshStandardMaterial({color:'#2a2f33',roughness:0.5})),0,-6,d/2+9);
+}
 function faceDraw(c,w,h,extra){
   return (x,cw,ch)=>{
     const [bg,fg]=LOOK[c.kind];x.fillStyle=bg;x.fillRect(0,0,cw,ch);
@@ -3029,6 +3323,7 @@ function rebuild3D(keepView){
   L.rows.forEach(r=>{
     const yc=py0-r.y-r.h/2;
     const rail=box(L.L,35,7.5,railM);rail.position.set((xs+L.L/2)*S,yc*S,3.75*S);root.add(rail);
+    if(r.items.length){const f0=r.items[0],fl=r.items[r.items.length-1],stM=mat('#7d868c',{metalness:0.6,roughness:0.4});[[xs+f0.x-5],[xs+fl.x+fl.w+5]].forEach(([x0])=>{const st=box(8,45,34,stM);st.position.set(x0*S,yc*S,(7.5+17)*S);root.add(st);const sc=new THREE.Mesh(new THREE.CylinderGeometry(2.2*S,2.2*S,2*S,12),mat('#c4cace',{metalness:0.85}));sc.rotation.x=Math.PI/2;sc.position.set(x0*S,(yc+12)*S,(7.5+35)*S);root.add(sc)})}
     r.items.forEach(it=>{
       const c=it.c,w=it.w,h=it.h,d=it.d;
       const g=new THREE.Group();g.position.set((xs+it.x+w/2)*S,yc*S,(7.5+d/2)*S);
@@ -3041,13 +3336,14 @@ function rebuild3D(keepView){
       addWires(g,c,w,h,d,r.h,it);
       if(it.part===0||it.part===undefined){
         // indicador / manopla
-        if(['brk','mpcb','cont','olr','soft','vfd','servo','psu','plc','timer','safe','rlyb','tx'].includes(c.kind)){
+        if(['brk','mpcb','cont','olr','soft','vfd','servo','psu','plc','timer','safe','rlyb','tx','gen'].includes(c.kind)){
           const ind=box(Math.min(10,w*0.3),7,3,new THREE.MeshStandardMaterial({color:'#7c858a',emissive:'#000000'}));
           ind.position.set((w/2-Math.min(10,w*0.3)/2-3)*S,(h/2-h*0.16-8)*S,(d/2+1.5)*S);g.add(ind);rec.ind=ind;
         }
         if(c.kind==='brk'||c.kind==='mpcb'){
           const hd=box(Math.min(12,w*0.5),16,14,mat(c.kind==='brk'?'#1f252a':'#2d3338'));hd.position.set(0,-6*S,(d/2+7)*S);g.add(hd);rec.handle=hd;
         }
+        compDetails(g,c,w,h,d,rec);
         if(c.kind==='plc'){rec.face=face;rec.faceDraw=faceDraw({...c,w},w,h)}
         if(c.kind==='vfd'||c.kind==='servo'){rec.face=face;rec.faceDraw=faceDraw({...c,w},w,h);rec.lastTxt=''}
       }
@@ -3344,8 +3640,9 @@ function plateLabel(g,txt,x,y,fz,w=60,bold,h=16){
   const p=new THREE.Mesh(new THREE.PlaneGeometry(w*S,h*S),new THREE.MeshBasicMaterial({map:t.t}));p.position.set(x,y,(fz+0.6)*S);g.add(p);
 }
 /* ============ Máquinas acionadas (ilustração 3D realista) ============ */
-const MTYPES={auto:'Automático (pelo nome)',bomba:'Bomba centrífuga',esteira:'Esteira transportadora',ventilador:'Ventilador / exaustor',misturador:'Misturador (tanque)',rosca:'Rosca transportadora',eixo:'Eixo linear (servo)',redutor:'Redutor + tambor'};
+const MTYPES={auto:'Automático (pelo nome)',bomba:'Bomba centrífuga',tanque_v:'Tanque vertical de armazenamento (líquidos)',tanque_comb:'Tanque aéreo de combustível (diesel)',ibc:'Bomba dosadora + IBC 1000 L',compressor:'Compressor de ar + reservatório',esteira:'Esteira transportadora',ventilador:'Ventilador / exaustor',misturador:'Misturador (tanque)',rosca:'Rosca transportadora',eixo:'Eixo linear (servo)',redutor:'Redutor + tambor'};
 function mtypeOf(l){if(l.mtype&&l.mtype!=='auto'&&MTYPES[l.mtype])return l.mtype;const n=(l.name||'').toLowerCase();
+  if(/compress/.test(n))return 'compressor';if(/diesel|combust|gasolin|etanol|óleo|oleo|gerador/.test(n))return 'tanque_comb';if(/ibc|químic|quimic|cloro|soda|hipoclorito/.test(n)||/bomba.*dosador/.test(n))return 'ibc';if(/tanque|reservat|armazen|caixa d|cisterna|recalque/.test(n))return 'tanque_v';
   if(/bomba/.test(n))return 'bomba';if(/esteira|transport|correia|cavaco/.test(n))return 'esteira';if(/exaust|ventil/.test(n))return 'ventilador';
   if(/mistur|agita/.test(n))return 'misturador';if(/rosca|helic|dosad/.test(n))return 'rosca';if(l.start==='servo'||/eixo/.test(n))return 'eixo';return 'redutor'}
 const TEXC={};
@@ -3433,6 +3730,110 @@ function buildDriven(l,g,r,len){
     const vr=P(new THREE.Mesh(new THREE.TorusGeometry(0.78,0.08,8,32),steel));vr.position.copy(vis.position);
     upd=(dt,sp)=>{vis.rotation.z-=sp*dt*4};
     ext=tx+Rt+0.8;top=yb+Ht+Rt*0.35;depth=Rt*2+0.6;
+  }else if(type==='tanque_v'||type==='tanque_comb'||type==='ibc'||type==='compressor'){
+    const V3=(a,b,c)=>new THREE.Vector3(a,b,c),PIPE=paint('#5d6d78'),conc=mat('#b9bab4',{roughness:0.95}),red=paint('#c0392b');
+    const pipe=(pts,rad,m)=>{for(let i=0;i<pts.length-1;i++){const a=pts[i],b=pts[i+1],L=a.distanceTo(b);if(L<1e-3)continue;const c=P(cyl(rad,rad,L,m||PIPE,14));c.position.copy(a).add(b).multiplyScalar(0.5);c.quaternion.setFromUnitVectors(V3(0,1,0),b.clone().sub(a).normalize());if(i>0){const e=P(new THREE.Mesh(new THREE.SphereGeometry(rad*1.12,14,10),m||PIPE));e.position.copy(a)}}};
+    const valve=(p,rad)=>{const b=P(bx(rad*3,rad*3,rad*3,red));b.position.copy(p);const st=P(cyl(rad*0.35,rad*0.35,rad*2.6,steel,8));st.position.set(p.x,p.y+rad*2.6,p.z);const hw=P(new THREE.Mesh(new THREE.TorusGeometry(rad*1.4,rad*0.25,8,20),red));hw.rotation.x=Math.PI/2;hw.position.set(p.x,p.y+rad*3.9,p.z)};
+    const plate=(w,h,lines,bg,fg,pos,ry)=>{const tx2=canvasTex(w*100,h*100,(x,cw,ch)=>{x.fillStyle=bg;x.fillRect(0,0,cw,ch);x.strokeStyle=fg;x.lineWidth=Math.max(2,ch*0.04);x.strokeRect(x.lineWidth,x.lineWidth,cw-2*x.lineWidth,ch-2*x.lineWidth);x.fillStyle=fg;x.textAlign='center';x.textBaseline='middle';
+        lines.forEach((t,i)=>{const fs=ch*(i===0?0.3:0.17)/Math.max(1,lines.length*0.55);x.font=`${i===0?800:600} ${fs}px "Barlow Condensed","Arial Narrow",sans-serif`;x.fillText(t,cw/2,ch*((i+0.75)/(lines.length+0.5)))})},2);
+      const m2=new THREE.Mesh(new THREE.PlaneGeometry(w,h),new THREE.MeshStandardMaterial({map:tx2.t,roughness:0.6}));m2.position.copy(pos);if(ry)m2.rotation.y=ry;g.add(m2);return m2};
+    const name=String(l.name||'').slice(0,26);
+    if(type!=='compressor'){ // bomba de transferência acoplada
+      guardCoupling();const pc=paint(type==='tanque_comb'?'#2f3a40':type==='ibc'?'#6b7a86':'#3b6c93');
+      const pv=P(cyl(r*0.95,r*0.95,r*0.7,pc,28));pv.rotation.z=Math.PI/2;pv.position.set(cx+r*0.75,0,0);
+      const pb=P(bx(r*0.7,r*0.5,r*0.9,pc));pb.position.set(cx+r*0.3,-r*0.6,0);const pf=P(bx(r*1.8,0.25,r*1.6,dark));pf.position.set(cx+r*0.5,yF+0.12,0)}
+    if(type==='tanque_v'){
+      const Rt=Math.max(7,r*5.5),Ht=Math.max(24,Rt*3.2),tx=cx+r*2.4+Rt+3,yb=yF+1.2,cap=Math.round(Math.PI*(Rt/10)**2*(Ht/10));
+      const base=P(new THREE.Mesh(new THREE.CylinderGeometry(Rt+1.2,Rt+1.4,1.2,48),conc));base.position.set(tx,yF+0.6,0);
+      const shell=paint('#d8dde0');const tank=P(cyl(Rt,Rt,Ht,shell,56));tank.position.set(tx,yb+Ht/2,0);
+      const roof=P(new THREE.Mesh(new THREE.ConeGeometry(Rt*1.03,Rt*0.28,56),shell));roof.position.set(tx,yb+Ht+Rt*0.14,0);
+      for(let y=4;y<Ht;y+=6){const s2=P(new THREE.Mesh(new THREE.TorusGeometry(Rt+0.02,0.06,6,56),mat('#c3c9cd',{roughness:0.5})));s2.rotation.x=Math.PI/2;s2.position.set(tx,yb+y,0)}
+      // escada marinheiro com gaiola e guarda-corpo
+      const lx=tx+Rt*0.42,lz=Math.sqrt(Rt*Rt-(Rt*0.42)**2)+0.9;const lm=paint('#E8B80E');
+      [-0.45,0.45].forEach(o=>{const rl=P(cyl(0.09,0.09,Ht+3,lm,8));rl.position.set(lx+o,yb+(Ht+3)/2,lz)});
+      for(let y=0.6;y<Ht+2.5;y+=0.75){const rg=P(cyl(0.06,0.06,0.9,lm,6));rg.rotation.z=Math.PI/2;rg.position.set(lx,yb+y,lz)}
+      for(let y=8;y<Ht+2.5;y+=2){const hp=P(new THREE.Mesh(new THREE.TorusGeometry(0.85,0.05,6,20,Math.PI),lm));hp.rotation.y=Math.PI;hp.position.set(lx,yb+y,lz+0.05);hp.rotation.x=Math.PI/2}
+      [0,1,2,3].forEach(i=>{const vb=P(cyl(0.05,0.05,Ht+2.5-8,lm,6));const a=Math.PI*(0.15+i*0.23);vb.position.set(lx+Math.cos(a)*0.85,yb+8+(Ht+2.5-8)/2,lz+Math.sin(a)*0.85)});
+      const gr=P(new THREE.Mesh(new THREE.TorusGeometry(Rt*0.98,0.08,6,56),lm));gr.rotation.x=Math.PI/2;gr.position.set(tx,yb+Ht+1.8,0);
+      for(let i=0;i<14;i++){const a=i/14*Math.PI*2;const po=P(cyl(0.07,0.07,1.8,lm,6));po.position.set(tx+Math.cos(a)*Rt*0.98,yb+Ht+0.9,Math.sin(a)*Rt*0.98)}
+      // visor de nível com líquido animado
+      const gx=tx-Rt*0.55,gz=Math.sqrt(Rt*Rt-(Rt*0.55)**2)+0.45,gH=Ht*0.86,gy0=yb+Ht*0.06;
+      const tube=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.28,gH,16,1,true),new THREE.MeshStandardMaterial({color:'#e8f1f5',transparent:true,opacity:0.35,roughness:0.05,side:THREE.DoubleSide,depthWrite:false}));tube.position.set(gx,gy0+gH/2,gz);g.add(tube);
+      const liq=P(cyl(0.22,0.22,1,mat('#2a83c9',{roughness:0.2}),12));liq.position.set(gx,gy0,gz);
+      [gy0,gy0+gH].forEach(y=>{const nz=P(cyl(0.12,0.12,0.55,steel,8));nz.rotation.x=Math.PI/2;nz.position.set(gx,y,gz-0.3)});
+      for(let i=0;i<=10;i++){const mk=P(bx(0.18,0.04,0.02,dark));mk.position.set(gx+0.42,gy0+gH*i/10,gz)}
+      // sensor radar, respiro e boca de visita
+      const rd=P(cyl(0.45,0.45,0.9,mat('#e3e5e2'),16));rd.position.set(tx+Rt*0.45,yb+Ht+Rt*0.14+0.7,-Rt*0.2);const rh=P(cyl(0.25,0.25,0.5,mat('#1f66c2'),12));rh.position.set(rd.position.x,rd.position.y+0.7,rd.position.z);
+      const vt=P(cyl(0.3,0.3,1.8,steel,12));vt.position.set(tx-Rt*0.2,yb+Ht+Rt*0.25+0.9,Rt*0.1);const vc=P(new THREE.Mesh(new THREE.SphereGeometry(0.5,12,8,0,Math.PI*2,0,Math.PI/2),steel));vc.rotation.x=Math.PI;vc.position.set(vt.position.x,vt.position.y+1.1,vt.position.z);
+      const mh=P(cyl(1.1,1.1,0.5,shell,28));mh.rotation.x=Math.PI/2;mh.position.set(tx+Rt*0.75,yb+2.2,Math.sqrt(Rt*Rt-(Rt*0.75)**2)+0.2);
+      // tubulação: recalque até o topo e sucção pelo fundo
+      const top0=yb+Ht+2.6;pipe([V3(cx+r*0.75,r*0.95,0),V3(cx+r*0.75,top0,0),V3(tx-Rt*0.55,top0,0),V3(tx-Rt*0.55,yb+Ht+Rt*0.16,0)],0.32);
+      pipe([V3(tx-Rt+0.05,yb+1.4,-Rt*0.35),V3(cx+r*2.0,yb+1.4,-Rt*0.35),V3(cx+r*2.0,0,-Rt*0.35),V3(cx+r*2.0,0,0),V3(cx+r*1.1,0,0)],0.34);valve(V3(cx+r*2.0+(tx-Rt-cx-r*2.0)*0.5,yb+1.4,-Rt*0.35),0.34);
+      plate(Rt*0.9,Rt*0.42,[name||'TANQUE',`${cap} m³ · líquido`,'TQ · NR-13 / NR-26'],'#f7f7f4','#1d2327',V3(tx,yb+Ht*0.62,Rt+0.03));
+      let lv=0.45;upd=(dt,sp)=>{lv=Math.min(0.96,Math.max(0.08,lv+(sp>0.05?0.035*sp:-0.006)*dt));liq.scale.y=gH*lv;liq.position.y=gy0+gH*lv/2};upd(0,0);
+      ext=tx+Rt+1.6;top=yb+Ht+Rt*0.3+2;depth=Rt*2+3;
+    }else if(type==='tanque_comb'){
+      const R2=Math.max(5.5,r*4.2),L2=Math.max(26,R2*4.6),tx=cx+r*2.6+L2/2+6,yS=yF+0.6,ax=yS+2.6+R2,cap=Math.round(Math.PI*(R2/10)**2*(L2/10));
+      const slab=P(bx(L2+11,0.6,R2*2+9,conc));slab.position.set(tx,yF+0.3,0);
+      [[L2+11,0.5,0,(R2*2+9)/2],[L2+11,0.5,0,-(R2*2+9)/2],[0.5,R2*2+9,(L2+11)/2,0],[0.5,R2*2+9,-(L2+11)/2,0]].forEach(([w,d2,x0,z0])=>{const wl=P(bx(w,3.2,d2,conc));wl.position.set(tx+x0,yF+0.6+1.6,z0)});
+      [-1,1].forEach(sx=>{const sd=P(bx(2.2,2.6+R2*0.55,R2*1.55,paint('#3d4247')));sd.position.set(tx+sx*L2*0.32,yS+(2.6+R2*0.55)/2,0)});
+      const shell=paint('#eceeef');const tank=P(cyl(R2,R2,L2,shell,56));tank.rotation.z=Math.PI/2;tank.position.set(tx,ax,0);
+      [-1,1].forEach(sx=>{const cp=P(new THREE.Mesh(new THREE.SphereGeometry(R2,40,16,0,Math.PI*2,0,Math.PI/2),shell));cp.scale.y=0.32;cp.rotation.z=-sx*Math.PI/2;cp.position.set(tx+sx*L2/2,ax,0)});
+      const band=P(new THREE.Mesh(new THREE.CylinderGeometry(R2+0.03,R2+0.03,L2*0.5,56,1,true),new THREE.MeshStandardMaterial({color:'#c62828',roughness:0.45,side:THREE.DoubleSide})));band.rotation.z=Math.PI/2;band.position.set(tx,ax,0);band.scale.set(1,1,1);band.visible=false;
+      plate(L2*0.42,R2*0.55,['ÓLEO DIESEL','INFLAMÁVEL · NÃO FUME',`${cap} m³ · NR-20`],'#c62828','#ffffff',V3(tx,ax+R2*0.12,R2+0.04));
+      {const dt2=canvasTex(220,220,(x,cw,ch)=>{x.translate(cw/2,ch/2);x.rotate(Math.PI/4);const s2=cw*0.33;[['#2f6db0',-1,-1],['#c62828',-1,1],['#f2c200',1,1],['#ffffff',1,-1]].forEach(([c,a,b])=>{x.fillStyle=c;x.fillRect(a<0?-s2:0,b<0?-s2:0,s2,s2)});x.strokeStyle='#111';x.lineWidth=4;x.strokeRect(-s2,-s2,2*s2,2*s2);x.rotate(-Math.PI/4);x.fillStyle='#111';x.font=`800 ${cw*0.11}px sans-serif`;x.textAlign='center';x.textBaseline='middle';x.fillText('1',-cw*0.2,0);x.fillText('2',0,-cw*0.2);x.fillText('0',cw*0.2,0)},2);
+        const dm2=new THREE.Mesh(new THREE.PlaneGeometry(2.4,2.4),new THREE.MeshStandardMaterial({map:dt2.t,transparent:true}));dm2.position.set(tx-L2/2-R2*0.33-0.05,ax,0);dm2.rotation.y=-Math.PI/2;g.add(dm2)}
+      const mh=P(cyl(1.3,1.3,0.7,shell,28));mh.position.set(tx,ax+R2+0.3,0);const lid=P(cyl(1.45,1.45,0.18,steel,28));lid.position.set(tx,ax+R2+0.7,0);
+      const vent=P(cyl(0.25,0.25,4.5,steel,12));vent.position.set(tx+L2*0.32,ax+R2+2.2,-R2*0.3);const fa=P(cyl(0.55,0.55,0.8,mat('#9aa3a8',{metalness:0.6})));fa.position.set(vent.position.x,vent.position.y+2.6,vent.position.z);const cap2=P(new THREE.Mesh(new THREE.ConeGeometry(0.75,0.5,16),steel));cap2.position.set(fa.position.x,fa.position.y+0.65,fa.position.z);
+      const fill=P(cyl(0.35,0.35,2.2,steel,12));fill.position.set(tx-L2*0.25,ax+R2+1.1,R2*0.3);const fcap=P(cyl(0.55,0.55,0.35,mat('#1f66c2')));fcap.position.set(fill.position.x,fill.position.y+1.2,fill.position.z);
+      const gauge=P(cyl(0.12,0.12,3,steel,8));gauge.position.set(tx+L2*0.12,ax+R2+1.5,R2*0.25);const gd=P(cyl(0.6,0.6,0.25,mat('#f7f7f4')));gd.rotation.x=Math.PI/2;gd.position.set(gauge.position.x,gauge.position.y+1.6,gauge.position.z+0.15);
+      const lad=paint('#E8B80E');const lx=tx-L2/2-R2*0.6-1.6;[-0.5,0.5].forEach(o=>{const rl=P(cyl(0.09,0.09,ax+R2+1.2-yS,lad,8));rl.position.set(lx,yS+(ax+R2+1.2-yS)/2,o+R2*0.4)});for(let y=yS+0.6;y<ax+R2+1;y+=0.75){const rg=P(cyl(0.06,0.06,1,lad,6));rg.rotation.x=Math.PI/2;rg.position.set(lx,y,R2*0.4)}
+      const gnd=P(cyl(0.05,0.05,3,mat('#2e8b57'),6));gnd.position.set(tx-L2*0.32,yS+1.5,R2*0.8);
+      // sucção pelo fundo do tanque até a bomba e recalque para o consumidor (gerador/caldeira)
+      const by=ax-R2*0.9;pipe([V3(tx-L2*0.15,ax-R2+0.1,0),V3(tx-L2*0.15,by,0),V3(cx+r*2.2,by,0),V3(cx+r*2.2,0,0),V3(cx+r*1.1,0,0)],0.28);valve(V3(tx-L2/2-4,by,0),0.3);
+      pipe([V3(cx+r*0.75,r*0.9,0),V3(cx+r*0.75,r*2.4,0),V3(cx+r*0.75,r*2.4,-R2-3),V3(tx+L2/2+4,r*2.4,-R2-3)],0.22);
+      let pulse=0;const flowA=new THREE.Mesh(new THREE.ConeGeometry(0.4,0.9,10),new THREE.MeshBasicMaterial({color:'#ffb300'}));flowA.rotation.z=-Math.PI/2;g.add(flowA);flowA.visible=false;
+      upd=(dt,sp)=>{flowA.visible=sp>0.1;pulse=(pulse+dt*sp*0.6)%1;const xa=cx+r*0.75+(tx+L2/2+4-cx-r*0.75)*pulse;flowA.position.set(xa,r*2.4+0.6,-R2-3)};
+      ext=tx+L2/2+6.5;top=ax+R2+4;depth=R2*2+10;
+    }else if(type==='ibc'){
+      const tx=cx+r*2.6+6.5,yb=yF+1.3,W2=11,H2=10.5,D2=9.5;
+      const pal=P(bx(W2+1,1.3,D2+1,paint('#3d4247')));pal.position.set(tx,yF+0.65,0);
+      const tk=new THREE.Mesh(new THREE.BoxGeometry(W2-0.4,H2-0.4,D2-0.4),new THREE.MeshPhysicalMaterial({color:'#f2f2ec',transparent:true,opacity:0.55,roughness:0.35,transmission:0,depthWrite:false}));tk.position.set(tx,yb+H2/2,0);g.add(tk);
+      const liq=P(bx(W2-0.8,1,D2-0.8,mat('#3c9a5f',{roughness:0.25})));liq.position.set(tx,yb,0);
+      const cg=mat('#9aa3a8',{metalness:0.8,roughness:0.3});
+      for(let i=0;i<=6;i++){const x=tx-W2/2+i*W2/6;[D2/2,-D2/2].forEach(z=>{const v=P(cyl(0.08,0.08,H2,cg,6));v.position.set(x,yb+H2/2,z)})}
+      for(let i=0;i<=5;i++){const z=-D2/2+i*D2/5;[W2/2,-W2/2].forEach(x=>{const v=P(cyl(0.08,0.08,H2,cg,6));v.position.set(tx+x,yb+H2/2,z)})}
+      for(let j=0;j<=4;j++){const y=yb+j*H2/4;[[W2,0,D2/2],[W2,0,-D2/2]].forEach(([w,x0,z])=>{const h2=P(cyl(0.08,0.08,w,cg,6));h2.rotation.z=Math.PI/2;h2.position.set(tx+x0,y,z)});[W2/2,-W2/2].forEach(x=>{const h3=P(cyl(0.08,0.08,D2,cg,6));h3.rotation.x=Math.PI/2;h3.position.set(tx+x,y,0)})}
+      const tc=P(cyl(1.1,1.1,0.6,mat('#2f6db0')));tc.position.set(tx,yb+H2+0.2,0);
+      const ov=P(bx(1.2,1.2,1.2,mat('#2f6db0')));ov.position.set(tx-W2/2-0.2,yb+0.8,0);
+      pipe([V3(tx-W2/2-0.8,yb+0.8,0),V3(cx+r*1.9,yb+0.8,0),V3(cx+r*1.9,0,0),V3(cx+r*1.1,0,0)],0.22,mat('#e9eef0',{roughness:0.3}));
+      pipe([V3(cx+r*0.75,r*0.9,0),V3(cx+r*0.75,r*2.0,0),V3(cx+r*0.75,r*2.0,-D2/2-2),V3(tx+W2/2+3,r*2.0,-D2/2-2)],0.18,mat('#e9eef0',{roughness:0.3}));
+      plate(5.2,3.6,['IBC 1000 L',name||'Produto químico','Usar EPI · FISPQ'],'#ffffff','#1d2327',V3(tx,yb+H2*0.55,D2/2+0.12));
+      {const gh=canvasTex(160,160,(x,cw,ch)=>{x.fillStyle='#fff';x.translate(cw/2,ch/2);x.rotate(Math.PI/4);x.fillRect(-cw*0.33,-ch*0.33,cw*0.66,ch*0.66);x.strokeStyle='#d32f2f';x.lineWidth=cw*0.06;x.strokeRect(-cw*0.33,-ch*0.33,cw*0.66,ch*0.66);x.rotate(-Math.PI/4);x.fillStyle='#111';x.font=`900 ${cw*0.42}px sans-serif`;x.textAlign='center';x.textBaseline='middle';x.fillText('!',0,cw*0.02)},2);
+        const gm=new THREE.Mesh(new THREE.PlaneGeometry(2.4,2.4),new THREE.MeshStandardMaterial({map:gh.t,transparent:true}));gm.position.set(tx+3.6,yb+H2*0.55,D2/2+0.13);g.add(gm)}
+      let lv=0.8;upd=(dt,sp)=>{lv+=(sp>0.05?-0.03*sp:0.004)*dt;if(lv<0.12)lv=0.92;lv=Math.min(0.92,lv);liq.scale.y=(H2-1)*lv;liq.position.y=yb+0.3+(H2-1)*lv/2};upd(0,0);
+      ext=tx+W2/2+3.5;top=yb+H2+1.5;depth=D2+5;
+    }else{ // compressor de ar com reservatório (vaso de pressão NR-13)
+      const cc=paint('#2f6db0');guardCoupling();
+      const ae=P(bx(r*1.6,r*1.5,r*1.4,cc));ae.position.set(cx+r*0.95,r*0.1,0);const fins=P(bx(r*1.2,r*0.3,r*1.5,dark));fins.position.set(cx+r*0.95,r*0.95,0);
+      const af=P(cyl(r*0.45,r*0.45,r*0.9,mat('#e3e5e2'),20));af.position.set(cx+r*0.95,r*1.6,r*0.3);
+      const pf=P(bx(r*2.4,0.25,r*1.8,dark));pf.position.set(cx+r*0.6,yF+0.12,0);
+      const Rr=Math.max(3,r*2.1),Hr=Math.max(12,Rr*4.4),tx=cx+r*2.4+Rr+4,yb=yF+2.4,col=paint('#b83a2c');
+      const tank=P(cyl(Rr,Rr,Hr,col,40));tank.position.set(tx,yb+Hr/2,0);
+      [1,-1].forEach(sy=>{const dm=P(new THREE.Mesh(new THREE.SphereGeometry(Rr,32,12,0,Math.PI*2,0,Math.PI/2),col));dm.scale.y=0.4;if(sy<0)dm.rotation.x=Math.PI;dm.position.set(tx,sy>0?yb+Hr:yb,0)});
+      [0,1,2].forEach(i=>{const a=i*Math.PI*2/3+0.5;const lg=P(cyl(0.18,0.18,yb-yF+0.2,steel,8));lg.position.set(tx+Math.cos(a)*Rr*0.75,(yb+yF)/2,Math.sin(a)*Rr*0.75);const ft=P(bx(1,0.15,1,steel));ft.position.set(lg.position.x,yF+0.08,lg.position.z)});
+      // manômetro com ponteiro animado, válvula de segurança e dreno
+      const gt=canvasTex(120,120,(x,cw,ch)=>{x.fillStyle='#fff';x.beginPath();x.arc(cw/2,ch/2,cw*0.48,0,7);x.fill();x.strokeStyle='#222';x.lineWidth=4;x.stroke();x.lineWidth=2;for(let i=0;i<=10;i++){const a=Math.PI*0.75+i*Math.PI*1.5/10;x.beginPath();x.moveTo(cw/2+Math.cos(a)*cw*0.36,ch/2+Math.sin(a)*ch*0.36);x.lineTo(cw/2+Math.cos(a)*cw*0.44,ch/2+Math.sin(a)*ch*0.44);x.stroke()}
+        x.strokeStyle='#d32f2f';x.lineWidth=5;x.beginPath();x.arc(cw/2,ch/2,cw*0.4,Math.PI*0.75+Math.PI*1.5*0.8,Math.PI*0.75+Math.PI*1.5);x.stroke();x.fillStyle='#222';x.font=`700 ${cw*0.13}px sans-serif`;x.textAlign='center';x.fillText('bar',cw/2,ch*0.72)},3);
+      const gp=new THREE.Vector3(tx,yb+Hr*0.62,Rr+0.55);const gb=P(cyl(0.95,0.95,0.4,steel,24));gb.rotation.x=Math.PI/2;gb.position.copy(gp);const gf=new THREE.Mesh(new THREE.CircleGeometry(0.85,32),new THREE.MeshStandardMaterial({map:gt.t}));gf.position.set(gp.x,gp.y,gp.z+0.21);g.add(gf);
+      const ndl=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.7,0.02),new THREE.MeshBasicMaterial({color:'#111'}));ndl.geometry.translate(0,0.3,0);ndl.position.set(gp.x,gp.y,gp.z+0.24);g.add(ndl);
+      const sv=P(cyl(0.22,0.22,1,mat('#c9a14a',{metalness:0.8,roughness:0.3}),10));sv.position.set(tx+Rr*0.4,yb+Hr+Rr*0.4+0.4,0);const dr=P(cyl(0.12,0.12,0.9,steel,8));dr.position.set(tx,yb-Rr*0.4-0.45,0);
+      pipe([V3(cx+r*0.95,r*0.85,0),V3(cx+r*0.95,yb+Hr*0.3+0.6,0),V3(tx-Rr,yb+Hr*0.3+0.6,0)],0.22,mat('#9aa3a8',{metalness:0.7,roughness:0.3}));
+      pipe([V3(tx,yb+Hr+Rr*0.4,0),V3(tx,yb+Hr+Rr*0.4+1.6,0),V3(tx+Rr+3,yb+Hr+Rr*0.4+1.6,0)],0.2,mat('#9aa3a8',{metalness:0.7,roughness:0.3}));valve(V3(tx+Rr+1.5,yb+Hr+Rr*0.4+1.6,0),0.2);
+      plate(Rr*1.3,Rr*0.75,['VASO DE PRESSÃO',`${Math.round(Math.PI*(Rr/10)**2*(Hr/10)*1000/50)*50} L · PMTA 10 bar`,'NR-13 · Categoria V'],'#f7f7f4','#1d2327',V3(tx,yb+Hr*0.38,Rr+0.04));
+      let pr=0.35;upd=(dt,sp)=>{pr=Math.min(0.95,Math.max(0.05,pr+(sp>0.05?0.06*sp:-0.015)*dt));ndl.rotation.z=-(Math.PI*0.75+Math.PI*1.5*pr)+Math.PI*1.5-Math.PI*0.25;ndl.rotation.z=Math.PI*0.75-Math.PI*1.5*pr};upd(0,0);
+      ext=tx+Rr+3.5;top=yb+Hr+Rr*0.4+2.4;depth=Rr*2+4;
+    }
   }else if(type==='rosca'){
     const ang=0.42,Lr=Math.max(14,11+l.kw),tR=r*0.72,grp=new THREE.Group();grp.position.set(cx+r*0.7,0,0);grp.rotation.z=ang;g.add(grp);
     const redu=P(bx(r*1,r*1.1,r*1.1,paint('#3b6c93')));redu.position.set(cx+r*0.15,0,0);
@@ -3634,6 +4035,7 @@ function setView(v,instant){
   else if(v==='plate'){g={th:0,ph:Math.PI/2-0.02,r:H*1.75,tx:0,ty:0,tz:0};if(ui.door)ui.doorGoal=1}
   else if(isAlt()&&AM){const pr=AM.kind==='primaria';g={th:pr?-0.32:0.38,ph:1.28,r:pr?fitR(E.W*S*1.15,H*1.6):fitR(E.W*S*2.4,H*1.35),tx:pr?0:-E.W*S*0.3,ty:-0.06*H,tz:pr?0:0.8}}
   else g={th:-0.55,ph:1.2,r:Math.max(H*2.5,(R.span[1]-R.span[0])*0.95),tx:cx*0.6,ty:state.showMach===false?0:-0.25*H,tz:0.8};
+  {const asp=R.cam.aspect||1.6;if(asp<1.2&&g&&g.r){g.r*=Math.min(2.2,Math.sqrt(1.5/asp));if(v==='persp'&&!isAlt()&&state.showMach!==false){g.tx=g.tx*0.35}}}
   if(instant){Object.assign(R.orb,g);R.goal=null}else R.goal=g;
 }
 const ACT_TIP={aq0:'Disjuntor geral -Q0 (liga/desliga)',afd:'Disjuntor do circuito (liga/desliga/rearma)',psec:'Seccionadora -Q1 (abrir/fechar)',pgnd:'Chave de aterramento',p52on:'Fechar disjuntor -52',p52off:'Abrir disjuntor -52',p86:'Rearmar relé (86)',pqgbt:'Disjuntor geral de BT -QG',start:'Liga',stop:'Desliga',emerg:'Emergência (clique para acionar/destravar)',sreset:'Rearme de segurança',q0:'Chave geral -Q0 (liga/desliga)',guard:'Proteção móvel (abrir/fechar)',curtain:'Interromper a cortina de luz',bim:'Bimanual (segure)',bimdoor:'Máquina com bimanual: use o pedestal'};
@@ -3800,6 +4202,8 @@ document.addEventListener('change',e=>{
   if(t.dataset.cfg){const k=t.dataset.cfg;state[k]=t.type==='checkbox'?t.checked:(['V','Hz','amb'].includes(k)?+t.value:t.value);refresh(k==='encl'?false:false);return}
   if(t.dataset.inst){const k=t.dataset.inst;state.inst[k]=k==='tloops'?+t.value:t.value;refresh(true);return}
   if(t.dataset.nr){const k=t.dataset.nr;state.nr12[k]=t.type==='checkbox'?t.checked:t.value;if(k==='on'){sim.safeLatch=false;model&&model.loads.forEach(l=>{const x=S_(l.id);x.latch=false;x.guardOpen=false;x.weldLock=false})}if(!state.nr12.loto)sim.loto=false;refresh(true);return}
+  if(t.dataset.xterms!==undefined){state.extraTerms=Math.max(0,Math.round(+t.value||0));refresh(true);return}
+  if(t.dataset.xf){const r=t.closest('[data-xid]'),x=state.extras.find(e=>e.id===r.dataset.xid);if(!x)return;const f=t.dataset.xf;x[f]=f==='qty'?Math.max(1,Math.round(+t.value||1)):t.value;refresh(true);return}
   if(t.dataset.lf){const id=t.closest('.load').dataset.id,l=state.loads.find(x=>x.id===id);const f=t.dataset.lf;
     if(['guard','curtain','twohand'].includes(f)){l[f]=t.checked;const x=S_(id);x.guardOpen=false;refresh(false);return}
     if(f==='name'){l.name=t.value;refresh(false);return}
@@ -3820,9 +4224,13 @@ document.addEventListener('click',e=>{
   const b=e.target.closest('[data-act]');if(!b||b.tagName==='SELECT'||b.tagName==='INPUT')return;
   const a=b.dataset.act,id=b.dataset.id;
   switch(a){
+    case 'xadd':{const k=XDEF[b.dataset.v]?b.dataset.v:'rele',d=XDEF[k];const n=state.extras.filter(e=>String(e.tag||'').replace(/^-/,'').replace(/\d+$/,'')===d.pre).length+1;
+      state.extras.push({id:uid(),tag:'-'+d.pre+n,tipo:k,desc:d.desc,spec:d.spec,qty:1,local:d.local});refresh(true);toast(`${XTYPE[k]} -${d.pre}${n} adicionado`);break}
+    case 'addm':{const k=MDEF[b.dataset.v]?b.dataset.v:'bomba',d=MDEF[k];state.loads.push({id:uid(),name:d.name,kw:d.kw,start:d.start,tp:TP_DEFAULT[d.start]||0,mtype:k,guard:true,curtain:false,twohand:false,estop:1,prox:0});refresh(true);toast(`${MTYPES[k]} adicionado(a) como M${state.loads.length}`);break}
+    case 'xrm':state.extras=state.extras.filter(e=>e.id!==b.dataset.id);refresh(true);break;
     case 'add':{const i=state.loads.length+1;state.loads.push({id:uid(),name:'Máquina '+i,kw:3,start:'direta',tp:0,guard:true,curtain:false,twohand:false,estop:1});refresh(true);break}
     case 'rm':state.loads=state.loads.filter(l=>l.id!==id);Object.keys(state.ov).forEach(k=>{if(k.startsWith(id+':'))delete state.ov[k]});delete sim.L[id];refresh(true);break;
-    case 'preset':Object.assign(state,PRESETS[b.dataset.v](),{ov:{}});norm();sim.L={};sim.log=[];R&&(R.viewSet=false);refresh(true);log('Exemplo carregado');break;
+    case 'preset':Object.assign(state,{extras:[],extraTerms:0,plc:true},PRESETS[b.dataset.v](),{ov:{}});norm();sim.L={};sim.log=[];R&&(R.viewSet=false);refresh(true);log('Exemplo carregado');break;
     case 'auto':autoSize();log(`Invólucro dimensionado: ${model.E.H} × ${model.E.W} × ${model.E.D} mm`);break;
     case 'resetov':state.ov={};state.bov={};refresh(false);break;
     case 'copy':copyBom(b);break;
@@ -3852,8 +4260,9 @@ document.addEventListener('click',e=>{
     case 'dopen':openDiagramEditor(b.dataset.v==='uni'?'uni':'full',0);break;
     case 'dclose':case 'dprev':case 'dnext':case 'dzoom':case 'dfit':case 'dedit':case 'dtool':case 'dsym':case 'ddel':case 'dundo':case 'dredo':case 'dreset':case 'dfs':dedAct(a,b);break;
     case 'impopen':impOpen();break;
-    case 'impclose':case 'impstop':case 'impai':case 'impcreate':case 'impadd':case 'imprm':impAct(a,b);break;
+    case 'impclose':case 'impstop':case 'impai':case 'impcreate':case 'impadd':case 'imprm':case 'impanalyze':case 'imppages':case 'imppgall':case 'imppgnone':case 'imppgtext':case 'imppgrange':case 'impxadd':case 'impxrm':impAct(a,b);break;
     case 'themecycle':themeCycle();break;
+    case 'mtab':setMTab(b.dataset.v);break;
     case 'ftoggle':state.ftoolHide=!state.ftoolHide;save();renderFull(true);break;
     case 'fpdf':makePDF(b);break;
     case 'proj':openProj();break;
@@ -3920,9 +4329,15 @@ function sectionize(root){if(SECBUSY||!root)return;SECBUSY=true;try{const kids=[
     else if(cur)cur.appendChild(n);else frag.appendChild(n)});
   root.innerHTML='';root.appendChild(frag)}finally{SECBUSY=false}}
 document.addEventListener('toggle',e=>{const d=e.target;if(d.classList&&d.classList.contains('sec')&&d.dataset.key){const c=state.secClosed||(state.secClosed={});if(d.open)delete c[d.dataset.key];else c[d.dataset.key]=1;save()}},true);
-['left','right'].forEach(id=>{const el=document.getElementById(id);if(el)new MutationObserver(()=>{if(!SECBUSY)sectionize(el)}).observe(el,{childList:true})});
+['left','right'].forEach(id=>{const el=document.getElementById(id);if(el)new MutationObserver(()=>{if(!SECBUSY)sectionize(el);if(id==='right'&&typeof updMBadge==='function')updMBadge()}).observe(el,{childList:true})});
 function secAll(open){document.querySelectorAll('#left details.sec').forEach(d=>d.open=open)}
 const ICS={eye:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>',layers:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 2 8l10 5 10-5-10-5z"/><path d="m2 13 10 5 10-5"/></svg>',download:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>',folder:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>',gear:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>',moon:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>',door:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 21V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v17"/><path d="M2 21h20"/><circle cx="13" cy="12" r=".8"/></svg>',camera:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h2l2-2h6l2 2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="4"/></svg>',cube:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 9 5v10l-9 5-9-5V7z"/><path d="m3 7 9 5 9-5"/><path d="M12 12v10"/></svg>',list:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>',alert:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9v4M12 17h.01"/></svg>',shield:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',bolt:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2 3 14h9l-1 8 10-12h-9z"/></svg>',cpu:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="5" width="14" height="14" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v4M15 1v4M9 19v4M15 19v4M1 9h4M1 15h4M19 9h4M19 15h4"/></svg>',gauge:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 14l4-4"/><path d="M3.3 19a10 10 0 1 1 17.4 0"/></svg>',grid:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>',motor:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7"/><path d="M12 9v6M9 12h6"/></svg>',thermo:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 14.8V4a2 2 0 0 0-4 0v10.8a4 4 0 1 0 4 0z"/></svg>',file:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>',chev:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>'};
+
+/* ============ Navegação no celular ============ */
+function setMTab(v,scroll){v=['left','center','right'].includes(v)?v:'center';document.body.dataset.mtab=v;try{sessionStorage.setItem('mtab',v)}catch(e){}
+  document.querySelectorAll('.mnav [data-act=mtab]').forEach(b=>b.setAttribute('aria-selected',String(b.dataset.v===v)));if(scroll!==false)window.scrollTo({top:0,behavior:'instant'in window?'instant':'auto'});
+  if(v==='center')setTimeout(()=>{try{resize3D()}catch(e){}},30)}
+function updMBadge(){const b=$('#mnavBd');if(!b)return;const n=document.querySelectorAll('#right .alerts .w,#right .alerts .e,#right .alert.w,#right .alert.e,#right [data-lv="w"],#right [data-lv="e"]').length;b.hidden=!n;b.textContent=n}
 /* ============ Início ============ */
 document.addEventListener('change',e=>{const t=e.target;if(t.dataset&&t.dataset.act==='logosame'){LOGO_SAME=t.checked;try{localStorage.setItem('qc-logo-same',LOGO_SAME?'1':'0')}catch(err){}afterLogo()}});
 $('#projDlg').addEventListener('close',()=>{renderLeft();if(ui.tab==='full')renderFull(true)});
@@ -3933,7 +4348,7 @@ applyLogo();
 renderLeft();
 init3D();
 refresh(false);
-updDoorBtn();updMachBtn();updEnvBtn();updThemeBtn();sectionize($('#left'));sectionize($('#right'));
+updDoorBtn();updMachBtn();updEnvBtn();updThemeBtn();setMTab((()=>{try{return sessionStorage.getItem('mtab')}catch(e){return null}})()||'center',false);sectionize($('#left'));sectionize($('#right'));
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>rebuild3D(true));
 requestAnimationFrame(loop);
 </script>
