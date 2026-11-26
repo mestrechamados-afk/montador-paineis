@@ -778,7 +778,7 @@ function applyBrand(c){
   const r=f[c.brand](c);c.model=r.m;c.mx=r.x||'';
 }
 // Ícones de linha das máquinas e componentes (mesmo estilo dos demais ícones do app)
-const MI={"desbobinador":"<circle cx=\"8\" cy=\"12\" r=\"5\"/><circle cx=\"8\" cy=\"12\" r=\"1.5\"/><path d=\"M13 9h8M13 12h8M13 15h8\"/>","alimentador":"<circle cx=\"6\" cy=\"9\" r=\"2\"/><circle cx=\"12\" cy=\"15\" r=\"2\"/><circle cx=\"18\" cy=\"9\" r=\"2\"/><path d=\"M2 12h20\"/>","solda_gradil":"<path d=\"M4 5v14M9 5v14M14 5v14M19 5v14M2 9h20M2 15h20\"/><path d=\"m17 2 1 2 2-1\"/>","transp_aereo":"<path d=\"M2 4h20\"/><path d=\"M8 4v4M16 4v4\"/><rect x=\"5\" y=\"8\" width=\"14\" height=\"10\" rx=\"1\"/><path d=\"M9 8v10M14 8v10\"/>","cabine_pintura":"<path d=\"M3 10h9l3-3h3v6h-3l-3-3\"/><path d=\"M7 10v8h3\"/><path d=\"M19 15h.01M21 17h.01M20 19h.01\"/>","estufa":"<rect x=\"2\" y=\"7\" width=\"20\" height=\"12\" rx=\"1\"/><path d=\"M12 10c1.5 1.8 2 2.8 2 4a2 2 0 0 1-4 0c0-1.2.5-2.2 2-4z\"/><path d=\"M17 7V3\"/>","bomba": "<circle cx=\"10\" cy=\"13\" r=\"6\"/><circle cx=\"10\" cy=\"13\" r=\"2\"/><path d=\"M10 7V3h8v4M16 13h5\"/>", "tanque_v": "<path d=\"M6 5c0-1.1 2.7-2 6-2s6 .9 6 2v14c0 1.1-2.7 2-6 2s-6-.9-6-2z\"/><path d=\"M6 12c0 1.1 2.7 2 6 2s6-.9 6-2\"/>", "tanque_comb": "<rect x=\"2\" y=\"6\" width=\"15\" height=\"8\" rx=\"4\"/><path d=\"M5 14v5M14 14v5\"/><path d=\"M20 9c1 1.5 1.5 2.4 1.5 3a1.5 1.5 0 0 1-3 0c0-.6.5-1.5 1.5-3z\"/>", "ibc": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"14\" rx=\"1\"/><path d=\"M4 9h16M4 14h16M9 4v14M15 4v14M6 18v2M18 18v2\"/>", "compressor": "<rect x=\"3\" y=\"12\" width=\"18\" height=\"7\" rx=\"3.5\"/><circle cx=\"8\" cy=\"7\" r=\"3\"/><path d=\"M8 10v2M15 12V7h4\"/>", "esteira": "<rect x=\"2\" y=\"13\" width=\"20\" height=\"5\" rx=\"2.5\"/><circle cx=\"5\" cy=\"15.5\" r=\".8\"/><circle cx=\"19\" cy=\"15.5\" r=\".8\"/><rect x=\"8\" y=\"6\" width=\"7\" height=\"7\" rx=\"1\"/>", "ventilador": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 12c0-4 1-6 3-6s1 4-3 6zM12 12c4 0 6 1 6 3s-4 1-6-3zM12 12c0 4-1 6-3 6s-1-4 3-6zM12 12c-4 0-6-1-6-3s4-1 6 3z\"/>", "misturador": "<path d=\"M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8\"/><path d=\"M12 5v11M8.5 16h7\"/><rect x=\"9\" y=\"2\" width=\"6\" height=\"3\" rx=\"1\"/>", "rosca": "<path d=\"M3 17 19 7M5 20 21 10M7 15l2 3.2M10 13.2l2 3.2M13 11.4l2 3.2M16 9.6l2 3.2\"/>", "eixo": "<rect x=\"2\" y=\"15\" width=\"20\" height=\"4\" rx=\"1\"/><rect x=\"9\" y=\"8\" width=\"6\" height=\"7\" rx=\"1\"/><path d=\"M3 11h3M18 11h3M4.5 9.5 3 11l1.5 1.5M19.5 9.5 21 11l-1.5 1.5\"/>", "redutor": "<circle cx=\"12\" cy=\"12\" r=\"3\"/><circle cx=\"12\" cy=\"12\" r=\"7\"/><path d=\"M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1\"/>", "rele": "<rect x=\"5\" y=\"3\" width=\"14\" height=\"18\" rx=\"2\"/><rect x=\"8.5\" y=\"7\" width=\"7\" height=\"5\"/><path d=\"M9 16h6\"/>", "fusivel": "<rect x=\"4\" y=\"8.5\" width=\"16\" height=\"7\" rx=\"1\"/><path d=\"M2 12h20\"/>", "disjuntor": "<rect x=\"6\" y=\"3\" width=\"12\" height=\"18\" rx=\"2\"/><rect x=\"10\" y=\"7\" width=\"4\" height=\"7\" rx=\"1\"/><path d=\"M10 17h4\"/>", "fonte": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M8 10h8M8 14h2M11 14h2M14 14h2\"/>", "controlador": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\"/><rect x=\"7\" y=\"7\" width=\"10\" height=\"5\"/><path d=\"M8 16h2M14 16h2\"/>", "temporizador": "<circle cx=\"12\" cy=\"13\" r=\"8\"/><path d=\"M12 9v4l3 2M10 2h4\"/>", "contator": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\"/><path d=\"M8 8v3M12 8v3M16 8v3M8 15h8\"/>", "clp": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M7 9h1M10 9h1M13 9h1M16 9h1M7 15h10\"/>", "transmissor": "<path d=\"M2 12c2.5-5 4.5-5 7 0s4.5 5 7 0 4-4.5 6-1\"/>", "sinaleiro": "<circle cx=\"12\" cy=\"10\" r=\"6\"/><path d=\"M9 19h6M10 22h4M12 2v2\"/>", "botao": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/>", "sensor": "<rect x=\"2\" y=\"9\" width=\"12\" height=\"6\" rx=\"1\"/><path d=\"M14 12h2M18 8.5a5 5 0 0 1 0 7M20.5 6a8.5 8.5 0 0 1 0 12\"/>", "borne": "<rect x=\"4\" y=\"4\" width=\"4\" height=\"16\"/><rect x=\"10\" y=\"4\" width=\"4\" height=\"16\"/><rect x=\"16\" y=\"4\" width=\"4\" height=\"16\"/><path d=\"M5.5 8h1M11.5 8h1M17.5 8h1\"/>", "outro": "<path d=\"M12 5v14M5 12h14\"/>"};
+const MI={"vincadeira":"<path d=\"M3 4h18v4H3z\"/><path d=\"m7 8 2 4 2-4M13 8l2 4 2-4\"/><path d=\"M3 16l3 3 3-3 3 3 3-3 3 3 3-3\"/>","desbobinador":"<circle cx=\"8\" cy=\"12\" r=\"5\"/><circle cx=\"8\" cy=\"12\" r=\"1.5\"/><path d=\"M13 9h8M13 12h8M13 15h8\"/>","alimentador":"<circle cx=\"6\" cy=\"9\" r=\"2\"/><circle cx=\"12\" cy=\"15\" r=\"2\"/><circle cx=\"18\" cy=\"9\" r=\"2\"/><path d=\"M2 12h20\"/>","solda_gradil":"<path d=\"M4 5v14M9 5v14M14 5v14M19 5v14M2 9h20M2 15h20\"/><path d=\"m17 2 1 2 2-1\"/>","transp_aereo":"<path d=\"M2 4h20\"/><path d=\"M8 4v4M16 4v4\"/><rect x=\"5\" y=\"8\" width=\"14\" height=\"10\" rx=\"1\"/><path d=\"M9 8v10M14 8v10\"/>","cabine_pintura":"<path d=\"M3 10h9l3-3h3v6h-3l-3-3\"/><path d=\"M7 10v8h3\"/><path d=\"M19 15h.01M21 17h.01M20 19h.01\"/>","estufa":"<rect x=\"2\" y=\"7\" width=\"20\" height=\"12\" rx=\"1\"/><path d=\"M12 10c1.5 1.8 2 2.8 2 4a2 2 0 0 1-4 0c0-1.2.5-2.2 2-4z\"/><path d=\"M17 7V3\"/>","bomba": "<circle cx=\"10\" cy=\"13\" r=\"6\"/><circle cx=\"10\" cy=\"13\" r=\"2\"/><path d=\"M10 7V3h8v4M16 13h5\"/>", "tanque_v": "<path d=\"M6 5c0-1.1 2.7-2 6-2s6 .9 6 2v14c0 1.1-2.7 2-6 2s-6-.9-6-2z\"/><path d=\"M6 12c0 1.1 2.7 2 6 2s6-.9 6-2\"/>", "tanque_comb": "<rect x=\"2\" y=\"6\" width=\"15\" height=\"8\" rx=\"4\"/><path d=\"M5 14v5M14 14v5\"/><path d=\"M20 9c1 1.5 1.5 2.4 1.5 3a1.5 1.5 0 0 1-3 0c0-.6.5-1.5 1.5-3z\"/>", "ibc": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"14\" rx=\"1\"/><path d=\"M4 9h16M4 14h16M9 4v14M15 4v14M6 18v2M18 18v2\"/>", "compressor": "<rect x=\"3\" y=\"12\" width=\"18\" height=\"7\" rx=\"3.5\"/><circle cx=\"8\" cy=\"7\" r=\"3\"/><path d=\"M8 10v2M15 12V7h4\"/>", "esteira": "<rect x=\"2\" y=\"13\" width=\"20\" height=\"5\" rx=\"2.5\"/><circle cx=\"5\" cy=\"15.5\" r=\".8\"/><circle cx=\"19\" cy=\"15.5\" r=\".8\"/><rect x=\"8\" y=\"6\" width=\"7\" height=\"7\" rx=\"1\"/>", "ventilador": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 12c0-4 1-6 3-6s1 4-3 6zM12 12c4 0 6 1 6 3s-4 1-6-3zM12 12c0 4-1 6-3 6s-1-4 3-6zM12 12c-4 0-6-1-6-3s4-1 6 3z\"/>", "misturador": "<path d=\"M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8\"/><path d=\"M12 5v11M8.5 16h7\"/><rect x=\"9\" y=\"2\" width=\"6\" height=\"3\" rx=\"1\"/>", "rosca": "<path d=\"M3 17 19 7M5 20 21 10M7 15l2 3.2M10 13.2l2 3.2M13 11.4l2 3.2M16 9.6l2 3.2\"/>", "eixo": "<rect x=\"2\" y=\"15\" width=\"20\" height=\"4\" rx=\"1\"/><rect x=\"9\" y=\"8\" width=\"6\" height=\"7\" rx=\"1\"/><path d=\"M3 11h3M18 11h3M4.5 9.5 3 11l1.5 1.5M19.5 9.5 21 11l-1.5 1.5\"/>", "redutor": "<circle cx=\"12\" cy=\"12\" r=\"3\"/><circle cx=\"12\" cy=\"12\" r=\"7\"/><path d=\"M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1\"/>", "rele": "<rect x=\"5\" y=\"3\" width=\"14\" height=\"18\" rx=\"2\"/><rect x=\"8.5\" y=\"7\" width=\"7\" height=\"5\"/><path d=\"M9 16h6\"/>", "fusivel": "<rect x=\"4\" y=\"8.5\" width=\"16\" height=\"7\" rx=\"1\"/><path d=\"M2 12h20\"/>", "disjuntor": "<rect x=\"6\" y=\"3\" width=\"12\" height=\"18\" rx=\"2\"/><rect x=\"10\" y=\"7\" width=\"4\" height=\"7\" rx=\"1\"/><path d=\"M10 17h4\"/>", "fonte": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M8 10h8M8 14h2M11 14h2M14 14h2\"/>", "controlador": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\"/><rect x=\"7\" y=\"7\" width=\"10\" height=\"5\"/><path d=\"M8 16h2M14 16h2\"/>", "temporizador": "<circle cx=\"12\" cy=\"13\" r=\"8\"/><path d=\"M12 9v4l3 2M10 2h4\"/>", "contator": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\"/><path d=\"M8 8v3M12 8v3M16 8v3M8 15h8\"/>", "clp": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M7 9h1M10 9h1M13 9h1M16 9h1M7 15h10\"/>", "transmissor": "<path d=\"M2 12c2.5-5 4.5-5 7 0s4.5 5 7 0 4-4.5 6-1\"/>", "sinaleiro": "<circle cx=\"12\" cy=\"10\" r=\"6\"/><path d=\"M9 19h6M10 22h4M12 2v2\"/>", "botao": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/>", "sensor": "<rect x=\"2\" y=\"9\" width=\"12\" height=\"6\" rx=\"1\"/><path d=\"M14 12h2M18 8.5a5 5 0 0 1 0 7M20.5 6a8.5 8.5 0 0 1 0 12\"/>", "borne": "<rect x=\"4\" y=\"4\" width=\"4\" height=\"16\"/><rect x=\"10\" y=\"4\" width=\"4\" height=\"16\"/><rect x=\"16\" y=\"4\" width=\"4\" height=\"16\"/><path d=\"M5.5 8h1M11.5 8h1M17.5 8h1\"/>", "outro": "<path d=\"M12 5v14M5 12h14\"/>"};
 const miIcon=k=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${MI[k]||MI.outro}</svg>`;
 const MDEF={
   bomba:{name:'Bomba centrífuga',kw:5.5,start:'direta',ic:'💧'},
@@ -795,6 +795,7 @@ const MDEF={
   desbobinador:{name:'Desbobinador de arames',kw:2.2,start:'inversor'},
   alimentador:{name:'Endireitador e alimentador de arames',kw:4,start:'inversor'},
   solda_gradil:{name:'Avanço da malha e solda',kw:3,start:'servo'},
+  vincadeira:{name:'Unidade hidráulica da vincadeira',kw:7.5,start:'estrela'},
   transp_aereo:{name:'Transportador aéreo',kw:1.5,start:'inversor'},
   cabine_pintura:{name:'Exaustor da cabine de pintura',kw:5.5,start:'inversor'},
   estufa:{name:'Ventilador de recirculação da estufa',kw:7.5,start:'inversor'}};
@@ -850,6 +851,7 @@ const PRESETS={
   gradil:()=>({loads:[{id:uid(),name:'Desbobinador de arames',kw:2.2,start:'inversor',tp:3,mtype:'desbobinador',guard:true,estop:1},
     {id:uid(),name:'Endireitador e alimentador de arames',kw:4,start:'inversor',tp:2,mtype:'alimentador',guard:true,estop:0},
     {id:uid(),name:'Avanço da malha e solda',kw:3,start:'servo',tp:0.3,mtype:'solda_gradil',guard:true,curtain:true,estop:1},
+    {id:uid(),name:'Unidade hidráulica da vincadeira',kw:7.5,start:'estrela',tp:4,mtype:'vincadeira',guard:true,curtain:true,estop:1},
     {id:uid(),name:'Transportador aéreo',kw:1.5,start:'inversor',tp:4,mtype:'transp_aereo',guard:true,estop:1},
     {id:uid(),name:'Exaustor da cabine de pintura',kw:5.5,start:'inversor',tp:6,mtype:'cabine_pintura',guard:true,estop:1},
     {id:uid(),name:'Ventilador de recirculação da estufa',kw:7.5,start:'inversor',tp:8,mtype:'estufa',guard:true,estop:1}],
@@ -4137,9 +4139,9 @@ function plateLabel(g,txt,x,y,fz,w=60,bold,h=16){
   const p=new THREE.Mesh(new THREE.PlaneGeometry(w*S,h*S),new THREE.MeshBasicMaterial({map:t.t}));p.position.set(x,y,(fz+0.6)*S);g.add(p);
 }
 /* ============ Máquinas acionadas (ilustração 3D realista) ============ */
-const MTYPES={auto:'Automático (pelo nome)',bomba:'Bomba centrífuga',tanque_v:'Tanque vertical de armazenamento (líquidos)',tanque_comb:'Tanque aéreo de combustível (diesel)',ibc:'Bomba dosadora + IBC 1000 L',compressor:'Compressor de ar + reservatório',esteira:'Esteira transportadora',ventilador:'Ventilador / exaustor',misturador:'Misturador (tanque)',rosca:'Rosca transportadora',eixo:'Eixo linear (servo)',redutor:'Redutor + tambor',desbobinador:'Desbobinador de arames',alimentador:'Endireitador e alimentador de arames',solda_gradil:'Máquina de solda de malha (gradil)',transp_aereo:'Transportador aéreo (monovia)',cabine_pintura:'Cabine de pintura a pó robotizada',estufa:'Estufa de cura'};
+const MTYPES={auto:'Automático (pelo nome)',bomba:'Bomba centrífuga',tanque_v:'Tanque vertical de armazenamento (líquidos)',tanque_comb:'Tanque aéreo de combustível (diesel)',ibc:'Bomba dosadora + IBC 1000 L',compressor:'Compressor de ar + reservatório',esteira:'Esteira transportadora',ventilador:'Ventilador / exaustor',misturador:'Misturador (tanque)',rosca:'Rosca transportadora',eixo:'Eixo linear (servo)',redutor:'Redutor + tambor',desbobinador:'Desbobinador de arames',alimentador:'Endireitador e alimentador de arames',solda_gradil:'Máquina de solda de malha (gradil)',vincadeira:'Vincadeira (prensa de vincos em V)',transp_aereo:'Transportador aéreo (monovia)',cabine_pintura:'Cabine de pintura a pó robotizada',estufa:'Estufa de cura'};
 function mtypeOf(l){if(l.mtype&&l.mtype!=='auto'&&MTYPES[l.mtype])return l.mtype;const n=(l.name||'').toLowerCase();
-  if(/desbobin/.test(n))return 'desbobinador';if(/endireit|alimentador de arame/.test(n))return 'alimentador';if(/solda|malha/.test(n))return 'solda_gradil';
+  if(/desbobin/.test(n))return 'desbobinador';if(/endireit|alimentador de arame/.test(n))return 'alimentador';if(/vinc|dobr|prensa/.test(n))return 'vincadeira';if(/solda|malha/.test(n))return 'solda_gradil';
   if(/a[ée]reo|suspens|monovia/.test(n))return 'transp_aereo';if(/cabine|pintura/.test(n))return 'cabine_pintura';if(/estufa|forno|cura/.test(n))return 'estufa';
   if(/compress/.test(n))return 'compressor';if(/diesel|combust|gasolin|etanol|óleo|oleo|gerador/.test(n))return 'tanque_comb';if(/ibc|químic|quimic|cloro|soda|hipoclorito/.test(n)||/bomba.*dosador/.test(n))return 'ibc';if(/tanque|reservat|armazen|caixa d|cisterna|recalque/.test(n))return 'tanque_v';
   if(/bomba/.test(n))return 'bomba';if(/esteira|transport|correia|cavaco/.test(n))return 'esteira';if(/exaust|ventil/.test(n))return 'ventilador';
@@ -4177,7 +4179,7 @@ function buildDriven(l,g,r,len){
   }else if(type==='desbobinador'){
     // Desbobinadores dos arames longitudinais: carretéis em dois níveis, arames seguindo para o endireitador
     const H=9,yW=yF+H,zc=-g.position.z,reels=[],wireM=mat('#b8bfc4',{metalness:0.9,roughness:0.3});
-    const zs=[-7.5,-4.5,-1.5,1.5,4.5,7.5];
+    const zs=[-9,-6,-3,0,3,6,9];
     zs.forEach((z,i)=>{const x=cx+3+(i%2)*5.2,rr=2.4,yc=yF+rr+0.9;
       [-0.75,0.75].forEach(dz=>{const up=P(bx(0.35,yc-yF+0.6,0.35,paint('#2F5E7A')));up.position.set(x,(yF+yc+0.6)/2,zc+z+dz)});
       const base=P(bx(2.2,0.3,2.2,paint('#2F5E7A')));base.position.set(x,yF+0.15,zc+z);
@@ -4201,73 +4203,140 @@ function buildDriven(l,g,r,len){
     upd=(dt,sp)=>rolls.forEach(rl=>rl.rotation.y+=sp*dt*8);
     ext=x0+L+1.4;top=yW+2.6;depth=13;
   }else if(type==='solda_gradil'){
-    // Máquina de solda de malha: pórtico com eletrodos, alimentação dos arames transversais e mesa de saída
-    const H=9,yW=yF+H,zc=-g.position.z,x0=cx+1.2,fr=paint('#2F5E7A'),cu=mat('#b8703c',{metalness:0.85,roughness:0.3});
+    // Máquina de solda de malha: magazine de arames transversais já cortados com tambor dosador, pórtico de eletrodos e mesa de saída
+    const H=9,yW=yF+H,zc=-g.position.z,x0=cx+1.2,ex=x0+5,fr=paint('#2F5E7A'),cu=mat('#b8703c',{metalness:0.85,roughness:0.3}),wm=mat('#b8bfc4',{metalness:0.9,roughness:0.3});
+    const hasPress=model.loads.some(q=>mtypeOf(q)==='vincadeira');
     const base=P(bx(9,H-0.6,16,fr));base.position.set(x0+4.5,yF+(H-0.6)/2,zc);
     const trafo=P(bx(4,3.4,5,paint('#3a4a58')));trafo.position.set(x0+3,yF+H+1.2,zc+10.6);
     const tf2=P(bx(3,2.2,3,dark));tf2.position.set(x0+3,yF+1.1,zc+10.2);
-    [-8.3,8.3].forEach(z=>{const col=P(bx(1.6,16.5-0.6,1.6,fr));col.position.set(x0+5,yF+(16.5)/2,zc+z)});
-    const beam=P(bx(2.4,2.2,18.2,fr));beam.position.set(x0+5,yF+16.4,zc);
-    const head=new THREE.Group();head.position.set(x0+5,0,zc);g.add(head);
+    [-8.3,8.3].forEach(z=>{const col=P(bx(1.6,16.5-0.6,1.6,fr));col.position.set(ex,yF+(16.5)/2,zc+z)});
+    const beam=P(bx(2.4,2.2,18.2,fr));beam.position.set(ex,yF+16.4,zc);
+    const head=new THREE.Group();head.position.set(ex,0,zc);g.add(head);
     const hb=bx(1.8,1.2,15.4,mat('#4a5258',{metalness:0.5,roughness:0.4}));hb.position.y=yF+14.6;head.add(hb);
-    for(let i=0;i<8;i++){const z=-5.6+i*1.6;const cyl1=cyl(0.35,0.35,2.6,steel,12);cyl1.position.set(0,yF+12.9,z);head.add(cyl1);const el=cyl(0.28,0.2,1.6,cu,12);el.position.set(0,yF+11,z);head.add(el)}
-    const low=P(bx(1.4,0.5,13.4,cu));low.position.set(x0+5,yW-0.45,zc);
-    // alimentação dos arames transversais (funil inclinado com arames cortados)
-    const hop=P(bx(3.2,0.3,14,steel));hop.position.set(x0+2.3,yW+3.4,zc);hop.rotation.z=-0.5;
-    for(let i=0;i<6;i++){const tw=P(cyl(0.06,0.06,13,mat('#b8bfc4',{metalness:0.9,roughness:0.3}),6));tw.rotation.x=Math.PI/2;tw.position.set(x0+1+i*0.45,yW+4.1-i*0.22,zc)}
+    GR_H.forEach(y=>{const z=-y;const c1=cyl(0.35,0.35,2.6,steel,12);c1.position.set(0,yF+12.9,z);head.add(c1);const el=cyl(0.28,0.2,1.6,cu,12);el.position.set(0,yF+11,z);head.add(el)});
+    const low=P(bx(1.4,0.5,11,cu));low.position.set(ex,yW-0.35,zc);
+    // magazine de arames transversais cortados (feixe) + tambor dosador + calha até a linha dos eletrodos
+    const mx=x0+1.6,my=yW+4.2;
+    // estrutura aberta do magazine (laterais em quadro, fundo inclinado) para ver o feixe
+    const mag=new THREE.Group();mag.position.set(mx,my,zc);mag.rotation.z=-0.35;g.add(mag);
+    [-5.7,5.7].forEach(z=>{[[-1.5,0],[1.5,0]].forEach(([dx])=>{const b2=bx(0.22,4.4,0.22,fr);b2.position.set(dx,0,z);b2.castShadow=true;mag.add(b2)});
+      [-2.2,2.2].forEach(dy=>{const b3=bx(3.2,0.22,0.22,fr);b3.position.set(0,dy,z);mag.add(b3)})});
+    const floorM=bx(3.2,0.12,11.6,steel);floorM.position.set(0,-1.75,0);mag.add(floorM);
+    const backM=bx(0.12,1.6,11.6,steel);backM.position.set(-1.5,-1.1,0);mag.add(backM);
+    const bundle=new THREE.Group();bundle.position.set(mx,my,zc);bundle.rotation.z=-0.35;g.add(bundle);
+    for(let r2=0;r2<7;r2++)for(let c2=0;c2<5;c2++){const w=cyl(0.055,0.055,10.6,wm,6);w.rotation.x=Math.PI/2;w.position.set(-0.9+c2*0.42+(r2%2)*0.2,-1.4+r2*0.42,0);bundle.add(w)}
+    const drum=new THREE.Group();drum.position.set(x0+2.9,yW+1.85,zc);g.add(drum);
+    const dc=cyl(0.62,0.62,11.2,mat('#5b6268',{metalness:0.6,roughness:0.35}),24);dc.rotation.x=Math.PI/2;drum.add(dc);
+    for(let i=0;i<8;i++){const n=bx(0.22,0.22,11.3,dark);const a=i/8*Math.PI*2;n.position.set(Math.cos(a)*0.6,Math.sin(a)*0.6,0);n.rotation.z=a;drum.add(n)}
+    const chute=P(bx(2.6,0.12,11,steel));chute.position.set((x0+2.9+ex)/2,yW+0.95,zc);chute.rotation.z=-0.42;
+    const dmot=P(cyl(0.5,0.5,1.4,paint('#2F5E7A'),16));dmot.rotation.x=Math.PI/2;dmot.position.set(x0+2.9,yW+1.85,zc+6.4);
     // faíscas
     const sparks=[];const sm=new THREE.MeshBasicMaterial({color:'#ffd27a',transparent:true,opacity:0});
-    for(let i=0;i<24;i++){const sp=new THREE.Mesh(new THREE.SphereGeometry(0.09,6,4),sm);sp.position.set(x0+5+(Math.random()-0.5)*1.2,yW+Math.random()*0.8,zc-5.6+Math.random()*11.2);g.add(sp);sparks.push(sp)}
+    for(let i=0;i<28;i++){const s2=new THREE.Mesh(new THREE.SphereGeometry(0.09,6,4),sm);s2.position.set(ex,yW,zc-GR_H[i%7]);g.add(s2);sparks.push(s2)}
     if(state.nr12.on&&(l.guard||l.curtain)){const ym=new THREE.MeshStandardMaterial({color:'#E8B80E',roughness:0.5});
-      [-9.6,9.6].forEach(z=>{const gp=P(new THREE.Mesh(new THREE.BoxGeometry(10,9,0.15),new THREE.MeshStandardMaterial({map:gradilTex(),color:'#E8B80E',transparent:true,alphaTest:0.4,side:THREE.DoubleSide})));gp.position.set(x0+5,yF+5.5,zc+z);
-        const fr3=P(bx(10.2,0.3,0.3,ym));fr3.position.set(x0+5,yF+10,zc+z)})}
-    // mesa de saída: a malha é formada passo a passo, cortada pela guilhotina e levada ao fim da mesa;
-    // ali o manipulador de pórtico pega o gradil, gira 90° e o pendura nos ganchos do trilho suspenso
-    const Lt=24,xt=x0+9,ex=x0+5,PANEL=20,STEPS=40,pitch=PANEL/STEPS,yr=yF+24,yT=yW-0.4;
-    const tab=P(bx(Lt,0.4,12,steel));tab.position.set(xt+Lt/2,yW-1,zc);
+      [-9.6,9.6].forEach(z=>{const gp=P(new THREE.Mesh(new THREE.BoxGeometry(10,9,0.15),new THREE.MeshStandardMaterial({map:gradilTex(),color:'#E8B80E',transparent:true,alphaTest:0.4,side:THREE.DoubleSide})));gp.position.set(ex,yF+5.5,zc+z);
+        const fr3=P(bx(10.2,0.3,0.3,ym));fr3.position.set(ex,yF+10,zc+z)})}
+    // mesa de saída
+    const PANEL=20,STEPS=40,pitch=PANEL/STEPS,yr=yF+24,xt=ex+4,Lt=hasPress?18:24,xEnd=xt+Lt;
+    const tab=P(bx(Lt,0.4,12,steel));tab.position.set(xt+Lt/2,yW-0.85,zc);
     [1,Lt/2,Lt-1].forEach(px=>[-5.4,5.4].forEach(z=>{const lg=P(bx(0.4,H-1.2,0.4,dark));lg.position.set(xt+px,yF+(H-1.2)/2,zc+z)}));
-    for(let i=0;i<8;i++){const rl=P(cyl(0.22,0.22,11.6,steel,12));rl.rotation.x=Math.PI/2;rl.position.set(xt+1.5+i*3,yW-0.68,zc)}
-    const mkPanel=()=>{const tx=gradilTex();const m=new THREE.Mesh(new THREE.PlaneGeometry(PANEL,10.3),new THREE.MeshStandardMaterial({map:tx,color:'#c9d0d4',metalness:0.8,roughness:0.35,transparent:true,alphaTest:0.4,side:THREE.DoubleSide}));m.castShadow=true;g.add(m);return m};
-    const grow=mkPanel();grow.rotation.x=-Math.PI/2;
-    const setGrow=k=>{const f=Math.max(0.001,k/STEPS);grow.scale.x=f;grow.position.set(ex+PANEL*f/2,yT,zc);grow.material.map.repeat.x=f;grow.material.map.offset.x=1-f};
-    setGrow(0);
-    const cross=P(cyl(0.07,0.07,10.8,mat('#b8bfc4',{metalness:0.9,roughness:0.3}),6));cross.rotation.x=Math.PI/2;cross.visible=false;
+    for(let i=0;i<Math.floor(Lt/3);i++){const rl=P(cyl(0.22,0.22,11.6,steel,12));rl.rotation.x=Math.PI/2;rl.position.set(xt+1.5+i*3,yW-0.45,zc)}
+    if(!R.renderer.localClippingEnabled)R.renderer.localClippingEnabled=true;
+    const clip=new THREE.Plane(new THREE.Vector3(1,0,0),-(g.position.x+ex-0.05));
+    const mkPanel=(c)=>{const m=new THREE.Mesh(gradilGeo(false),gradilMat());m.rotation.x=-Math.PI/2;m.castShadow=true;if(c)m.material.clippingPlanes=[clip];g.add(m);return m};
+    const grow=mkPanel(true);const setGrow=kf=>{grow.position.set(ex-PANEL/2+kf*pitch,yW,zc)};setGrow(0);
+    const cross=P(cyl(0.055,0.055,10.6,wm,6));cross.rotation.x=Math.PI/2;cross.visible=false;
     const shear=P(bx(0.5,1.4,12.4,mat('#5b6268',{metalness:0.6,roughness:0.35})));const shY=yW+1.6;shear.position.set(ex+1.2,shY,zc);
-    // batente e sensor de posição no fim da mesa
-    const xEnd=xt+Lt,xc=xEnd-PANEL/2-0.6;
-    const stop=P(bx(0.4,1.2,10,mat('#c3302a',{roughness:0.5})));stop.position.set(xEnd-0.3,yT+0.4,zc);
-    // manipulador de pórtico (garra pneumática + atuador rotativo)
-    const zg=zc+5.15,yPark=yT+13,yHook=yr-2.45+0.3;
-    const gp=gripGantry(g,{xc,floor:yF,topY:yr+3,z0:zc,z1:zg});gp.set(zg,yPark,0,false);
-    const xfer=mkPanel();xfer.visible=false;
+    const xfer=mkPanel(false);xfer.visible=false;
     const ease=x=>x<0?0:x>1?1:x*x*(3-2*x),lerp=(a,b,f)=>a+(b-a)*f;
-    let t=0,k=0,mode=null,mt=0,prevStep=0;
-    const goHead=down=>{head.position.y=down?-1.3:0;sm.opacity=down?0.95:0;if(down)sparks.forEach(s2=>{s2.position.y=yW+Math.random()*1.4;s2.position.x=ex+(Math.random()-0.5)*2.4})};
-    // etapas do manipulador: [duração, função(f)]
-    const G=[[0.9,f=>gp.set(zg,lerp(yPark,yT+0.3,f),0,false)],                    // desce até o gradil
-      [0.4,f=>{gp.set(zg,yT+0.3,0,f>0.5);if(f>0.5){xfer.visible=false;gp.held.visible=true}}], // fecha as garras
-      [1.1,f=>gp.set(zg,lerp(yT+0.3,yHook,f),0,true)],                              // levanta acima dos ganchos
-      [1.3,f=>gp.set(zg,yHook,-Math.PI/2*f,true)],                                  // gira 90°: gradil na vertical
-      [0.9,f=>gp.set(lerp(zg,zc,f),yHook,-Math.PI/2,true)],                         // leva até a linha do trilho
-      [0.5,f=>{gp.set(zc,yHook-0.3*f,-Math.PI/2,f<0.6);if(f>=0.6&&gp.held.visible){gp.held.visible=false;if(R.gl&&R.gl.spawn)R.gl.spawn(g.position.x+xc)}}], // engata nos ganchos e solta
-      [1.4,f=>gp.set(lerp(zc,zg,f),lerp(yHook,yPark,f),-Math.PI/2*(1-f),false)]];   // volta à posição de espera
-    let gi=-1,gt=0;
+    // sem vincadeira na linha: pórtico próprio pendura o gradil plano no trilho
+    let gp=null,G=[],xc=xEnd-PANEL/2-0.6;
+    if(!hasPress){const zg=zc+5.15,yPark=yW+13,yHook=yr-2.45+0.3,yT=yW;
+      const stop=P(bx(0.4,1.2,10,mat('#c3302a',{roughness:0.5})));stop.position.set(xEnd-0.3,yW-0.2,zc);
+      gp=gripGantry(g,{xc,floor:yF,topY:yr+3,z0:zc,z1:zg});gp.set(zg,yPark,0,false);
+      G=[[0.9,f=>gp.set(zg,lerp(yPark,yT+0.3,f),0,false)],[0.4,f=>{gp.set(zg,yT+0.3,0,f>0.5);if(f>0.5){xfer.visible=false;gp.held.visible=true}}],
+        [1.1,f=>gp.set(zg,lerp(yT+0.3,yHook,f),0,true)],[1.3,f=>gp.set(zg,yHook,-Math.PI/2*f,true)],[0.9,f=>gp.set(lerp(zg,zc,f),yHook,-Math.PI/2,true)],
+        [0.5,f=>{gp.set(zc,yHook-0.3*f,-Math.PI/2,f<0.6);if(f>=0.6&&gp.held.visible){gp.held.visible=false;if(R.gl&&R.gl.spawn)R.gl.spawn(g.position.x+xc)}}],
+        [1.4,f=>gp.set(lerp(zc,zg,f),lerp(yHook,yPark,f),-Math.PI/2*(1-f),false)]]}
+    let t=0,k=0,mode=null,mt=0,prevStep=0,gi=-1,gt=0,drumA=0;
+    const goHead=down=>{head.position.y=down?-1.3:0;sm.opacity=down?0.95:0;if(down)sparks.forEach((s2,i)=>{s2.position.set(ex+(Math.random()-0.5)*0.9,yW+Math.random()*0.9,zc-GR_H[i%7]+(Math.random()-0.5)*0.5)})};
     upd=(dt,sp)=>{const d=dt*sp;t+=d*2.5;
       const step=Math.floor(t),ph=t-step;
+      // ciclo: 0–0,35 avanço de 50 mm; 0,35–0,55 tambor libera um arame cortado que desce pela calha; 0,55–0,8 solda; 0,8–1 subida
       if(sp>0.02){
         if(ph<0.35&&R.gl&&R.gl.wireTick)R.gl.wireTick(pitch*d*2.5/0.35);
-        cross.visible=ph>=0.35&&ph<0.6;if(cross.visible){const f=ease((ph-0.35)/0.2);cross.position.set(x0+2.9+(ex-x0-2.9)*f,yW+3.2-3.15*f,zc)}
+        if(ph>=0.3&&ph<0.42){drum.rotation.z=drumA-(ph-0.3)/0.12*Math.PI/4}else if(ph>=0.42)drum.rotation.z=drumA-Math.PI/4;
+        cross.visible=ph>=0.36&&ph<0.6;if(cross.visible){const f=ease((ph-0.36)/0.2);cross.position.set(lerp(x0+2.9,ex,f),lerp(yW+1.25,yW+0.1,f),zc)}
         goHead(ph>0.55&&ph<0.8)}else{goHead(false);cross.visible=false}
-      if(step!==prevStep){prevStep=step;k++;
-        if(k>=STEPS&&!mode&&gi<0){k=0;mode='cut';mt=0;xfer.visible=true;xfer.rotation.set(-Math.PI/2,0,0);xfer.position.set(ex+PANEL/2,yT,zc)}
-        else if(k>=STEPS)k=STEPS}
+      if(step!==prevStep){prevStep=step;drumA-=Math.PI/4;
+        if(k<STEPS)k++;
+        if(k>=STEPS&&!mode&&gi<0){k=0;mode='cut';mt=0;xfer.visible=true;xfer.position.set(ex+PANEL/2,yW,zc)}}
       setGrow(Math.min(STEPS,k+(sp>0.02&&ph<0.35&&k<STEPS?ph/0.35:0)));
       if(mode){mt+=d;
         if(mode==='cut'){shear.position.y=shY-1.1*Math.sin(Math.min(1,mt/0.5)*Math.PI);if(mt>0.5){mode='move';mt=0}}
-        else if(mode==='move'){const f=ease(mt/1.4);xfer.position.x=ex+PANEL/2+(xc-ex-PANEL/2)*f;if(mt>1.4){mode=null;gi=0;gt=0;gp.held.material.color.set('#c9d0d4')}}}
+        else if(mode==='move'){const tx=hasPress?ex+PANEL/2+2:xc,f=ease(mt/(hasPress?0.6:1.4));xfer.position.x=lerp(ex+PANEL/2,tx,f);
+          if(f>=1){mode=null;if(hasPress){xfer.visible=false;if(R.gl&&R.gl.press)R.gl.press.receive(g.position.x+tx)}else{gi=0;gt=0;gp.held.material.color.set('#c9d0d4')}}}}
       if(gi>=0&&sp>0.02){gt+=d;const [dur,fn]=G[gi];fn(ease(Math.min(1,gt/dur)));if(gt>=dur){gi++;gt=0;if(gi>=G.length)gi=-1}}};
-    if(!R.gl)R.gl={};R.gl.weldX1=g.position.x+xEnd;R.gl.weldLine={x:g.position.x+ex,y:g.position.y+yW,hopX:g.position.x+x0+2.3};
+    if(!R.gl)R.gl={};R.gl.weldLine={x:g.position.x+ex,y:g.position.y+yW};R.gl.panelY=g.position.y+yW;R.gl.weldTableEnd=g.position.x+xEnd;
+    if(!hasPress)R.gl.weldX1=g.position.x+xEnd;
     ext=xEnd+0.6;top=yr+1;depth=24;
+  }else if(type==='vincadeira'){
+    // Vincadeira: prensa hidráulica com estampos em V que forma os 3 vincos do gradil; depois, o pórtico pendura o gradil no trilho
+    const zc=-g.position.z,G0=R.gl||{},yP=(G0.panelY!=null?G0.panelY-g.position.y:yF+9),PANEL=20,yr=yF+24;
+    const xIn=G0.weldTableEnd!=null?G0.weldTableEnd-g.position.x:cx+1,xP=Math.max(xIn+12,cx+10),xc=xP+23,xEnd=xc+11;
+    const fr=paint('#2F5E7A'),blk=mat('#2a2f33',{roughness:0.5,metalness:0.35}),chrome=mat('#e9ecee',{metalness:0.9,roughness:0.15});
+    // mesa de transferência com roletes
+    const Lt=xEnd-xIn,tab=P(bx(Lt,0.4,12,steel));tab.position.set(xIn+Lt/2,yP-0.85,zc);
+    for(let px=1;px<Lt;px+=Lt/6)[-5.4,5.4].forEach(z=>{const lg=P(bx(0.4,yP-0.85-yF,0.4,dark));lg.position.set(xIn+px,(yF+yP-0.85)/2,zc+z)});
+    for(let x=xIn+1.5;x<xEnd-1;x+=3){if(Math.abs(x-xP)<11)continue;const rl=P(cyl(0.22,0.22,11.6,steel,12));rl.rotation.x=Math.PI/2;rl.position.set(x,yP-0.45,zc)}
+    // estrutura da prensa: 4 colunas, travessa superior, 2 cilindros hidráulicos, martelo móvel com punções em V e matrizes inferiores
+    [-11.2,11.2].forEach(dx=>[-7.2,7.2].forEach(z=>{const c=P(bx(1.2,yP+10.5-yF,1.2,fr));c.position.set(xP+dx,(yF+yP+10.5)/2,zc+z)}));
+    const crown=P(bx(23.6,1.8,16,fr));crown.position.set(xP,yP+10.2,zc);
+    const bed=P(bx(23.6,yP-0.7-yF,16,fr));bed.position.set(xP,(yF+yP-0.7)/2,zc);
+    const ram=new THREE.Group();ram.position.set(xP,yP+5,zc);g.add(ram);
+    const rb=bx(22,1.1,13,mat('#4a5258',{metalness:0.5,roughness:0.4}));rb.castShadow=true;ram.add(rb);
+    GR_F.forEach(f=>{const pu=bx(21,0.55,0.55,chrome);pu.rotation.x=Math.PI/4;pu.position.set(0,-0.95,-f);ram.add(pu);const hold=bx(21,0.6,0.9,blk);hold.position.set(0,-0.5,-f);ram.add(hold);
+      const die=P(bx(21,0.35,1.4,blk));die.position.set(xP,yP-0.7,zc-f)});
+    const rods=[];[-6,6].forEach(dx=>{const body=P(cyl(0.9,0.9,4,mat('#c3302a',{roughness:0.4,metalness:0.3}),20));body.position.set(xP+dx,yP+13.1,zc);
+      const rod=cyl(0.38,0.38,1,chrome,16);g.add(rod);rods.push({rod,dx})});
+    // unidade hidráulica (tanque, bomba e válvulas) ao lado
+    const tank=P(bx(5,3.2,3.6,paint('#3a4a58')));tank.position.set(xP-6,yF+1.6,zc+10.6);
+    const pump=P(cyl(0.7,0.7,2,paint('#2F5E7A'),16));pump.rotation.z=Math.PI/2;pump.position.set(xP-6,yF+3.9,zc+10.6);
+    const vb=P(bx(2,1.2,1.4,mat('#c8a030',{metalness:0.6,roughness:0.3})));vb.position.set(xP-3,yF+3.6,zc+10.6);
+    const hose=P(cyl(0.12,0.12,yP+11-yF,blk,8));hose.position.set(xP-3,(yF+3.6+yP+11)/2,zc+9.6);
+    // proteções NR-12: grades laterais e cortina de luz na entrada e saída
+    const gm=new THREE.MeshStandardMaterial({map:gradilTex(),color:'#E8B80E',transparent:true,alphaTest:0.4,side:THREE.DoubleSide});
+    [-8,8].forEach(z=>{const gd=P(new THREE.Mesh(new THREE.BoxGeometry(21.6,7,0.12),gm));gd.position.set(xP,yP+3.6,zc+z)});
+    [xP-11.9,xP+11.9].forEach(x=>[-6.8,6.8].forEach(z=>{const cp=P(bx(0.35,4,0.35,mat(z<0?'#1d2327':'#c3302a',{roughness:0.5})));cp.position.set(x,yP+1.8,zc+z)}));
+    const lbl=canvasTex(120,30,(x,cw,ch)=>{x.fillStyle='#15212C';x.fillRect(0,0,cw,ch);x.fillStyle='#E8B80E';x.font=`700 ${ch*0.6}px "Barlow Condensed",sans-serif`;x.fillText('VINCADEIRA 3D',cw*0.08,ch*0.72)},4);
+    const sg=new THREE.Mesh(new THREE.PlaneGeometry(9,2.3),new THREE.MeshStandardMaterial({map:lbl.t}));sg.position.set(xP,yP+10.2,zc+8.05);g.add(sg);
+    // pórtico de transferência para o trilho
+    const zg=zc+5.15,yPark=yP+13,yHook=yr-2.45+0.3;
+    const gp=gripGantry(g,{xc,floor:yF,topY:yr+3,z0:zc,z1:zg,folded:true});gp.set(zg,yPark,0,false);
+    const stop=P(bx(0.4,1.2,10,mat('#c3302a',{roughness:0.5})));stop.position.set(xEnd-0.3,yP-0.2,zc);
+    // gradil na prensa: plano ao entrar, vincado depois do golpe
+    const pf=new THREE.Mesh(gradilGeo(false),gradilMat());pf.rotation.x=-Math.PI/2;pf.visible=false;pf.castShadow=true;g.add(pf);
+    const pv=new THREE.Mesh(gradilGeo(true),gradilMat());pv.rotation.x=Math.PI/2;   // vincos para baixo, sobre as matrizes
+   pv.visible=false;pv.castShadow=true;g.add(pv);
+    const ease=x=>x<0?0:x>1?1:x*x*(3-2*x),lerp=(a,b,f)=>a+(b-a)*f,ramUp=yP+5,ramDown=yP+1.55;
+    const setRam=y=>{ram.position.y=y;rods.forEach(r=>{const L=yP+11.1-(y+0.55);r.rod.scale.y=Math.max(0.2,L);r.rod.position.set(xP+r.dx,(yP+11.1+y+0.55)/2,zc)})};setRam(ramUp);
+    const queue=[];let cur=null;
+    const S=[[1.2,(f,c)=>{pf.position.x=lerp(c.x,xP,f)}],                                        // entra na prensa
+      [0.6,(f,c)=>{setRam(lerp(ramUp,ramDown,f));if(f>=1){pf.visible=false;pv.visible=true;pv.position.set(xP,yP,zc)}}], // golpe: forma os vincos
+      [0.6,(f,c)=>setRam(lerp(ramDown,ramUp,f))],
+      [1.4,(f,c)=>{pv.position.x=lerp(xP,xc,f)}],                                                // vai até o batente do pórtico
+      [0.9,f=>gp.set(zg,lerp(yPark,yP+0.75,f),0,false)],
+      [0.4,f=>{gp.set(zg,yP+0.75,0,f>0.5);if(f>0.5){pv.visible=false;gp.held.visible=true}}],
+      [1.1,f=>gp.set(zg,lerp(yP+0.75,yHook,f),0,true)],
+      [1.3,f=>gp.set(zg,yHook,-Math.PI/2*f,true)],
+      [0.9,f=>gp.set(lerp(zg,zc,f),yHook,-Math.PI/2,true)],
+      [0.5,f=>{gp.set(zc,yHook-0.3*f,-Math.PI/2,f<0.6);if(f>=0.6&&gp.held.visible){gp.held.visible=false;if(R.gl&&R.gl.spawn)R.gl.spawn(g.position.x+xc)}}],
+      [1.4,f=>gp.set(lerp(zc,zg,f),lerp(yHook,yPark,f),-Math.PI/2*(1-f),false)]];
+    if(!R.gl)R.gl={};
+    R.gl.press={receive:x=>{queue.push({x:x-g.position.x})}};R.gl.weldX1=g.position.x+xEnd;R.gl.folded=true;
+    upd=(dt,sp)=>{if(!cur&&queue.length){cur=queue.shift();cur.i=0;cur.t=0;pf.visible=true;pf.position.set(cur.x,yP,zc)}
+      if(cur&&sp>0.02){cur.t+=dt*Math.max(0.6,sp);const [dur,fn]=S[cur.i];fn(ease(Math.min(1,cur.t/dur)),cur);if(cur.t>=dur){cur.i++;cur.t=0;if(cur.i>=S.length)cur=null}}};
+    ext=xEnd+0.6;top=yr+4;depth=24;
   }else if(type==='transp_aereo'){
     // Estação de acionamento do transportador aéreo (monovia); o trilho e os gradis são montados depois (buildOverhead)
     const zc=-g.position.z,yr=yF+24,xs=cx+1.5;
@@ -4588,6 +4657,25 @@ function gradilTex(){return texOnce('gradil',256,132,(x,w,h)=>{x.clearRect(0,0,w
   for(let i=0;i<=40;i++)x.fillRect(Math.round(i*(w-2)/40),0,2,h);
   for(let j=0;j<=5;j++)x.fillRect(0,Math.round(j*(h-3)/5),w,3);
   [0.32,0.68].forEach(f=>{x.fillRect(0,Math.round(h*f)-3,w,6)})})}
+/* ============ Gradil 3D (painel com vincos em V) ============ */
+// Painel 2,00 × 1,03 m: 40 arames verticais (transversais, já cortados) a cada 50 mm com pontas de 60 mm,
+// 7 arames horizontais (longitudinais, das bobinas) e 3 vincos em V (em cima, no meio e embaixo) com um horizontal no vértice.
+// Coordenadas do painel: x = comprimento, y = altura, z = profundidade do vinco.
+const GR_H=[4.55,3.0,1.5,0,-1.5,-3.0,-4.55],GR_F=[4.55,0,-4.55],GRGEO={};
+function gradilGeo(folded){const k=folded?'v':'p';if(GRGEO[k])return GRGEO[k];
+  const pos=[],idx=[],r=0.045,dv=folded?0.45:0,hv=0.7,Y0=-5.15,Y1=5.15;
+  const seg=(a,b)=>{const d=new THREE.Vector3(b[0]-a[0],b[1]-a[1],b[2]-a[2]).normalize();
+    const u=Math.abs(d.z)>0.9?new THREE.Vector3(1,0,0):new THREE.Vector3(0,0,1);
+    const s=new THREE.Vector3().crossVectors(d,u).normalize().multiplyScalar(r),t=new THREE.Vector3().crossVectors(d,s).normalize().multiplyScalar(r);
+    const base=pos.length/3;[a,b].forEach(p=>[[1,1],[1,-1],[-1,-1],[-1,1]].forEach(([i,j])=>pos.push(p[0]+s.x*i+t.x*j,p[1]+s.y*i+t.y*j,p[2]+s.z*i+t.z*j)));
+    [[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]].forEach(([a1,b1,c1,d1])=>idx.push(base+a1,base+b1,base+c1,base+a1,base+c1,base+d1))};
+  const zAt=y=>{for(const f of GR_F){const e=Math.abs(y-f);if(e<hv)return dv*(1-e/hv)}return 0};
+  const ys=[Y0,Y1];GR_F.forEach(f=>[f-hv,f,f+hv].forEach(y=>{if(y>Y0&&y<Y1)ys.push(y)}));ys.sort((a,b)=>a-b);
+  for(let i=0;i<40;i++){const x=-9.75+i*0.5;for(let j=0;j<ys.length-1;j++)seg([x,ys[j],zAt(ys[j])],[x,ys[j+1],zAt(ys[j+1])])}
+  GR_H.forEach(y=>seg([-10,y,zAt(y)],[10,y,zAt(y)]));
+  const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setIndex(idx);geo.computeVertexNormals();
+  return GRGEO[k]=geo}
+const gradilMat=c=>new THREE.MeshStandardMaterial({color:c||'#c9d0d4',metalness:0.8,roughness:0.35,side:THREE.DoubleSide});
 /* ============ Manipulador tipo pórtico com garra pneumática (entrada e saída da linha de gradil) ============ */
 // Pórtico com ponte que corre em Z, haste vertical (eixo Y) com cilindro, atuador rotativo e barra de garras ao longo de X.
 // set(z,y,theta,closed): z da ponte, altura da barra de garras, giro da barra (0 = gradil deitado; -90° = pendurado) e garras fechadas.
@@ -4616,8 +4704,9 @@ function gripGantry(parent,o){
     const pc=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.9,10),al);pc.rotation.x=Math.PI/2;pc.position.z=0.5;fg.add(pc);
     [-1,1].forEach(sd=>{const j=new THREE.Group();j.position.z=sd*0.25;fg.add(j);const f=B(0.25,1,0.2,dk);f.position.y=-0.5;j.add(f);fingers.push({j,sd})})});
   // gradil preso na garra (deslocado meia largura a partir da borda presa)
-  const held=new THREE.Mesh(new THREE.PlaneGeometry(20,10.3),new THREE.MeshStandardMaterial({map:gradilTex(),color:'#c9d0d4',metalness:0.8,roughness:0.35,transparent:true,alphaTest:0.4,side:THREE.DoubleSide}));
-  held.rotation.x=-Math.PI/2;held.position.set(0,-0.3,-5.15);held.castShadow=true;held.visible=false;pivot.add(held);
+  const held=new THREE.Mesh(gradilGeo(!!o.folded),gradilMat());
+  held.rotation.x=o.folded?Math.PI/2:-Math.PI/2;held.position.set(0,-0.3,-5.15);   // vincado: vincos para baixo quando deitado
+  held.castShadow=true;held.visible=false;pivot.add(held);
   const g={root,pivot,held,set(z,y,theta,closed){bridge.position.z=z;const L=Math.max(0.5,topY-1.6-y);rod.scale.y=L;rod.position.set(xc,topY-1.6-L/2,0);prod.scale.y=Math.max(0.3,L*0.6);prod.position.set(xc+1.2,topY-1.9-L*0.3,0);
     pivot.position.set(xc,y,z);pivot.rotation.x=theta;fingers.forEach(f=>f.j.rotation.x=f.sd*(closed?0.05:0.55))}};
   return g}
@@ -4642,7 +4731,7 @@ function buildOverhead(floorY){
   const fork=[];[-3.2,3.2].forEach(z=>{const f=new THREE.Mesh(new THREE.BoxGeometry(14,0.25,0.9),mat('#3a3f44',{roughness:0.5,metalness:0.4}));f.position.set(-13,0.6,z);f.visible=false;grp.add(f);fork.push(f)});
   // manipulador de pórtico da descarga: pega o gradil pendurado, desloca, gira para a horizontal e assenta na pilha
   const zS=5.15,yHook=yr-2.45+0.3,yParkU=yHook+2.2;
-  const gpU=gripGantry(grp,{xc:xU,floor:floorY,topY:yr+3,z0:0,z1:zS});gpU.set(0,yParkU,-Math.PI/2,false);
+  const gpU=gripGantry(grp,{xc:xU,floor:floorY,topY:yr+3,z0:0,z1:zS,folded:!!G.folded});gpU.set(0,yParkU,-Math.PI/2,false);
   const lbl=canvasTex(140,40,(x,cw,ch)=>{x.fillStyle='#15212C';x.fillRect(0,0,cw,ch);x.fillStyle='#E8B80E';x.font=`700 ${ch*0.5}px "Barlow Condensed",sans-serif`;x.fillText('DESCARGA E EMPILHAMENTO',cw*0.05,ch*0.68)},4);
   const sg=new THREE.Mesh(new THREE.PlaneGeometry(14,4),new THREE.MeshStandardMaterial({map:lbl.t}));sg.position.set(xU,yr+5.4,7.9);grp.add(sg);
   // ---- cores: cru → recebe a cor durante a pintura (fosca) → curada na estufa (brilhante) ----
@@ -4652,13 +4741,13 @@ function buildOverhead(floorY){
     if(b0!=null&&x>b0)f=Math.min(1,(x-b0)/Math.max(1,rX-b0));
     if(o0!=null&&x>o0)gl=Math.min(1,(x-o0)/Math.max(1,o1-o0));
     m.color.copy(cRaw).lerp(cPaint,f);m.metalness=0.8-0.65*f;m.roughness=0.35+0.55*f-0.6*gl};
-  const stackM=new THREE.MeshStandardMaterial({map:gradilTex(),color:cPaint,roughness:0.3,metalness:0.15,transparent:true,alphaTest:0.4,side:THREE.DoubleSide});
-  const MAXS=20,stack=[];for(let i=0;i<MAXS;i++){const s=new THREE.Mesh(new THREE.PlaneGeometry(20,10.3),stackM);s.rotation.x=-Math.PI/2;s.position.set(xU,floorY+1.42+i*0.14,0);s.visible=false;grp.add(s);stack.push(s)}
+  const stackM=gradilMat();stackM.color.copy(cPaint);stackM.roughness=0.3;stackM.metalness=0.15;
+  const MAXS=20,stack=[];for(let i=0;i<MAXS;i++){const s=new THREE.Mesh(gradilGeo(!!G.folded),stackM);s.rotation.x=G.folded?Math.PI/2:-Math.PI/2;s.position.set(xU,floorY+1.6+i*0.22,0);s.visible=false;grp.add(s);stack.push(s)}
   let nStack=6;const showStack=()=>stack.forEach((s,i)=>s.visible=i<nStack);showStack();
   const pool=[];
   const make=()=>{const pg=new THREE.Group();grp.add(pg);
-    const m=new THREE.MeshStandardMaterial({map:tex,color:cRaw.clone(),metalness:0.8,roughness:0.35,transparent:true,alphaTest:0.4,side:THREE.DoubleSide});
-    const pl=new THREE.Mesh(new THREE.PlaneGeometry(20,10.3),m);pl.position.y=-7.6;pl.castShadow=true;pg.add(pl);
+    const m=gradilMat();m.color.copy(cRaw);
+    const pl=new THREE.Mesh(gradilGeo(!!G.folded),m);pl.position.y=-7.6;pl.castShadow=true;pg.add(pl);
     const tr=new THREE.Mesh(new THREE.BoxGeometry(1.2,0.5,0.8),stl);tr.position.y=-0.2;pg.add(tr);
     const hooks=[];[-8,8].forEach(dx=>{const h=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,2.4,6),dark);h.position.set(dx,-1.4,0);pg.add(h);hooks.push(h)});
     const bar=new THREE.Mesh(new THREE.BoxGeometry(17,0.18,0.18),dark);bar.position.set(0,-2.5,0);pg.add(bar);
@@ -4668,7 +4757,7 @@ function buildOverhead(floorY){
   for(let x=x0+40;x<xU-14;x+=30)put(make(),x);
   // descarga em etapas: [duração, função(f)]
   let job=null,palOut=null;const ease=x=>x<0?0:x>1?1:x*x*(3-2*x),lerp=(a,b,f)=>a+(b-a)*f;
-  const topS=()=>floorY+1.42+nStack*0.14+0.35;
+  const topS=()=>floorY+1.6+nStack*0.22+0.35;
   const U=[[0.9,(f,p)=>gpU.set(0,lerp(yParkU,yHook,f),-Math.PI/2,false)],                                   // desce sobre a borda do gradil
     [0.4,(f,p)=>{gpU.set(0,yHook,-Math.PI/2,f>0.5);if(f>0.5&&p.g.visible){gpU.held.material.color.copy(p.m.color);gpU.held.material.roughness=p.m.roughness;gpU.held.material.metalness=p.m.metalness;gpU.held.visible=true;p.g.visible=false}}], // fecha as garras
     [0.6,(f,p)=>gpU.set(0,yHook+0.8*f,-Math.PI/2,true)],                                                     // tira dos ganchos
@@ -4691,7 +4780,7 @@ function buildOverhead(floorY){
 // Arames longitudinais contínuos: do topo de cada carretel, pelo endireitador, até a linha dos eletrodos da solda
 function buildWires(){
   const G=R.gl;if(!G||!G.weldLine||!G.reels||!G.reels.length)return;
-  const W=G.weldLine,yF=W.y,zs=[0,1,2,3,4,5].map(i=>-5.15+i*2.06),reels=[...G.reels].sort((a,b)=>a.z-b.z),segs=[];
+  const W=G.weldLine,yF=W.y,zs=GR_H.map(y=>-y).sort((a,b)=>a-b),reels=[...G.reels].sort((a,b)=>a.z-b.z),segs=[];
   const xIn=G.str?G.str.x0-1.2:W.x-8;
   const mk=(A,B)=>{const d=new THREE.Vector3().subVectors(B,A),Lw=d.length();const tx=texOnce('wiremark',8,32,(x,w,h)=>{x.fillStyle='#c4cbd0';x.fillRect(0,0,w,h);x.fillStyle='#7d868b';x.fillRect(0,0,w,4)},[1,Lw/0.6]);
     const m=new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.055,Lw,6),new THREE.MeshStandardMaterial({map:tx,metalness:0.85,roughness:0.3}));
