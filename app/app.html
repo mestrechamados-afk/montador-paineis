@@ -549,6 +549,41 @@ aside .btn.block,aside .row2 .btn{white-space:normal;line-height:1.2}
   #right{grid-column:2;grid-row:2;border:1px solid var(--line) !important}
 }
 
+
+/* ===== Revisão visual: contraste (WCAG AA), cores IEC 60204-1 e ícones ===== */
+.mlist .mi{display:grid;place-items:center;width:30px;height:30px;border-radius:8px;background:color-mix(in srgb,var(--neutral) 10%,var(--surface));color:var(--neutral)}
+.mlist .mi .ic{width:18px;height:18px;margin:0;color:inherit;stroke-width:1.8}
+/* Verde de partida mais escuro: texto branco passa de 4,0:1 para 4,7:1 */
+.btn.run{background:#1A8447}
+.btn.run:hover{background:#15703C}
+/* Emergência: vermelho sobre amarelo (IEC 60204-1 / NBR 13759), não âmbar */
+.btn[data-act="emerg"]{background:#D7261E;color:#fff;border-color:transparent;box-shadow:0 0 0 3px #FFD400,0 1px 0 rgba(0,0,0,.08);margin:0 3px}
+.btn[data-act="emerg"]:hover{background:#B91F18}
+.btn[data-act="emerg"][aria-pressed="true"]{background:#7E1510;color:#fff;box-shadow:0 0 0 3px #FFD400,inset 0 2px 4px rgba(0,0,0,.35)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn.run,:root:not([data-theme="light"]) .btn.stop{color:#0B1117}
+  :root:not([data-theme="light"]) .btn.run{background:var(--run)}:root:not([data-theme="light"]) .btn.run:hover{background:color-mix(in srgb,var(--run) 88%,#fff)}}
+:root[data-theme="dark"] .btn.run,:root[data-theme="dark"] .btn.stop{color:#0B1117}
+:root[data-theme="dark"] .btn.run{background:var(--run)}:root[data-theme="dark"] .btn.run:hover{background:color-mix(in srgb,var(--run) 88%,#fff)}
+
+/* Orçamento */
+.dlg.dlg-wide{width:min(1080px,96vw)}
+.qwrap{max-height:46vh;overflow:auto;margin:4px 0 6px}
+.qtab{width:100%;border-collapse:collapse;font-size:13px}
+.qtab th{position:sticky;top:0;background:var(--surface2);text-align:left;font-weight:600;color:var(--muted);padding:6px;border-bottom:1px solid var(--line)}
+.qtab td{padding:5px 6px;border-bottom:1px solid color-mix(in srgb,var(--line) 70%,transparent);vertical-align:middle}
+.qtab .n{text-align:right;white-space:nowrap}
+.qtab input{width:110px;height:30px;text-align:right}
+.qsum{display:flex;flex-direction:column;align-items:flex-end;margin-top:12px}
+.qsum dl{display:grid;grid-template-columns:auto auto;gap:4px 18px;margin:0;font-variant-numeric:tabular-nums}
+.qsum dt{color:var(--muted)}.qsum dd{margin:0;text-align:right;font-weight:600}
+.qsum .tt{font:700 20px/1.3 "Barlow Condensed","Arial Narrow",sans-serif;color:var(--ink)}
+.warnc{color:var(--warn)}
+@media (max-width:760px){.qtab th:nth-child(3),.qtab td:nth-child(3){display:none}.qtab input{width:84px}}
+
+/* Modelos de quadro */
+.tplnew{display:flex;gap:8px;margin:6px 0 8px}.tplnew input{flex:1}
+.tplrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
+.tplrow:first-of-type{border-top:0}.tplrow small{display:block;color:var(--muted);font-size:12.5px}.tplrow .a{display:flex;gap:6px;flex:0 0 auto}
 </style>
 </head>
 <body>
@@ -568,6 +603,8 @@ aside .btn.block,aside .row2 .btn{white-space:normal;line-height:1.2}
           <button role="menuitem" data-act="pjexport"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/></svg>Exportar arquivo (.json)</button>
           <button role="menuitem" data-act="pjimport"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Importar arquivo (.json)</button>
           <hr>
+          <button role="menuitem" data-act="tpl"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M17.5 14v7M14 17.5h7"/></svg>Modelos de quadro…</button>
+          <button role="menuitem" data-act="quote"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>Orçamento e proposta…</button>
           <button role="menuitem" data-act="proj"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Dados do projeto…</button>
         </div></div>
       <button class="btn small icbtn" data-act="themecycle" id="btnTheme" title="Alternar tema"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg><span>Tema</span></button>
@@ -576,6 +613,8 @@ aside .btn.block,aside .row2 .btn{white-space:normal;line-height:1.2}
   </header>
   <dialog id="projDlg" class="dlg" aria-labelledby="projTitle"></dialog>
   <dialog id="cfgDlg" class="dlg" aria-labelledby="cfgTitle"></dialog>
+  <dialog id="quoteDlg" class="dlg dlg-wide" aria-labelledby="quoteTitle"></dialog>
+  <dialog id="tplDlg" class="dlg" aria-labelledby="tplTitle"></dialog>
   <nav class="mnav" role="tablist" aria-label="Seções do app">
     <button role="tab" data-act="mtab" data-v="left" aria-selected="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg>Configurar</button>
     <button role="tab" data-act="mtab" data-v="center" aria-selected="true"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 9 5v10l-9 5-9-5V7z"/><path d="m3 7 9 5 9-5"/><path d="M12 12v10"/></svg>Visualizar</button>
@@ -614,6 +653,8 @@ aside .btn.block,aside .row2 .btn{white-space:normal;line-height:1.2}
             <button role="menuitem" data-act="exp3d" data-keep data-label="Modelo 3D navegável (HTML)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 2 9 5v10l-9 5-9-5V7z"/><path d="m3 7 9 5 9-5"/><path d="M12 12v10"/></svg>Modelo 3D navegável (HTML)</button>
             <button role="menuitem" data-act="bomxlsx" data-keep data-label="Lista de materiais (Excel)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/></svg>Lista de materiais (Excel)</button>
             <button role="menuitem" data-act="bompdf" data-keep data-label="Lista de materiais (PDF)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Lista de materiais (PDF)</button>
+            <button role="menuitem" data-act="wiresxlsx" data-keep data-label="Lista de fios (Excel)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 7h6l2 2h10M3 12h18M3 17h8l2-2h8"/></svg>Lista de fios (Excel)</button>
+            <button role="menuitem" data-act="dxf" data-keep data-label="Furação da placa e da porta (DXF)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8" cy="8" r="1.5"/><circle cx="16" cy="8" r="1.5"/><circle cx="8" cy="16" r="1.5"/><path d="M13 13h5v5h-5z"/></svg>Furação da placa e da porta (DXF)</button>
             <button role="menuitem" id="mDiagPdf" data-act="fpdf" data-keep data-label="Diagrama completo (PDF A3)"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>Diagrama completo (PDF A3)</button>
           </div></div>
         </div>
@@ -677,9 +718,9 @@ const WEG_CONT=[9,12,18,25,32,40,50,65,80,95,105,150,180];
 const up=(list,v)=>list.find(x=>x>=v-1e-9)??list[list.length-1];
 const frame=(v,f)=>f.find(x=>x>=v)??f[f.length-1];
 const FAM={
-  brk:{weg:c=>c.val<=63?{m:`MDW-C${c.val}-${c.poles||3}`}:{m:`DWB${frame(c.val,[160,250,400])} ${c.val} A`},
-       schneider:c=>c.val<=63?{m:`Acti9 iC60N ${c.poles||3}P C${c.val}`}:{m:`ComPacT NSX${frame(c.val,[100,160,250,400])}F ${c.val} A`},
-       siemens:c=>c.val<=63?{m:`5SL6${c.poles||3}${pad(c.val)}-7`}:{m:`3VA1 ${c.val} A`}},
+  brk:{weg:c=>mccbOf(c,'weg')?{m:`DWB${frame(Math.max(16,c.val),[160,250,400])} ${Math.max(16,c.val)} A`}:{m:`MDW-C${c.val}-${c.poles||3}`},
+       schneider:c=>mccbOf(c,'schneider')?{m:`ComPacT NSX${frame(Math.max(16,c.val),[100,160,250,400])}${nsxLetter()} ${Math.max(16,c.val)} A`}:{m:`Acti9 iC60N ${c.poles||3}P C${c.val}`},
+       siemens:c=>mccbOf(c,'siemens')?{m:`3VA1 ${Math.max(16,c.val)} A`}:{m:`5SL6${c.poles||3}${pad(c.val)}-7`}},
   mpcb:{weg:c=>{const w=up(WEG_MPW,c.val);return{m:`${w<=18?'MPW18':w<=40?'MPW40':w<=65?'MPW65':w<=80?'MPW80':'MPW100'}-3-${wegSuf(w)}`}},
        schneider:c=>({m:`TeSys ${GV[c.sel]}`}),
        siemens:c=>({m:`SIRIUS ${c.val<=16?'3RV2011':c.val<=40?'3RV2021':c.val<=80?'3RV2031':'3RV2041'}`,x:`faixa ${c.label}`})},
@@ -710,6 +751,17 @@ const FAM={
   tx:{novus:()=>({m:'TxRail',x:`${state.inst.sensor} → 4–20 mA`})},
   term:{phoenix:()=>({m:'UT 4 + UT 4-PE'}),weidmuller:()=>({m:'WDU 4 + WPE 4'})}
 };
+// Capacidade de interrupção de referência (kA, IEC 60947-2, 380/400 V). Confirme no catálogo do código exato.
+const ICU_MINI={weg:5,schneider:10,siemens:6}; // MDW, iC60N, 5SL6
+const ICC_OPTS=[3,4.5,6,10,15,20,25,36,50,70];
+const NSX={F:36,N:50,H:70,L:150};
+function nsxLetter(){const i=+state.icc||0;return i<=36?'F':i<=50?'N':i<=70?'H':'L'}
+// Disjuntor em caixa moldada: acima de 63 A ou, no -Q0, quando a Icc presumida passa da Icu do minidisjuntor
+function mccbOf(c,b){c.mccb=c.val>63||(c.key==='Q0'&&(+state.icc||0)>(ICU_MINI[b]||6));return c.mccb}
+function icuOf(c){
+  if(c.kind==='mpcb')return c.val<=10?100:c.val<=16?50:c.val<=32?15:25;
+  if(c.kind==='brk'){if(!c.mccb)return ICU_MINI[c.brand]||6;if(c.brand==='schneider')return NSX[nsxLetter()];return Math.max(25,Math.min(50,+state.icc||0))}
+  return null}
 const PREF={cliente:['weg','unitronics','autonics','novus'],weg:['weg'],schneider:['schneider'],siemens:['siemens']};
 const uniMods=c=>({di:Math.max(1,Math.ceil(c.DI/16)),do:Math.max(1,Math.ceil(c.DO/16)),an:Math.ceil(((c.AO||0)+(c.AI||0))/4)});
 const FAM_DEF={psu:'meanwell',plc:'siemens',safe:'pilz',rlyb:'phoenix',term:'phoenix'};
@@ -721,6 +773,9 @@ function applyBrand(c){
   c.brand=c.brandOpts.includes(pref)?pref:pl||(FAM_DEF[c.kind]||c.brandOpts[0]);
   const r=f[c.brand](c);c.model=r.m;c.mx=r.x||'';
 }
+// Ícones de linha das máquinas e componentes (mesmo estilo dos demais ícones do app)
+const MI={"bomba": "<circle cx=\"10\" cy=\"13\" r=\"6\"/><circle cx=\"10\" cy=\"13\" r=\"2\"/><path d=\"M10 7V3h8v4M16 13h5\"/>", "tanque_v": "<path d=\"M6 5c0-1.1 2.7-2 6-2s6 .9 6 2v14c0 1.1-2.7 2-6 2s-6-.9-6-2z\"/><path d=\"M6 12c0 1.1 2.7 2 6 2s6-.9 6-2\"/>", "tanque_comb": "<rect x=\"2\" y=\"6\" width=\"15\" height=\"8\" rx=\"4\"/><path d=\"M5 14v5M14 14v5\"/><path d=\"M20 9c1 1.5 1.5 2.4 1.5 3a1.5 1.5 0 0 1-3 0c0-.6.5-1.5 1.5-3z\"/>", "ibc": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"14\" rx=\"1\"/><path d=\"M4 9h16M4 14h16M9 4v14M15 4v14M6 18v2M18 18v2\"/>", "compressor": "<rect x=\"3\" y=\"12\" width=\"18\" height=\"7\" rx=\"3.5\"/><circle cx=\"8\" cy=\"7\" r=\"3\"/><path d=\"M8 10v2M15 12V7h4\"/>", "esteira": "<rect x=\"2\" y=\"13\" width=\"20\" height=\"5\" rx=\"2.5\"/><circle cx=\"5\" cy=\"15.5\" r=\".8\"/><circle cx=\"19\" cy=\"15.5\" r=\".8\"/><rect x=\"8\" y=\"6\" width=\"7\" height=\"7\" rx=\"1\"/>", "ventilador": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 12c0-4 1-6 3-6s1 4-3 6zM12 12c4 0 6 1 6 3s-4 1-6-3zM12 12c0 4-1 6-3 6s-1-4 3-6zM12 12c-4 0-6-1-6-3s4-1 6 3z\"/>", "misturador": "<path d=\"M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8\"/><path d=\"M12 5v11M8.5 16h7\"/><rect x=\"9\" y=\"2\" width=\"6\" height=\"3\" rx=\"1\"/>", "rosca": "<path d=\"M3 17 19 7M5 20 21 10M7 15l2 3.2M10 13.2l2 3.2M13 11.4l2 3.2M16 9.6l2 3.2\"/>", "eixo": "<rect x=\"2\" y=\"15\" width=\"20\" height=\"4\" rx=\"1\"/><rect x=\"9\" y=\"8\" width=\"6\" height=\"7\" rx=\"1\"/><path d=\"M3 11h3M18 11h3M4.5 9.5 3 11l1.5 1.5M19.5 9.5 21 11l-1.5 1.5\"/>", "redutor": "<circle cx=\"12\" cy=\"12\" r=\"3\"/><circle cx=\"12\" cy=\"12\" r=\"7\"/><path d=\"M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1\"/>", "rele": "<rect x=\"5\" y=\"3\" width=\"14\" height=\"18\" rx=\"2\"/><rect x=\"8.5\" y=\"7\" width=\"7\" height=\"5\"/><path d=\"M9 16h6\"/>", "fusivel": "<rect x=\"4\" y=\"8.5\" width=\"16\" height=\"7\" rx=\"1\"/><path d=\"M2 12h20\"/>", "disjuntor": "<rect x=\"6\" y=\"3\" width=\"12\" height=\"18\" rx=\"2\"/><rect x=\"10\" y=\"7\" width=\"4\" height=\"7\" rx=\"1\"/><path d=\"M10 17h4\"/>", "fonte": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M8 10h8M8 14h2M11 14h2M14 14h2\"/>", "controlador": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\"/><rect x=\"7\" y=\"7\" width=\"10\" height=\"5\"/><path d=\"M8 16h2M14 16h2\"/>", "temporizador": "<circle cx=\"12\" cy=\"13\" r=\"8\"/><path d=\"M12 9v4l3 2M10 2h4\"/>", "contator": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\"/><path d=\"M8 8v3M12 8v3M16 8v3M8 15h8\"/>", "clp": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M7 9h1M10 9h1M13 9h1M16 9h1M7 15h10\"/>", "transmissor": "<path d=\"M2 12c2.5-5 4.5-5 7 0s4.5 5 7 0 4-4.5 6-1\"/>", "sinaleiro": "<circle cx=\"12\" cy=\"10\" r=\"6\"/><path d=\"M9 19h6M10 22h4M12 2v2\"/>", "botao": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/>", "sensor": "<rect x=\"2\" y=\"9\" width=\"12\" height=\"6\" rx=\"1\"/><path d=\"M14 12h2M18 8.5a5 5 0 0 1 0 7M20.5 6a8.5 8.5 0 0 1 0 12\"/>", "borne": "<rect x=\"4\" y=\"4\" width=\"4\" height=\"16\"/><rect x=\"10\" y=\"4\" width=\"4\" height=\"16\"/><rect x=\"16\" y=\"4\" width=\"4\" height=\"16\"/><path d=\"M5.5 8h1M11.5 8h1M17.5 8h1\"/>", "outro": "<path d=\"M12 5v14M5 12h14\"/>"};
+const miIcon=k=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${MI[k]||MI.outro}</svg>`;
 const MDEF={
   bomba:{name:'Bomba centrífuga',kw:5.5,start:'direta',ic:'💧'},
   tanque_v:{name:'Bomba de recalque do tanque',kw:7.5,start:'direta',ic:'🛢'},
@@ -771,7 +826,7 @@ function motorI(kw,V){const cos=kw<1.5?0.78:kw<7.5?0.84:0.87, eta=kw<1.5?0.78:kw
 function cableFor(I,min=1.5,tri=true){const T=tri?CABLE3:CABLE,c=T.find(c=>c[1]>=I&&c[0]>=min);return c?c[0]:T[T.length-1][0]}
 
 /* ============ Estado ============ */
-function defaultState(){return{v:2,brand:'cliente',bov:{},inst:{tloops:0,sensor:'PT100',mode:'porta'},encl:'1000x800x300',V:380,Hz:60,ctrl:'24Vcc',amb:35,dps:true,plc:true,hmi:false,nr12:{on:true,cat:'3',loto:true,tower:true},
+function defaultState(){return{v:2,icc:4.5,brand:'cliente',bov:{},inst:{tloops:0,sensor:'PT100',mode:'porta'},encl:'1000x800x300',V:380,Hz:60,ctrl:'24Vcc',amb:35,dps:true,plc:true,hmi:false,nr12:{on:true,cat:'3',loto:true,tower:true},
   loads:[{id:uid(),name:'Esteira transportadora',kw:5.5,start:'direta',tp:0},
          {id:uid(),name:'Bomba de recalque',kw:11,start:'estrela',tp:4},
          {id:uid(),name:'Exaustor',kw:3,start:'inversor',tp:5}],ov:{}}}
@@ -791,6 +846,7 @@ function norm(){
   altNorm();
   if(!state.nr12)state.nr12={on:true,cat:'3',loto:true,tower:true};
   if(!state.brand)state.brand='cliente';if(!state.bov)state.bov={};
+  if(!(+state.icc>0))state.icc=4.5;
   if(state.v!==2){state.v=2;state.brand='cliente';state.bov={}}
   if(!state.inst)state.inst={tloops:0,sensor:'PT100',mode:'porta'};
   state.loads.forEach(l=>{if(l.prox===undefined)l.prox=0});
@@ -806,7 +862,7 @@ let model=null;
 function dims(c){
   const v=c.val;
   switch(c.kind){
-    case 'brk': return v<=63?{w:18*(c.poles||3),h:90,d:75}:v<=250?{w:105,h:160,d:100}:{w:140,h:255,d:110};
+    case 'brk': return !c.mccb?{w:18*(c.poles||3),h:90,d:75}:v<=250?{w:105,h:160,d:100}:{w:140,h:255,d:110};
     case 'mpcb': return v<=32?{w:45,h:100,d:90}:v<=65?{w:55,h:140,d:120}:{w:70,h:165,d:130};
     case 'cont': return v<=18?{w:45,h:85,d:95}:v<=38?{w:55,h:90,d:105}:v<=65?{w:70,h:120,d:125}:v<=95?{w:85,h:130,d:130}:{w:120,h:165,d:150};
     case 'olr': return v<=38?{w:45,h:80,d:90}:v<=65?{w:55,h:100,d:110}:{w:70,h:120,d:120};
@@ -1048,8 +1104,17 @@ function build(){
   loads.forEach(l=>{l.cable=cableFor(l.start==='estrela'?l.In*0.58:l.In,2.5);l.cables=l.start==='estrela'?6:3;
     l.Istart=l.In*({direta:6.2,estrela:2.1,soft:3.2,inversor:1.1,servo:1}[l.start]);});
 
+  // Curto-circuito: capacidade de interrupção de cada dispositivo de proteção
+  const icc=+state.icc||0;
+  comps.forEach(c=>{const u=icuOf(c);if(u==null)return;c.icu=u;c.mx=[c.mx,`Icu ${fmt(u,1)} kA`].filter(Boolean).join(' · ')});
   // Alertas
   const alerts=[];
+  {const q0=comps.find(c=>c.key==='Q0');
+   if(q0&&q0.icu<icc)alerts.push({lv:'e',key:'Q0',t:`-Q0: capacidade de interrupção de ${fmt(q0.icu,1)} kA é menor que o curto-circuito presumido de ${fmt(icc,1)} kA. Escolha um disjuntor de caixa moldada com Icu ≥ ${fmt(icc,1)} kA.`});
+   else if(q0&&q0.mccb&&q0.val<=63)alerts.push({lv:'i',key:'Q0',t:`-Q0 em caixa moldada porque o curto-circuito de ${fmt(icc,1)} kA passa da capacidade do minidisjuntor (${fmt(ICU_MINI[q0.brand]||6,1)} kA).`});
+   const low=comps.filter(c=>c.key!=='Q0'&&c.icu!=null&&c.icu<icc);
+   if(low.length){const backup=q0&&q0.icu>=icc;
+     alerts.push({lv:backup?'w':'e',t:`${low.map(c=>c.tag).join(', ')}: Icu de referência abaixo de ${fmt(icc,1)} kA. ${backup?'A proteção de retaguarda (back-up) pelo -Q0 só vale com a tabela de coordenação do fabricante; confirme ou use dispositivos de maior capacidade.':'Use dispositivos de maior capacidade de interrupção.'}`})}}
   comps.forEach(c=>{
     if(c.status==='under') alerts.push({lv:'e',key:c.key,t:`${c.tag}: ${c.desc.toLowerCase()} de ${c.label} está abaixo do necessário (${fmtA(c.req)}).`});
     if(c.status==='over') alerts.push({lv:'w',key:c.key,t:`${c.tag}: a faixa ${c.label} começa acima da corrente de ${fmtA(c.req)} e não protegerá o motor contra sobrecarga.`});
@@ -1083,7 +1148,7 @@ function build(){
     if(loads.some(l=>l.curtain))alerts.push({lv:'i',t:'Cortinas de luz: calcule a distância de segurança até a zona de perigo com o tempo de parada da máquina (ABNT NBR ISO 13855).'});
   }else alerts.push({lv:'w',t:'Adequação à NR-12 desativada: o quadro não tem redundância, intertravamento nem rearme de segurança.'});
   if(!alerts.some(a=>a.lv==='e'||a.lv==='w')) alerts.unshift({lv:'ok',t:'Dimensionamento consistente: nenhuma incompatibilidade encontrada.'});
-  return {E,V,loads,comps,acc,Itot,lay,P,Pnat,A,Tint,flow,fan,mainCable,q0,plcInfo,alerts,nr};
+  return {E,V,loads,comps,acc,Itot,lay,P,Pnat,A,Tint,flow,fan,mainCable,q0,plcInfo,alerts,nr,icc};
 }
 
 function layout(comps,E){
@@ -1301,6 +1366,9 @@ function renderLeft(){
     <label class="f"><span>Tensão de comando</span><select data-cfg="ctrl">${opt(['24Vcc','220Vca'],state.ctrl,v=>v==='24Vcc'?'24 Vcc':'220 Vca')}</select></label>
     <label class="f"><span>Temp. ambiente</span><select data-cfg="amb">${opt([25,30,35,40,45],state.amb,v=>v+' °C')}</select></label>
   </div>
+  <div class="row2">
+    <label class="f" title="Corrente de curto-circuito presumida no ponto de alimentação do quadro (informada pela concessionária ou calculada a partir do transformador e do cabo)"><span>Curto-circuito no ponto (Icc)</span><select data-cfg="icc">${opt(ICC_OPTS,+state.icc,v=>fmt(v,1)+' kA')}</select></label>
+  </div>
   <div class="checks">
     <label><input type="checkbox" data-cfg="plc" ${state.plc?'checked':''}> CLP</label>
     <label><input type="checkbox" data-cfg="hmi" ${state.hmi?'checked':''}> IHM na porta</label>
@@ -1349,7 +1417,7 @@ function renderLeft(){
     </div>`:''}
   </div>`).join('')}
   <div class="menu addmenu"><button class="btn primary block mbtn" data-menu aria-haspopup="menu" aria-expanded="false">+ Adicionar máquina ▾</button>
-    <div class="mlist" role="menu" hidden>${Object.keys(MDEF).map(k=>`<button role="menuitem" data-act="addm" data-v="${k}"><span class="mi">${MDEF[k].ic}</span><span><b>${esc(MTYPES[k])}</b><small>${esc(MDEF[k].name)} · ${fmt(MDEF[k].kw,2)} kW · ${esc(START[MDEF[k].start]||'')}</small></span></button>`).join('')}</div></div>
+    <div class="mlist" role="menu" hidden>${Object.keys(MDEF).map(k=>`<button role="menuitem" data-act="addm" data-v="${k}"><span class="mi">${miIcon(k)}</span><span><b>${esc(MTYPES[k])}</b><small>${esc(MDEF[k].name)} · ${fmt(MDEF[k].kw,2)} kW · ${esc(START[MDEF[k].start]||'')}</small></span></button>`).join('')}</div></div>
   <h2>Componentes adicionais</h2>
   <p class="cap" style="margin:0 0 8px">Relés, fusíveis, controladores, temporizadores e outros itens que não dependem das máquinas. Os itens da placa entram no 3D e na lista de materiais; os de porta e de campo, só na lista.</p>
   ${state.extras.map(x=>`<div class="load xrow" data-xid="${x.id}"><header><input type="text" class="xtag" value="${esc(x.tag||'')}" data-xf="tag" aria-label="Tag" placeholder="Tag"><select data-xf="tipo" aria-label="Tipo">${opt(Object.keys(XTYPE),x.tipo||'outro',k=>XTYPE[k])}</select><button class="x" data-act="xrm" data-id="${x.id}" aria-label="Remover componente">×</button></header>
@@ -1357,7 +1425,7 @@ function renderLeft(){
     <div class="row2"><label class="f"><span>Especificação</span><input type="text" value="${esc(x.spec||'')}" data-xf="spec" placeholder="ex.: 24 Vcc, 5 A"></label>
     <label class="f"><span>Qtd. · local</span><span style="display:flex;gap:6px"><input type="number" min="1" step="1" value="${x.qty||1}" data-xf="qty" style="width:64px"><select data-xf="local">${opt(['placa','porta','campo'],x.local||'placa',v=>({placa:'Placa',porta:'Porta',campo:'Campo'})[v])}</select></span></label></div></div>`).join('')}
   <div class="row2"><div class="menu addmenu"><button class="btn block mbtn" data-menu aria-haspopup="menu" aria-expanded="false">+ Adicionar componente ▾</button>
-    <div class="mlist" role="menu" hidden>${Object.keys(XDEF).map(k=>`<button role="menuitem" data-act="xadd" data-v="${k}"><span class="mi">${XDEF[k].ic}</span><span><b>${esc(XTYPE[k])}</b><small>${esc(XDEF[k].desc)}${XDEF[k].spec?' · '+esc(XDEF[k].spec):''} · ${({placa:'placa',porta:'porta',campo:'campo'})[XDEF[k].local]}</small></span></button>`).join('')}</div></div><label class="f" style="margin:0"><span>Bornes extras</span><input type="number" min="0" step="1" value="${state.extraTerms||0}" data-xterms aria-label="Bornes extras"></label></div>
+    <div class="mlist" role="menu" hidden>${Object.keys(XDEF).map(k=>`<button role="menuitem" data-act="xadd" data-v="${k}"><span class="mi">${miIcon(k)}</span><span><b>${esc(XTYPE[k])}</b><small>${esc(XDEF[k].desc)}${XDEF[k].spec?' · '+esc(XDEF[k].spec):''} · ${({placa:'placa',porta:'porta',campo:'campo'})[XDEF[k].local]}</small></span></button>`).join('')}</div></div><label class="f" style="margin:0"><span>Bornes extras</span><input type="number" min="0" step="1" value="${state.extraTerms||0}" data-xterms aria-label="Bornes extras"></label></div>
   <h3>Carregar exemplo</h3>
   <div class="presets">
     <button class="btn small" data-act="preset" data-v="simples">Esteira simples</button>
@@ -1380,7 +1448,8 @@ function renderRight(){
   <dl class="sum">
     <dt>Rede</dt><dd>${m.V} V · 3F + N + PE · ${state.Hz} Hz</dd>
     <dt>Corrente nominal total</dt><dd>${fmtA(m.Itot)}</dd>
-    <dt>Disjuntor geral</dt><dd>${m.q0.label}</dd>
+    <dt>Disjuntor geral</dt><dd>${m.q0.label}${m.q0.mccb?' · caixa moldada':''}</dd>
+    <dt>Curto-circuito (Icc / Icu do -Q0)</dt><dd${m.q0.icu<m.icc?' style="color:var(--stop)"':''}>${fmt(m.icc,1)} kA / ${fmt(m.q0.icu,1)} kA</dd>
     <dt>Cabo de alimentação</dt><dd>${fmt(m.mainCable)} mm² Cu</dd>
     <dt>Potência instalada</dt><dd>${fmt(m.loads.reduce((a,l)=>a+l.kw,0),2)} kW</dd>
     ${m.plcInfo?`<dt>E/S do CLP</dt><dd>${m.plcInfo.DI} ED · ${m.plcInfo.DO} SD${m.plcInfo.AO?` · ${m.plcInfo.AO} SA`:''}</dd>`:''}
@@ -1406,7 +1475,7 @@ function renderRight(){
   ${m.acc.some(a=>a.sec==='mont')?`<h3>Montagem e identificação</h3>`+m.acc.filter(a=>a.sec==='mont').map(a=>`<div class="item" style="cursor:default"><span class="tg">${esc(a.tag||'—')}</span><span class="ds">${esc(a.desc)}</span><span class="mt"><span class="qty">Qtd: ${a.qty}</span></span></div>`).join(''):''}
   ${m.acc.some(a=>a.sec==='campo')?`<h3>Dispositivos de campo</h3>`+m.acc.filter(a=>a.sec==='campo').map(a=>`<div class="item" style="cursor:default"><span class="tg">${esc(a.tag||'—')}</span><span class="ds">${esc(a.desc)}</span><span class="mt"><span class="qty">Qtd: ${a.qty}</span></span></div>`).join(''):''}
   </div>
-  <div class="foot"><button class="btn primary" data-act="bomxlsx">Gerar Excel (.xlsx)</button><button class="btn primary" data-act="bompdf">Gerar PDF</button><button class="btn" data-act="copy">Copiar lista</button><button class="btn" data-act="resetov">Voltar tudo ao recomendado</button></div>`;
+  <div class="foot"><button class="btn primary" data-act="bomxlsx">Gerar Excel (.xlsx)</button><button class="btn primary" data-act="bompdf">Gerar PDF</button><button class="btn primary" data-act="quote">Orçamento</button><button class="btn" data-act="copy">Copiar lista</button><button class="btn" data-act="resetov">Voltar tudo ao recomendado</button></div>`;
 }
 function itemHTML(c){
   let sel='';
@@ -2212,6 +2281,261 @@ async function exportBomXlsx(btn){
   }catch(e){console.error(e);btn.textContent='Falha ao gerar Excel'}
   btn.disabled=false;setTimeout(()=>{if(btn.textContent!==lab)btn.textContent=lab},2600);
 }
+/* ============ Modelos de quadro da empresa ============ */
+// Guardados em localStorage['qc-templates'] (sincroniza na nuvem como "templates"). Não levam dados de cliente nem o vínculo com a nuvem.
+const getTpls=()=>{const v=lsJ('qc-templates',[]);return Array.isArray(v)?v:[]};
+const setTpls=v=>{try{localStorage.setItem('qc-templates',JSON.stringify(v))}catch(e){toast('Não foi possível salvar o modelo: armazenamento cheio.')}};
+function tplData(){const d=snapshot();delete d.proj;delete d.cloudId;delete d._cloudAt;delete d.pid;delete d.quote;delete d.dedit;return d}
+function tplDesc(d){const k=d.kind||'comando';if(k==='comando')return `${(d.loads||[]).length} máquina(s) · ${d.encl||''} · ${d.V||''} V${d.nr12&&d.nr12.on?' · NR-12':''}`;return k==='forca'?'Quadro de força':'Cabine primária'}
+function openTpl(msg){const d=$('#tplDlg'),L=getTpls();
+  d.innerHTML=`<div class="dh"><h2 id="tplTitle">Modelos de quadro</h2><button class="x" data-act="tplclose" aria-label="Fechar">×</button></div>
+  <div class="db"><p class="cap">Guarde quadros que você repete (por exemplo, "Bomba 7,5 kW estrela-triângulo") e comece projetos novos a partir deles. O modelo leva a configuração técnica; os dados do cliente e do projeto ficam de fora.${document.querySelector('meta[name="app-cloud"]')?' Os modelos são compartilhados com a sua empresa na nuvem.':''}</p>
+  ${msg?`<p class="cap" role="status" style="color:var(--run)">${esc(msg)}</p>`:''}
+  <fieldset><legend>Salvar o quadro atual como modelo</legend><div class="tplnew"><input type="text" id="tplName" placeholder="Nome do modelo" maxlength="80" aria-label="Nome do modelo"><button class="btn primary" data-act="tplsave">Salvar modelo</button></div></fieldset>
+  <fieldset><legend>Modelos salvos (${L.length})</legend>${L.length?L.map(t=>`<div class="tplrow"><div><b>${esc(t.name)}</b><small>${esc(tplDesc(t.data||{}))} · ${esc(new Date(t.at).toLocaleDateString('pt-BR'))}</small></div>
+    <div class="a"><button class="btn small primary" data-act="tpluse" data-v="${esc(t.id)}">Usar</button><button class="btn small" data-act="tpldel" data-v="${esc(t.id)}" aria-label="Excluir ${esc(t.name)}">Excluir</button></div></div>`).join(''):'<p class="cap">Nenhum modelo salvo ainda.</p>'}</fieldset></div>
+  <div class="df"><button class="btn" data-act="tplclose">Fechar</button></div>`;
+  if(!d.open){if(d.showModal)d.showModal();else d.setAttribute('open','')}}
+function tplAct(a,v){
+  if(a==='tplsave'){const nm=($('#tplName').value||'').trim();if(!nm){$('#tplName').focus();return}
+    const L=getTpls().filter(t=>t.name.toLowerCase()!==nm.toLowerCase());L.unshift({id:'t'+Date.now().toString(36),name:nm,at:Date.now(),data:tplData()});setTpls(L);openTpl(`Modelo "${nm}" salvo.`)}
+  else if(a==='tpldel'){setTpls(getTpls().filter(t=>t.id!==v));openTpl()}
+  else if(a==='tpluse'){const t=getTpls().find(t=>t.id===v);if(!t)return;
+    state=JSON.parse(JSON.stringify(t.data));norm();sim.L={};sim.log=[];sim.q0=false;sim.q0trip=false;sim.emerg=false;sim.safeLatch=false;sim.loto=false;sim.hist=[];if(R)R.viewSet=false;
+    refresh(true);log(`Novo projeto a partir do modelo "${t.name}"`);const d=$('#tplDlg');if(d.close)d.close();toast(`Projeto criado a partir do modelo "${t.name}". Preencha os dados do projeto.`)}
+  else if(a==='tplclose'){const d=$('#tplDlg');if(d.close)d.close();else d.removeAttribute('open')}}
+
+/* ============ Furação da placa e da porta (DXF) ============ */
+// DXF R12 em milímetros: placa à esquerda, porta (vista frontal) à direita. Camadas separadas para corte, furação e referência.
+function dxfDoc(){const ent=[];const n=v=>(Math.round(v*100)/100).toString();
+  const o={line(x1,y1,x2,y2,l){ent.push(`0\nLINE\n8\n${l}\n10\n${n(x1)}\n20\n${n(y1)}\n30\n0\n11\n${n(x2)}\n21\n${n(y2)}\n31\n0`)},
+    rect(x,y,w,h,l){o.line(x,y,x+w,y,l);o.line(x+w,y,x+w,y+h,l);o.line(x+w,y+h,x,y+h,l);o.line(x,y+h,x,y,l)},
+    circle(x,y,r,l){ent.push(`0\nCIRCLE\n8\n${l}\n10\n${n(x)}\n20\n${n(y)}\n30\n0\n40\n${n(r)}`)},
+    text(x,y,h,t,l){ent.push(`0\nTEXT\n8\n${l}\n10\n${n(x)}\n20\n${n(y)}\n30\n0\n40\n${n(h)}\n1\n${String(t).normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^\x20-\x7E]/g,'')}`)},
+    out(layers){const lt=layers.map(([nm,c])=>`0\nLAYER\n2\n${nm}\n70\n0\n62\n${c}\n6\nCONTINUOUS`).join('\n');
+      return `0\nSECTION\n2\nHEADER\n9\n$ACADVER\n1\nAC1009\n9\n$INSUNITS\n70\n4\n0\nENDSEC\n0\nSECTION\n2\nTABLES\n0\nTABLE\n2\nLAYER\n70\n${layers.length}\n${lt}\n0\nENDTAB\n0\nENDSEC\n0\nSECTION\n2\nENTITIES\n${ent.join('\n')}\n0\nENDSEC\n0\nEOF\n`}};
+  return o}
+function buildDxf(){
+  const m=model,E=m.E,L=m.lay,d=dxfDoc(),Bw=L.Bw,Bh=L.Bh,VD=L.VD,HD=L.HD,Y=y=>Bh-y;
+  // Placa de montagem
+  d.rect(0,0,Bw,Bh,'PLACA');d.text(0,Bh+30,18,`PLACA DE MONTAGEM ${Bw} x ${Bh} mm - ${curName()}`,'TEXTO');
+  d.rect(0,0,VD,Bh,'CANALETA');d.rect(Bw-VD,0,VD,Bh,'CANALETA');
+  const hdx=[VD,Bw-VD];const holes=(x1,x2,y,step,r,l)=>{const len=x2-x1;const k=Math.max(1,Math.round(len/step));for(let i=0;i<=k;i++)d.circle(x1+len*i/k,y,r,l)};
+  for(const x of [VD/2,Bw-VD/2]){const k=Math.max(1,Math.round((Bh-60)/300));for(let i=0;i<=k;i++)d.circle(x,30+(Bh-60)*i/k,2.5,'FURACAO')}
+  let prev=0;L.rows.forEach((r,i)=>{
+    const dy=r.y-HD+5;d.rect(hdx[0],Y(dy+50),hdx[1]-hdx[0],50,'CANALETA');holes(hdx[0]+30,hdx[1]-30,Y(dy+25),300,2.5,'FURACAO');
+    const rc=r.y+r.h/2,x0=VD+10,x1=VD+10+L.L;d.rect(x0,Y(rc+17.5),L.L,35,'TRILHO');holes(x0+25,x1-25,Y(rc),200,2.75,'FURACAO');
+    r.items.forEach(it=>{const cx=VD+10+it.x,h=Math.min(it.h,r.h-10);d.rect(cx,Y(rc+h/2),it.w,h,'COMPONENTES');
+      if(it.part===undefined||it.part===0)d.text(cx+2,Y(rc-h/2)+4,Math.min(9,Math.max(5,it.w/6)),it.c.tag,'TEXTO')});
+    prev=r.y+r.h});
+  {const dy=prev+5;if(dy+50<Bh)d.rect(hdx[0],Y(dy+50),hdx[1]-hdx[0],50,'CANALETA')}
+  d.text(0,-28,10,'Furos: M5 (5,5 mm) trilho a cada 200 mm; canaleta 5 mm a cada 300 mm. Conferir com o gabarito dos componentes.','TEXTO');
+  // Porta (vista frontal), deslocada para a direita
+  const ox=Bw+250,dev=(R&&R.ddev)||[];
+  d.rect(ox,0,E.W,E.H,'PORTA');d.text(ox,E.H+30,18,`PORTA ${E.W} x ${E.H} mm (vista frontal)`,'TEXTO');
+  const cnt={};dev.forEach(v=>{const x=ox+v.x/S,y=E.H/2+v.y/S;cnt[v.k+(v.sub||'')]=(cnt[v.k+(v.sub||'')]||0)+1;
+    if(v.k==='btn'||v.k==='lamp'||v.k==='estop'){d.circle(x,y,11.15,'RECORTES');d.line(x-14,y,x+14,y,'CENTRO');d.line(x,y-14,x,y+14,'CENTRO')}
+    else if(v.k==='handle'){d.circle(x,y,12.5,'RECORTES');d.text(x-30,y-26,6,'Manopla -Q0: conforme gabarito','TEXTO')}
+    else if(v.sub==='meter')d.rect(x-46,y-46,92,92,'RECORTES');
+    else if(v.sub==='tic')d.rect(x-22.5,y-22.5,45,45,'RECORTES');
+    else if(v.sub==='hmi'){d.rect(x-77,y-52,154,104,'RECORTES');d.text(x-77,y-62,6,'IHM: confirmar recorte no manual','TEXTO')}});
+  const nb=(cnt.btn||0)+(cnt.lamp||0)+(cnt.estop||0);
+  d.text(ox,-28,10,`Furos 22,3 mm: ${nb}${cnt.boxmeter?' | multimedidor 92x92':''}${cnt.boxtic?` | controlador 45x45: ${cnt.boxtic}`:''}${cnt.boxhmi?' | IHM':''}`,'TEXTO');
+  return {txt:d.out([['PLACA',7],['CANALETA',8],['TRILHO',5],['COMPONENTES',3],['FURACAO',1],['PORTA',7],['RECORTES',1],['CENTRO',9],['TEXTO',2]]),door:dev.length}}
+function exportDxf(btn){
+  if(isAlt()){toast('A furação em DXF está disponível para o quadro de comando.');return}
+  if(!R||!R.ddev){toast('Abra a Vista 3D uma vez para posicionar os dispositivos da porta e tente de novo.');return}
+  const lab=btn.textContent,{txt}=buildDxf(),M=bomMeta();
+  saveBlob(`furacao-placa-porta-${M.nome}.dxf`,new Blob([txt],{type:'application/dxf'}),btn,lab);if(!DL)btn.textContent='DXF gerado';
+  setTimeout(()=>{if(btn.textContent!==lab)btn.textContent=lab},2600)}
+/* ============ Orçamento e proposta comercial ============ */
+// Tabela de preços (custo) da empresa, por fabricante + modelo; vale para todos os projetos e sincroniza na nuvem.
+const QUOTE_DEF={rate:120,markup:25,tax:0,valid:15,pay:'50% no pedido e 50% na entrega',prazo:'30 dias após a aprovação',obs:''};
+const lsJ=(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k)||'null');return v&&typeof v==='object'?v:d}catch(e){return d}};
+const getPrices=()=>lsJ('qc-prices',{}),getQuote=()=>({...QUOTE_DEF,...lsJ('qc-quote',{})});
+const setPrices=v=>{try{localStorage.setItem('qc-prices',JSON.stringify(v))}catch(e){}},setQuote=v=>{try{localStorage.setItem('qc-quote',JSON.stringify(v))}catch(e){}};
+// a chave ignora a capacidade de interrupção (muda com a Icc do projeto, não com a peça)
+const priceKey=r=>[(r.brand||'').trim(),(r.model||r.desc||'').replace(/\s*·\s*Icu [\d.,]+ kA/,'').trim()].join('|').toLowerCase();
+const brl=v=>(+v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+const parseBR=t=>{t=String(t||'').replace(/[^\d,.-]/g,'');if(t.includes(','))t=t.replace(/\./g,'').replace(',','.');const v=parseFloat(t);return isFinite(v)?v:0};
+function QP(){if(!state.quote||typeof state.quote!=='object')state.quote={};return state.quote}
+function laborAuto(){
+  if(isAlt()){const n=bomRows().filter(r=>!r.grp).length;return Math.round(6+n*0.4)}
+  const m=model,door=m.acc.filter(a=>!a.sec).reduce((a,x)=>a+(+x.qty||1),0);
+  return Math.round(4+m.comps.length*0.35+wireList().length*0.04+door*0.2)}
+function quoteCalc(){
+  const P=getPrices(),Q=getQuote(),q=QP();
+  const items=bomRows().filter(r=>!r.grp).map(r=>{const qty=typeof r.qty==='number'?r.qty:0,k=priceKey(r),pr=+P[k]||0;return {...r,qn:qty,k,pr,tot:qty*pr}});
+  const mat=items.reduce((a,x)=>a+x.tot,0),auto=laborAuto(),hrs=q.horas!=null&&q.horas!==''?+q.horas:auto,mo=hrs*(+Q.rate||0);
+  const f=(1+(+Q.markup||0)/100)*(1+(+Q.tax||0)/100),total=(mat+mo)*f;
+  return {items,mat,hrs,auto,mo,f,total,Q,missing:items.filter(x=>x.qn&&!x.pr).length}}
+function quoteSumHTML(c){return `<dl><dt>Materiais (custo)</dt><dd>${brl(c.mat)}</dd><dt>Mão de obra (${fmt(c.hrs,1)} h)</dt><dd>${brl(c.mo)}</dd>
+  <dt>Margem ${fmt(c.Q.markup,1)}% e impostos ${fmt(c.Q.tax,1)}%</dt><dd>${brl(c.total-c.mat-c.mo)}</dd><dt class="tt">Total da proposta</dt><dd class="tt">${brl(c.total)}</dd></dl>
+  ${c.missing?`<p class="cap warnc">${c.missing} ${c.missing>1?'itens estão':'item está'} sem preço e ${c.missing>1?'entram':'entra'} como R$ 0,00.</p>`:''}`}
+function openQuote(){const d=$('#quoteDlg'),c=quoteCalc(),Q=c.Q,q=QP(),cloud=!!document.querySelector('meta[name="app-cloud"]');
+  const money=v=>v?v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}):'';
+  d.innerHTML=`<div class="dh"><h2 id="quoteTitle">Orçamento e proposta</h2><button class="x" data-act="quoteclose" aria-label="Fechar">×</button></div>
+  <div class="db"><p class="cap">Informe o <b>custo unitário</b> de cada item. Os preços ficam guardados por fabricante e modelo e são reaproveitados em todos os projetos${cloud?' e compartilhados com a sua empresa na nuvem':''}. A margem e os impostos entram no preço de venda da proposta.</p>
+  <fieldset><legend>Itens (${c.items.length})</legend><div class="qwrap"><table class="qtab"><thead><tr><th>Tag</th><th>Descrição</th><th>Fabricante · modelo</th><th class="n">Qtd</th><th class="n">Custo unit. (R$)</th><th class="n">Total</th></tr></thead><tbody>
+  ${c.items.map((x,i)=>`<tr><td><b>${esc(x.tag||'')}</b></td><td>${esc(x.desc)}</td><td>${esc([x.brand,x.model].filter(Boolean).join(' · '))}</td><td class="n">${typeof x.qty==='number'?fmt(x.qty,2):esc(x.qty)} ${esc(x.un||'')}</td>
+    <td class="n"><input type="text" inputmode="decimal" data-qp="${esc(x.k)}" value="${money(x.pr)}" placeholder="0,00" aria-label="Custo unitário de ${esc(x.tag||x.desc)}"></td><td class="n" id="qt${i}">${x.pr?brl(x.tot):'—'}</td></tr>`).join('')}
+  </tbody></table></div></fieldset>
+  <fieldset><legend>Mão de obra, margem e condições</legend><div class="g3">
+    <label class="f"><span>Horas de montagem (estimado: ${c.auto} h)</span><input type="number" min="0" step="1" data-qs="horas" value="${q.horas!=null&&q.horas!==''?esc(q.horas):''}" placeholder="${c.auto}"></label>
+    <label class="f"><span>Valor da hora (R$)</span><input type="text" inputmode="decimal" data-qg="rate" value="${esc(String(Q.rate).replace('.',','))}"></label>
+    <label class="f"><span>Margem (%)</span><input type="number" min="0" step="1" data-qg="markup" value="${esc(Q.markup)}"></label>
+    <label class="f"><span>Impostos (%)</span><input type="number" min="0" step="0.5" data-qg="tax" value="${esc(Q.tax)}"></label>
+    <label class="f"><span>Validade (dias)</span><input type="number" min="1" step="1" data-qg="valid" value="${esc(Q.valid)}"></label>
+    <label class="f"><span>Nº da proposta</span><input type="text" data-qs="num" value="${esc(q.num||'')}" placeholder="${esc(PJ().projeto.numero||'')}"></label>
+    <label class="f" style="grid-column:1/-1"><span>Condições de pagamento</span><input type="text" data-qg="pay" value="${esc(Q.pay)}"></label>
+    <label class="f" style="grid-column:1/-1"><span>Prazo de entrega</span><input type="text" data-qg="prazo" value="${esc(Q.prazo)}"></label>
+    <label class="f" style="grid-column:1/-1"><span>Observações da proposta</span><textarea data-qg="obs">${esc(Q.obs||'')}</textarea></label>
+  </div></fieldset>
+  <div class="qsum" id="qsum">${quoteSumHTML(c)}</div></div>
+  <div class="df"><button class="btn" data-act="quoteclose">Fechar</button><button class="btn primary" data-act="quotepdf">Gerar proposta (PDF)</button></div>`;
+  if(d.showModal)d.showModal();else d.setAttribute('open','')}
+document.addEventListener('input',e=>{const t=e.target;if(!t.closest||!t.closest('#quoteDlg'))return;
+  if(t.dataset.qp!==undefined){const P=getPrices(),v=parseBR(t.value);if(v>0)P[t.dataset.qp]=v;else delete P[t.dataset.qp];setPrices(P)}
+  else if(t.dataset.qg){const Q=lsJ('qc-quote',{}),k=t.dataset.qg;Q[k]=k==='rate'?parseBR(t.value):['markup','tax','valid'].includes(k)?(+t.value||0):t.value;setQuote(Q)}
+  else if(t.dataset.qs){QP()[t.dataset.qs]=t.value;save()}
+  else return;
+  const c=quoteCalc();c.items.forEach((x,i)=>{const el=document.getElementById('qt'+i);if(el)el.textContent=x.pr?brl(x.tot):'—'});$('#qsum').innerHTML=quoteSumHTML(c)});
+async function exportQuotePdf(btn){
+  const lab=btn.textContent;btn.disabled=true;btn.textContent='Gerando proposta…';
+  try{
+    await loadAny(['https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'],()=>!!window.jspdf);
+    await loadAny(['https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js','https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js'],()=>!!(window.jspdf&&window.jspdf.jsPDF.API.autoTable));
+    const c=quoteCalc(),Q=c.Q,M=bomMeta(),pj=PJ(),q=QP(),{jsPDF}=window.jspdf,doc=new jsPDF({unit:'mm',format:'a4'});
+    const num=q.num||pj.projeto.numero||new Date().toISOString().slice(0,10).replace(/-/g,'');
+    doc.setProperties({title:`Proposta ${num}`,author:M.empresa||'',creator:'Montador de painéis elétricos'});
+    const RL=RLOGO(),sz=await imgSize(RL),pw=210,mg=14;let y;
+    if(RL&&sz){const h=16,w=Math.min(50,h*sz.w/sz.h);doc.addImage(RL,'PNG',mg,10,w,h)}
+    doc.setFontSize(8);doc.setTextColor(95,109,120);
+    [COMP.razao||compName(),COMP.cnpj&&'CNPJ '+COMP.cnpj,[COMP.endereco,COMP.cidade].filter(Boolean).join(' · '),[COMP.fone,COMP.email,COMP.site].filter(Boolean).join(' · ')].filter(Boolean).forEach((t,i)=>doc.text(pdfTxt(t),pw-mg,12+i*4,{align:'right'}));
+    y=34;doc.setDrawColor(213,219,225);doc.line(mg,y-4,pw-mg,y-4);
+    doc.setTextColor(21,33,44);doc.setFont('helvetica','bold');doc.setFontSize(16);doc.text(pdfTxt(`Proposta comercial nº ${num}`),mg,y+2);
+    doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(95,109,120);doc.text(pdfTxt(`Data: ${M.data} · Validade: ${Q.valid} dias`),mg,y+8);
+    y+=16;doc.setTextColor(21,33,44);doc.setFont('helvetica','bold');doc.setFontSize(10);doc.text('Cliente',mg,y);doc.text('Objeto',pw/2+2,y);
+    doc.setFont('helvetica','normal');doc.setFontSize(9);
+    const cl=[pj.cliente.nome,pj.cliente.cnpj&&'CNPJ '+pj.cliente.cnpj,pj.cliente.endereco,[pj.cliente.contato,pj.cliente.email].filter(Boolean).join(' · ')].filter(Boolean);
+    const ob=doc.splitTextToSize(pdfTxt([pj.projeto.nome||'Fornecimento de painel elétrico',M.quadro].join(' — ')),pw/2-mg-2);
+    (cl.length?cl:['—']).forEach((t,i)=>doc.text(pdfTxt(t),mg,y+5+i*4.5));doc.text(ob,pw/2+2,y+5);
+    y+=Math.max(cl.length||1,ob.length)*4.5+9;
+    const body=c.items.map((x,i)=>[i+1,pdfTxt(x.tag||''),pdfTxt(x.desc),pdfTxt([x.brand,x.model].filter(Boolean).join(' ')),typeof x.qty==='number'?x.qty.toLocaleString('pt-BR'):pdfTxt(x.qty),pdfTxt(x.un||''),x.pr?brl(x.pr*c.f):'—',x.pr?brl(x.tot*c.f):'—']);
+    body.push(['','',{content:pdfTxt(`Montagem, fiação, testes e documentação (${fmt(c.hrs,1)} h)`),colSpan:2},'1','vb','',brl(c.mo*c.f)]);
+    doc.autoTable({startY:y,margin:{left:mg,right:mg,bottom:18},head:[['#','Tag','Descrição','Fabricante / modelo','Qtd','Un.','Unitário','Total']],body,
+      styles:{font:'helvetica',fontSize:7.5,cellPadding:1.4,textColor:[30,40,50],lineColor:[225,229,234],lineWidth:0.1,valign:'top'},headStyles:{fillColor:[21,33,44],textColor:255,fontStyle:'bold'},
+      columnStyles:{0:{cellWidth:7,halign:'right'},1:{cellWidth:13,fontStyle:'bold'},2:{cellWidth:55},3:{cellWidth:44},4:{cellWidth:11,halign:'right'},5:{cellWidth:9},6:{cellWidth:22,halign:'right'},7:{cellWidth:21,halign:'right'}},
+      didDrawPage:()=>{doc.setFontSize(7.5);doc.setTextColor(95,109,120);doc.text(`Página ${doc.internal.getNumberOfPages()} de {total}`,pw-mg,290,{align:'right'});doc.text(pdfTxt(M.empresa||''),mg,290)}});
+    y=doc.lastAutoTable.finalY+6;if(y>240){doc.addPage();y=20}
+    doc.setFont('helvetica','bold');doc.setFontSize(12);doc.setTextColor(21,33,44);doc.text(pdfTxt('Valor total: '+brl(c.total)),pw-mg,y,{align:'right'});
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(95,109,120);doc.text(pdfTxt(Q.tax?`Impostos incluídos (${fmt(Q.tax,1)}%).`:'Impostos não incluídos.'),pw-mg,y+5,{align:'right'});
+    y+=13;doc.setTextColor(21,33,44);doc.setFont('helvetica','bold');doc.setFontSize(10);doc.text(pdfTxt('Condições comerciais'),mg,y);doc.setFont('helvetica','normal');doc.setFontSize(9);
+    const cond=[`Pagamento: ${Q.pay}`,`Prazo de entrega: ${Q.prazo}`,`Validade da proposta: ${Q.valid} dias`,'Equipamentos de referência; marcas equivalentes podem ser propostas mediante aprovação.',...(Q.obs?String(Q.obs).split('\n').filter(Boolean):[])];
+    cond.forEach(t=>{const L=doc.splitTextToSize(pdfTxt('• '+t),pw-2*mg);if(y+5+L.length*4.3>280){doc.addPage();y=20}doc.text(L,mg,y+5);y+=L.length*4.3});
+    y+=18;if(y>275){doc.addPage();y=40}
+    doc.line(mg,y,mg+70,y);doc.setFontSize(8.5);doc.text(pdfTxt(COMP.razao||compName()),mg,y+4.5);if(pj.eng.nome)doc.text(pdfTxt(`${pj.eng.nome}${pj.eng.crea?' · CREA '+pj.eng.crea:''}`),mg,y+9);
+    doc.line(pw-mg-70,y,pw-mg,y);doc.text(pdfTxt('De acordo: '+(pj.cliente.nome||'cliente')),pw-mg-70,y+4.5);
+    doc.putTotalPages('{total}');
+    saveBlob(`proposta-${String(num).replace(/[^\w-]+/g,'-')}-${M.nome}.pdf`,doc.output('blob'),btn,lab);if(!DL)btn.textContent='Proposta gerada';
+  }catch(e){console.error(e);btn.textContent='Falha ao gerar a proposta'}
+  btn.disabled=false;setTimeout(()=>{if(btn.textContent!==lab)btn.textContent=lab},2600);
+}
+/* ============ Lista de fios ponto a ponto ============ */
+// Gera a lista de fiação interna do quadro de comando: origem, destino, bitola, cor, anilha e comprimento estimado.
+function wireList(){
+  const m=model;if(!m||isAlt())return [];
+  const L=m.lay,VD=L.VD,pos={};
+  L.rows.forEach(r=>r.items.forEach(it=>{if(!pos[it.c.key])pos[it.c.key]={x:VD+10+it.x+it.w/2,y:r.y+r.h/2}}));
+  const P=k=>pos[k]||{x:L.Bw/2,y:L.Bh-40};const tagPos={};m.comps.forEach(c=>tagPos[c.tag]=P(c.key));
+  const PE={x:L.Bw/2,y:L.Bh-20},X1=P('X1');
+  const len=(a,b)=>Math.max(0.3,Math.round(((Math.abs(a.x-b.x)+Math.abs(a.y-b.y)+240)/1000)*10)/10);
+  const doorLen=Math.round((m.E.W*0.5+m.E.H*0.3+600)/100)/10;
+  const xm=x1Map(),xt=(id,f)=>{const r=(xm.loads[id]||[]).find(t=>t.fn===f);return r?'-X1:'+r.n:'-X1'};
+  const sup=f=>{const r=xm.sup.find(t=>t.fn===f);return r?'-X1:'+r.n:'-X1'};
+  const rows=[];let an=1;
+  const add=(o)=>{rows.push({n:rows.length+1,an:o.an||String(an++),de:o.de,para:o.para,sec:o.sec,cor:o.cor,len:o.len,fn:o.fn||''});};
+  const sec=v=>fmt(v)+' mm²';
+  const CP='preto',CN='azul-claro',CPE='verde-amarelo',CPOS='vermelho',CNEG='azul-escuro',CAC='vermelho';
+  const tri=(de,para,s,a,b,fn,pre,ph)=>(ph||['L1','L2','L3']).forEach((f,i)=>add({an:pre?pre+'-'+f:undefined,de:de[i],para:para[i],sec:sec(s),cor:CP,len:len(a,b),fn}));
+  const T=(tag,ts)=>ts.map(t=>tag+':'+t);
+  const q0=m.q0,mc=cableFor(q0.val,2.5);
+  // Alimentação
+  tri([sup('L1'),sup('L2'),sup('L3')],T(q0.tag,['1','3','5']),mc,X1,P('Q0'),'Alimentação do disjuntor geral','R');
+  add({an:'N',de:sup('N'),para:'Barra N',sec:sec(mc),cor:CN,len:len(X1,PE),fn:'Neutro'});
+  add({an:'PE',de:sup('PE'),para:'Barra PE',sec:sec(mc),cor:CPE,len:len(X1,PE),fn:'Terra de proteção'});
+  // Motores
+  m.loads.forEach(l=>{const p=l.parts,n=l.n,s=cableFor(l.start==='estrela'?l.In*0.58:l.In,1.5),sF=cableFor(l.In,1.5),pre='M'+n,fn=`${l.tag} ${l.name}`;
+    const Q=p.Q,pq=P(Q.key);tri(T(q0.tag,['2','4','6']),T(Q.tag,['1','3','5']),sF,P('Q0'),pq,fn+' · derivação',pre+'Q');
+    let last=Q,lp=pq;const ser=(c,a,b)=>{const pc=P(c.key);tri(T(last.tag,['2','4','6']),T(c.tag,a||['1','3','5']),l.start==='estrela'?sF:s,lp,pc,fn,pre+c.tag.replace('-',''));last=c;lp=pc;if(b)last._out=b};
+    if(p.KS)ser(p.KS);if(p.KS2)ser(p.KS2);
+    if(l.start==='direta'){ser(p.K1);tri(T(p.K1.tag,['2','4','6']),[xt(l.id,'U'),xt(l.id,'V'),xt(l.id,'W')],s,P(p.K1.key),X1,fn+' · saída ao motor',pre,['U','V','W'])}
+    else if(l.start==='estrela'){const K1=p.K1,K2=p.K2,K3=p.K3,F=p.F;ser(K1);
+      tri(T(K1.tag,['1','3','5']),T(K2.tag,['1','3','5']),s,P(K1.key),P(K2.key),fn+' · ponte linha → triângulo',pre+'D');
+      tri(T(K1.tag,['2','4','6']),T(F.tag,['1','3','5']),s,P(K1.key),P(F.key),fn+' · relé de sobrecarga',pre+'F');
+      tri(T(F.tag,['2','4','6']),[xt(l.id,'U1'),xt(l.id,'V1'),xt(l.id,'W1')],s,P(F.key),X1,fn+' · saída U1 V1 W1',pre,['U1','V1','W1']);
+      tri(T(K2.tag,['2','4','6']),[xt(l.id,'W2'),xt(l.id,'U2'),xt(l.id,'V2')],s,P(K2.key),X1,fn+' · saída W2 U2 V2',pre,['W2','U2','V2']);
+      tri(T(K2.tag,['2','4','6']),T(K3.tag,['1','3','5']),s,P(K2.key),P(K3.key),fn+' · contator estrela',pre+'Y');
+      add({an:pre+'-Y',de:K3.tag+':2',para:K3.tag+':4 e :6',sec:sec(s),cor:CP,len:0.3,fn:fn+' · ponte de fechamento da estrela'})}
+    else{const U=p.U,isS=l.start==='soft';ser(U,isS?['1L1','3L2','5L3']:['L1','L2','L3']);
+      tri(T(U.tag,isS?['2T1','4T2','6T3']:['U','V','W']),[xt(l.id,'U'),xt(l.id,'V'),xt(l.id,'W')],s,P(U.key),X1,fn+' · saída ao motor'+(DRV(l)?' (cabo blindado)':''),pre,['U','V','W'])}
+    add({an:pre+'-PE',de:xt(l.id,'PE'),para:'Barra PE',sec:sec(s),cor:CPE,len:len(X1,PE),fn:fn+' · terra do motor'})});
+  // Comando
+  const q9=m.comps.find(c=>c.key==='Q9'),t1=m.comps.find(c=>c.key==='T1');
+  if(q9){add({an:'L',de:q0.tag+':2',para:q9.tag+':1',sec:'1,5 mm²',cor:CAC,len:len(P('Q0'),P('Q9')),fn:'Alimentação do comando'});
+    add({an:'N1',de:'Barra N',para:q9.tag+':3',sec:'1,5 mm²',cor:CN,len:len(PE,P('Q9')),fn:'Neutro do comando'})}
+  if(t1&&q9){add({an:'L.1',de:q9.tag+':2',para:t1.tag+':L',sec:'1,5 mm²',cor:CAC,len:len(P('Q9'),P('T1')),fn:'Entrada da fonte'});
+    add({an:'N.1',de:q9.tag+':4',para:t1.tag+':N',sec:'1,5 mm²',cor:CN,len:len(P('Q9'),P('T1')),fn:'Entrada da fonte'});
+    add({an:'L+',de:t1.tag+':+V',para:'Barramento L+ (bornes de distribuição)',sec:'1,5 mm²',cor:CPOS,len:0.4,fn:'+24 Vcc'});
+    add({an:'M',de:t1.tag+':−V',para:'Barramento M (bornes de distribuição)',sec:'1,5 mm²',cor:CNEG,len:0.4,fn:'0 V'})}
+  const plc=m.comps.find(c=>c.kind==='plc');
+  if(plc){add({an:'L+',de:'Barramento L+',para:plc.tag+':24V',sec:'0,75 mm²',cor:CPOS,len:len(P('T1'),P(plc.key)),fn:'Alimentação do CLP'});
+    add({an:'M',de:'Barramento M',para:plc.tag+':0V',sec:'0,75 mm²',cor:CNEG,len:len(P('T1'),P(plc.key)),fn:'Alimentação do CLP'})}
+  const io=ioMap(),dw=io.dw;
+  // Porta: mesma numeração do diagrama "Ligação da porta" (régua -X2 e fios 101…)
+  dw.cols.filter(c=>!c.spacer&&!c.feed).forEach(c=>{const tp=tagPos[c.dest]||P('X1');
+    add({an:c.no||String(an++),de:c.from,para:'-X2:'+c.x2,sec:'0,75 mm²',cor:c.color==='lp'?CPOS:CNEG,len:doorLen,fn:'Porta → régua -X2 (chicote pela dobradiça)'});
+    add({an:c.no||'',de:'-X2:'+c.x2,para:`${c.dest}:${c.dt}`,sec:'0,75 mm²',cor:c.color==='lp'?CPOS:CNEG,len:len(X1,tp),fn:'Régua -X2 → '+c.dest})});
+  // Entradas e saídas do CLP (exceto as da porta, já listadas)
+  io.inp.filter(i=>!i.door).forEach(i=>add({de:`${i.src}:${i.t}`,para:i.a?`${plc?plc.tag:'-A1'}:${i.a}`:'comando',sec:'0,75 mm²',cor:CNEG,len:len(tagPos[i.src]||X1,plc?P(plc.key):X1),fn:i.desc}));
+  io.out.filter(o=>o.kind!=='lamp').forEach(o=>{const k100=m.comps.find(c=>c.kind==='rlyb'),tp=tagPos[o.dst]||X1;
+    if(o.rel){add({de:`${plc?plc.tag:'-A1'}:${o.a}`,para:`${o.rel}:A1`,sec:'0,75 mm²',cor:CNEG,len:len(plc?P(plc.key):X1,P(k100.key)),fn:o.desc+' · saída do CLP'});
+      add({de:`${o.rel}:14`,para:`${o.dst}:${o.kind==='coil'?'A1':'DI1'}`,sec:'0,75 mm²',cor:CNEG,len:len(P(k100.key),tp),fn:o.desc+' · relé de interface'})}
+    else add({de:o.a?`${plc?plc.tag:'-A1'}:${o.a}`:'comando',para:`${o.dst}:${o.kind==='coil'?'A1':'DI1'}`,sec:'0,75 mm²',cor:CNEG,len:len(plc?P(plc.key):X1,tp),fn:o.desc})});
+  // Retorno das bobinas
+  m.comps.filter(c=>c.kind==='cont').forEach(c=>add({de:c.tag+':A2',para:state.ctrl==='24Vcc'?'Barramento M':'Barra N (comando)',sec:'0,75 mm²',cor:state.ctrl==='24Vcc'?CNEG:CN,len:len(P(c.key),P('T1')),fn:'Retorno da bobina'}));
+  // Campo (cabos externos, ligados na régua -X1)
+  xm.field.forEach(r=>add({an:'',de:'-X1:'+r.n,para:`${r.dest}:${r.fn}`,sec:'cabo de campo',cor:'conforme o cabo',len:'',fn:r.desc+' (cabo externo)'}));
+  return rows;
+}
+async function exportWiresXlsx(btn){
+  const lab=btn.textContent;
+  if(isAlt()){toast('A lista de fios está disponível para o quadro de comando.');return}
+  btn.disabled=true;btn.textContent='Gerando lista de fios…';
+  try{
+    await loadAny(['https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js','https://cdn.jsdelivr.net/npm/exceljs@4.4.0/dist/exceljs.min.js'],()=>!!window.ExcelJS);
+    const M=bomMeta(),rows=wireList(),wb=new ExcelJS.Workbook();wb.creator=M.empresa||'Montador de painéis';wb.created=new Date();
+    const ws=wb.addWorksheet('Lista de fios',{pageSetup:{paperSize:9,orientation:'landscape',fitToPage:true,fitToWidth:1,fitToHeight:0}});
+    ws.columns=[{width:6},{width:10},{width:26},{width:30},{width:14},{width:16},{width:11},{width:46}];
+    const dark='FF15212C',line='FFD5DBE1';
+    ws.mergeCells('A1:H1');ws.getCell('A1').value='Lista de fios — '+(M.projeto||M.quadro||'');ws.getCell('A1').font={size:16,bold:true,color:{argb:dark}};
+    ws.mergeCells('A2:H2');ws.getCell('A2').value=[M.cliente,M.quadro,M.data].filter(Boolean).join(' · ');ws.getCell('A2').font={color:{argb:'FF5F6D78'}};
+    const head=ws.getRow(4);head.values=['Nº','Anilha','De','Para','Bitola','Cor','Compr. (m)','Função'];
+    head.eachCell(c=>{c.font={bold:true,color:{argb:'FFFFFFFF'}};c.fill={type:'pattern',pattern:'solid',fgColor:{argb:dark}}});
+    rows.forEach((x,i)=>{const r=ws.getRow(5+i);r.values=[x.n,x.an,x.de,x.para,x.sec,x.cor,x.len,x.fn];r.eachCell({includeEmpty:true},c=>{c.border={bottom:{style:'hair',color:{argb:line}}};c.alignment={vertical:'top',wrapText:true}});if(typeof x.len==='number')r.getCell(7).numFmt='0.0'});
+    const tot=rows.reduce((a,x)=>a+(typeof x.len==='number'?x.len:0),0),tr=ws.getRow(6+rows.length);tr.getCell(6).value='Total estimado';tr.getCell(6).font={bold:true};tr.getCell(7).value=Math.round(tot*10)/10;tr.getCell(7).numFmt='0.0';tr.getCell(7).font={bold:true};
+    const nt=ws.getRow(8+rows.length);ws.mergeCells(`A${nt.number}:H${nt.number}`);nt.getCell(1).value='Comprimentos estimados pela posição dos componentes na placa (percurso pela canaleta + folga). Cores conforme ABNT NBR 5410 / IEC 60204-1: fase preto, neutro azul-claro, PE verde-amarelo, +24 Vcc vermelho, 0 V e sinais azul-escuro. Confira com o diagrama antes da montagem.';nt.getCell(1).alignment={wrapText:true};nt.height=42;
+    ws.views=[{state:'frozen',ySplit:4}];ws.autoFilter={from:{row:4,column:1},to:{row:4+rows.length,column:8}};
+    // Resumo por bitola e cor (para a compra)
+    const s2=wb.addWorksheet('Resumo por bitola');s2.columns=[{width:16},{width:18},{width:14}];s2.getRow(1).values=['Bitola','Cor','Total (m)'];s2.getRow(1).font={bold:true};
+    const g={};rows.forEach(x=>{if(typeof x.len!=='number')return;const k=x.sec+'|'+x.cor;g[k]=(g[k]||0)+x.len});
+    Object.entries(g).sort().forEach(([k,v],i)=>{const [a,b]=k.split('|');s2.getRow(2+i).values=[a,b,Math.ceil(v*1.15*10)/10]});
+    s2.getRow(3+Object.keys(g).length).getCell(1).value='Inclui 15% de reserva.';
+    const buf=await wb.xlsx.writeBuffer();
+    saveBlob(`lista-de-fios-${M.nome}.xlsx`,new Blob([buf],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'}),btn,lab);if(!DL)btn.textContent='Lista de fios gerada';
+  }catch(e){console.error(e);btn.textContent='Falha ao gerar a lista de fios'}
+  btn.disabled=false;setTimeout(()=>{if(btn.textContent!==lab)btn.textContent=lab},2600);
+}
 const pdfTxt=t=>String(t==null?'':t).replace(/≥/g,'>=').replace(/≤/g,'<=').replace(/→/g,'->').replace(/∥/g,'//').replace(/Δ/g,'D').replace(/Ω/g,'ohm').replace(/[“”]/g,'"').replace(/[^\x00-\xFF–—•…‘’]/g,'');
 async function exportBomPdf(btn){
   const lab=btn.textContent;btn.disabled=true;btn.textContent='Gerando PDF…';
@@ -2988,7 +3312,7 @@ function renderRightAlt(){const m=AM;let sum='';
   const rows=altBomRows();
   $('#right').innerHTML=`<h2>Resumo técnico</h2>${sum}<h2>Alertas</h2><ul class="alerts">${m.alerts.map(a=>`<li class="${a.lv}">${esc(a.t)}</li>`).join('')}</ul>
   <h2>Lista de materiais</h2><div class="bom">${rows.map(r=>r.grp?`<h3>${esc(r.grp)}</h3>`:`<div class="item" style="cursor:default"><span class="tg">${r.tag||'—'}</span><span class="ds">${esc(r.desc)}</span>${(r.brand&&r.brand.trim())||r.model?`<span class="mdl"><b>${esc((r.brand||'').trim())} ${esc(r.model)}</b></span>`:''}<span class="mt">${r.spec?`<span>${esc(r.spec)}</span>`:''}<span class="qty">Qtd: ${typeof r.qty==='number'?fmt(r.qty,1):r.qty} ${r.un}</span></span></div>`).join('')}</div>
-  <div class="foot"><button class="btn primary" data-act="bomxlsx">Gerar Excel (.xlsx)</button><button class="btn primary" data-act="bompdf">Gerar PDF</button><button class="btn" data-act="copy">Copiar lista</button></div>
+  <div class="foot"><button class="btn primary" data-act="bomxlsx">Gerar Excel (.xlsx)</button><button class="btn primary" data-act="bompdf">Gerar PDF</button><button class="btn primary" data-act="quote">Orçamento</button><button class="btn" data-act="copy">Copiar lista</button></div>
   <p class="cap" style="margin-top:8px">Referências para pré-projeto e orçamento. O projeto executivo deve ser elaborado por profissional habilitado, com ART.</p>`}
 function buildSimRowsAlt(){const m=AM;if(!m)return;let h='';
   if(m.kind==='forca'){h=`<div class="simtop"><button class="btn ${AS.q0?'stop':'run'}" data-act="aq0">${AS.q0trip?'Rearmar e ligar -Q0':AS.q0?'Desligar -Q0':'Ligar -Q0 (geral)'}</button>
@@ -4294,7 +4618,7 @@ document.addEventListener('change',e=>{
   if(t.dataset.af){const k=t.dataset.af;state.forca[k]=t.type==='checkbox'?t.checked:(t.value!==''&&!isNaN(+t.value)?+t.value:t.value);refresh(true);return}
   if(t.dataset.ap){const k=t.dataset.ap;state.prim[k]=t.type==='checkbox'?t.checked:(t.value!==''&&!isNaN(+t.value)?+t.value:t.value);refresh(true);return}
   if(t.dataset.ff){const id=t.closest('[data-fid]').dataset.fid,d=state.forca.feeders.find(x=>x.id===id),k=t.dataset.ff;d[k]=k==='name'||k==='fase'||k==='curva'?t.value:k==='dr'?t.checked:k==='dist'?Math.max(0,+t.value||0):Math.max(0.1,+t.value||0.1);refresh(k!=='name');return}
-  if(t.dataset.cfg){const k=t.dataset.cfg;state[k]=t.type==='checkbox'?t.checked:(['V','Hz','amb'].includes(k)?+t.value:t.value);refresh(k==='encl'?false:false);return}
+  if(t.dataset.cfg){const k=t.dataset.cfg;state[k]=t.type==='checkbox'?t.checked:(['V','Hz','amb','icc'].includes(k)?+t.value:t.value);refresh(k==='encl'?false:false);return}
   if(t.dataset.inst){const k=t.dataset.inst;state.inst[k]=k==='tloops'?+t.value:t.value;refresh(true);return}
   if(t.dataset.nr){const k=t.dataset.nr;state.nr12[k]=t.type==='checkbox'?t.checked:t.value;if(k==='on'){sim.safeLatch=false;model&&model.loads.forEach(l=>{const x=S_(l.id);x.latch=false;x.guardOpen=false;x.weldLock=false})}if(!state.nr12.loto)sim.loto=false;refresh(true);return}
   if(t.dataset.xterms!==undefined){state.extraTerms=Math.max(0,Math.round(+t.value||0));refresh(true);return}
@@ -4331,6 +4655,7 @@ document.addEventListener('click',e=>{
     case 'copy':copyBom(b);break;
     case 'bomxlsx':exportBomXlsx(b);break;
     case 'bompdf':exportBomPdf(b);break;
+    case 'wiresxlsx':exportWiresXlsx(b);break;
     case 'tab':switchTab(b.dataset.v);break;
     case 'view':if(ui.tab!=='3d')switchTab('3d');setView(b.dataset.v);break;
     case 'simfold':state[b.dataset.v]=!state[b.dataset.v];save();buildSimRows();updateSimUI();break;
@@ -4362,6 +4687,12 @@ document.addEventListener('click',e=>{
     case 'ffit':state.fullReal=!state.fullReal;save();renderFull(true);break;
     case 'fpdf':makePDF(b);break;
     case 'proj':openProj();break;
+    case 'quote':openQuote();break;
+    case 'tpl':openTpl();break;
+    case 'tplsave':case 'tpldel':case 'tpluse':case 'tplclose':tplAct(a,b.dataset.v);break;
+    case 'dxf':exportDxf(b);break;
+    case 'quoteclose':{const d=$('#quoteDlg');if(d.close)d.close();else d.removeAttribute('open');break}
+    case 'quotepdf':exportQuotePdf(b);break;
     case 'cfg':openCfg();break;
     case 'cfgclose':{const d=$('#cfgDlg');if(d.close)d.close();else d.removeAttribute('open');break}
     case 'thmode':THEME.mode=b.dataset.v;themeChanged();renderCfg();break;

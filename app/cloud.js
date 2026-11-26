@@ -4,7 +4,7 @@
 'use strict';
 if(!document.querySelector('meta[name="app-cloud"]'))return;
 const C={user:null,status:'off',saveT:0,setT:0,busy:false,pending:false,list:[],org:null,applying:false};window.CLOUD=C;
-const SETKEYS={'qc-company':'company','qc-logo':'logo','qc-logo-app':'logoApp','qc-logo-same':'logoSame','qc-theme':'theme','qc-projects':null};
+const SETKEYS={'qc-company':'company','qc-logo':'logo','qc-logo-app':'logoApp','qc-logo-same':'logoSame','qc-theme':'theme','qc-prices':'prices','qc-quote':'quote','qc-templates':'templates','qc-projects':null};
 const rawSet=Storage.prototype.setItem,rawRemove=Storage.prototype.removeItem;
 async function api(path,opt={}){const r=await fetch('/api'+path,{method:opt.method||'GET',headers:opt.body?{'Content-Type':'application/json'}:{},body:opt.body?JSON.stringify(opt.body):undefined,credentials:'same-origin'});
   let j={};try{j=await r.json()}catch(e){}if(!r.ok){const e=new Error(j.error||('Erro '+r.status));e.status=r.status;e.data=j;throw e}return j}

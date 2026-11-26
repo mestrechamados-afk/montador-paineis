@@ -165,7 +165,8 @@ app.get('/api/settings', need(), wrap(async (req, res) => {
   res.json({ data: r ? db.json(r.data) : {}, updated_at: r ? r.updated_at : null });
 }));
 // Membros só alteram o tema; dados da empresa e logos (que saem nos PDFs) são do administrador
-const SET_KEYS = ['company', 'logo', 'logoApp', 'logoSame', 'theme'];
+// prices/quote: tabela de preços e condições do orçamento; templates: modelos de quadro da empresa
+const SET_KEYS = ['company', 'logo', 'logoApp', 'logoSame', 'theme', 'prices', 'quote', 'templates'];
 app.put('/api/settings', need(), wrap(async (req, res) => {
   const raw = req.body && req.body.data && typeof req.body.data === 'object' ? req.body.data : {};
   const allowed = req.user.role === 'admin' ? SET_KEYS : ['theme'];
