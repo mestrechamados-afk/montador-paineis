@@ -6,13 +6,19 @@ const path = require('path');
 
 const url = process.env.DATABASE_URL || 'sqlite:./data/app.db';
 const isPg = /^postgres(ql)?:\/\//.test(url);
+const isSupabase = /supabase\.(co|com)/.test(url);
 
 let impl;
 if (isPg) {
   const { Pool } = require('pg');
+  // Supabase e bancos gerenciados exigem SSL; o pooler do Supabase (porta 5432 "session" ou 6543 "transaction") funciona em IPv4.
   const ssl = process.env.PGSSL === 'disable' ? false
-    : (process.env.PGSSL === 'require' || /sslmode=require/.test(url) ? { rejectUnauthorized: false } : undefined);
-  const pool = new Pool({ connectionString: url, ssl, max: Number(process.env.PGPOOL_MAX || 10) });
+    // Com PGCA (certificado da CA do banco, ex.: o do Supabase em Database › SSL) a conexão confere o servidor e evita interceptação
+    : process.env.PGCA ? { ca: process.env.PGCA.replace(/\\n/g, '\n'), rejectUnauthorized: true }
+    : (process.env.PGSSL === 'require' || isSupabase || /sslmode=require/.test(url) ? { rejectUnauthorized: false } : undefined);
+  const conn = url.replace(/[?&]sslmode=[^&]*/, '').replace(/\?$/, '');
+  const pool = new Pool({ connectionString: conn, ssl, max: Number(process.env.PGPOOL_MAX || (isSupabase ? 5 : 10)), idleTimeoutMillis: 30000, connectionTimeoutMillis: 15000 });
+  pool.on('error', (e) => console.error('[db] conexão perdida:', e.message));
   const toPg = (sql) => { let i = 0; return sql.replace(/\?/g, () => '$' + (++i)); };
   const wrap = (q) => ({
     all: async (s, p = []) => (await q(toPg(s), p)).rows,
@@ -20,7 +26,7 @@ if (isPg) {
     run: async (s, p = []) => ({ changes: (await q(toPg(s), p)).rowCount }),
   });
   impl = {
-    kind: 'postgres',
+    kind: isSupabase ? 'postgres (Supabase)' : 'postgres',
     ...wrap((s, p) => pool.query(s, p)),
     async exec(sql) { await pool.query(sql); },
     async tx(fn) {
@@ -59,6 +65,7 @@ async function migrate() {
   const done = new Set((await impl.all('SELECT name FROM schema_migrations')).map((r) => r.name));
   for (const f of fs.readdirSync(dir).filter((x) => x.endsWith('.sql')).sort()) {
     if (done.has(f)) continue;
+    if (f.endsWith('.pg.sql') && !isPg) continue; // migrações exclusivas do PostgreSQL
     let sql = fs.readFileSync(path.join(dir, f), 'utf8');
     if (!isPg) sql = sql.replace(/TIMESTAMPTZ/g, 'TEXT').replace(/JSONB/g, 'TEXT')
       .replace(/DEFAULT NOW\(\)/g, "DEFAULT (strftime('%Y-%m-%dT%H:%M:%fZ','now'))");
@@ -68,4 +75,4 @@ async function migrate() {
   }
 }
 
-module.exports = { db: impl, migrate, isPg };
+module.exports = { db: impl, migrate, isPg, isSupabase };

@@ -86,7 +86,9 @@ Em todos os casos o app precisa de um banco PostgreSQL e destas variáveis de am
 | `NODE_ENV` | `production` |
 | `ALLOW_SIGNUP` | `1` permite criar empresas novas; `0` permite entrar só com convite |
 
-Comandos: build `npm install && npm run build`, início `npm start`. A porta vem da variável `PORT`, que o provedor define.
+Comandos: build `npm install --include=dev && npm run build`, início `npm start`. A porta vem da variável `PORT`, que o provedor define.
+
+> Use `--include=dev`: com `NODE_ENV=production`, o `npm install` pularia as bibliotecas que o build copia para o app (3D, PDF, Excel).
 
 - **Render:** crie um *PostgreSQL* e um *Web Service* a partir do repositório, preencha as variáveis e use o caminho de verificação `/api/health`.
 - **Railway:** adicione um *PostgreSQL* ao projeto e use `${{Postgres.DATABASE_URL}}` em `DATABASE_URL`.
@@ -94,6 +96,70 @@ Comandos: build `npm install && npm run build`, início `npm start`. A porta vem
 - **Azure:** use *App Service* (Linux, Node 22 ou contêiner) com *Azure Database for PostgreSQL – Flexible Server* e `PGSSL=require`.
 - **AWS:** use *App Runner* ou *ECS* com a imagem do Dockerfile, mais *RDS PostgreSQL* e `PGSSL=require`.
 - **Servidor único sem PostgreSQL:** é possível usar `DATABASE_URL=sqlite:/caminho/persistente/app.db`, com um disco persistente. Atende bem equipes pequenas num único servidor. Não use SQLite com várias instâncias do app.
+
+---
+
+## 4.1 Banco de dados no Supabase
+
+O Supabase é um PostgreSQL gerenciado, com backups, painel web e plano gratuito para testes. O Montador funciona com ele sem mudanças no código: basta apontar `DATABASE_URL` para o Supabase.
+
+**Criar o banco**
+
+1. Em **supabase.com**, crie uma conta e clique em **New project**.
+2. Escolha a organização e dê um nome ao projeto, por exemplo `montador-paineis`.
+3. Crie uma **Database Password** forte e guarde-a: ela vai na `DATABASE_URL`.
+4. Em **Region**, escolha a mais próxima dos usuários e do servidor do app (para o Brasil, **South America (São Paulo)**).
+5. Clique em **Create new project** e aguarde alguns minutos.
+
+**Copiar o endereço de conexão**
+
+1. No topo do painel do projeto, clique em **Connect**.
+2. Em **Connection String**, escolha o modo **Session pooler** e copie o endereço. Ele tem esta forma:
+   ```
+   postgresql://postgres.abcdefghijklmn:[YOUR-PASSWORD]@aws-0-sa-east-1.pooler.supabase.com:5432/postgres
+   ```
+3. Troque `[YOUR-PASSWORD]` pela senha do banco, sem os colchetes.
+
+> **Por que o "Session pooler":** a conexão direta (`db.xxxx.supabase.co`) usa só IPv6, que muitos provedores (Render, Railway, Docker em VPS) não alcançam. O pooler funciona em IPv4 e aceita as transações do Montador.
+>
+> **Senha com símbolos** (`@ # / : ? %` etc.): codifique-os no endereço. Por exemplo, `@` vira `%40` e `#` vira `%23`. Outra opção é criar uma senha só com letras e números.
+
+**Configurar o app**
+
+| Variável | Valor |
+|---|---|
+| `DATABASE_URL` | o endereço do *Session pooler* com a senha |
+| `PGSSL` | `require` (o app também detecta o Supabase e ativa o SSL sozinho) |
+| `PGPOOL_MAX` | `5` (limite de conexões por instância, adequado aos planos do Supabase) |
+
+Na primeira inicialização, o servidor cria as tabelas sozinho. Elas aparecem no Supabase em **Table Editor**: `orgs`, `users`, `projects`, `project_versions`, `org_settings` e `audit_log`.
+
+**Segurança no Supabase**
+
+- A migração `002_rls.pg.sql` ativa o **Row Level Security** em todas as tabelas. Assim, a API automática do Supabase (chaves *anon*/*publishable*) **não acessa** os dados. Tudo passa pelo servidor do Montador, que aplica o login e as permissões da empresa.
+- Não use as chaves de API do Supabase no app: o Montador conecta direto no banco pela `DATABASE_URL`, que deve ficar só nas variáveis de ambiente do servidor.
+- O Supabase pode avisar que as tabelas têm RLS **sem políticas**. Isso é intencional e significa "ninguém acessa pela API pública".
+
+**Plano e backups**
+
+- No plano gratuito, o projeto é **pausado após um período sem uso** e não tem backups diários. Serve para testar.
+- Para uso real, use um plano pago, que mantém o projeto ativo e faz **backups diários** (em **Database › Backups**). Confira os limites e preços atuais no site do Supabase.
+- Backup manual a qualquer momento:
+  ```bash
+  pg_dump "postgresql://postgres.xxxx:SENHA@aws-0-sa-east-1.pooler.supabase.com:5432/postgres" | gzip > backup.sql.gz
+  ```
+
+**Usar o Supabase com Docker em servidor próprio**
+
+Com o banco no Supabase, o contêiner do PostgreSQL do `docker-compose.yml` não é necessário:
+
+```bash
+docker build -t montador .
+docker run -d --name montador -p 8080:8080 --restart unless-stopped \
+  -e NODE_ENV=production -e SESSION_SECRET=SEU_SEGREDO \
+  -e DATABASE_URL="postgresql://postgres.xxxx:SENHA@aws-0-sa-east-1.pooler.supabase.com:5432/postgres" \
+  -e PGSSL=require -e PGPOOL_MAX=5 montador
+```
 
 ---
 
@@ -124,6 +190,35 @@ Só para testar em `http://localhost` com `NODE_ENV=production`, use `COOKIE_SEC
 4. O administrador pode promover membros, removê-los e gerar um código novo (o anterior deixa de valer).
 
 Depois de cadastrar a equipe, você pode definir `ALLOW_SIGNUP=0` para impedir a criação de novas empresas no seu servidor.
+
+### Esqueci a senha
+
+- **Membro da equipe:** o administrador entra, clica no nome dele (topo) › **Equipe** › **Gerar senha provisória** ao lado da pessoa. A pessoa entra com essa senha e troca no próprio menu de conta, em **Trocar senha**.
+- **Único administrador:** no painel do servidor, crie as variáveis `RESET_PASSWORD_EMAIL` (o e-mail da conta) e `RESET_PASSWORD_NEW` (a nova senha, com no mínimo 8 caracteres) e reinicie o serviço. No log aparece "senha de … redefinida". Entre com a nova senha e **apague as duas variáveis** em seguida.
+- No cadastro, a senha é digitada duas vezes e há o botão **Mostrar**, para evitar erros de digitação.
+
+---
+
+## 6.1 Instalar como aplicativo (ícone na área de trabalho ou na tela inicial)
+
+O site é um **aplicativo instalável** (PWA): tem ícone próprio, abre em janela própria, sem barra de endereço, e carrega mais rápido.
+
+- **Computador (Chrome/Edge):** use o botão **Instalar app** no topo do Montador, ou o ícone de instalar na barra de endereço.
+- **Android (Chrome):** use o botão **Instalar app** ou o menu **⋮ › Instalar app**.
+- **iPhone/iPad (Safari):** toque em **Compartilhar › Adicionar à Tela de Início**. O botão **Instalar app** mostra esse passo a passo.
+
+Requisitos: o site precisa estar em **HTTPS**, como Render e os demais provedores já entregam.
+
+Projetos e dados nunca ficam guardados no cache do aplicativo: sempre vêm do servidor. O cache guarda só a página e as bibliotecas, para abrir mais rápido.
+
+Arquivos em `app/pwa/`: ícones (`icon-*.png`, `apple-touch-icon.png`, `favicon.ico`, `icon.svg`), `manifest.webmanifest` (nome, cores e atalhos), `sw.js` (service worker) e `pwa.js` (botão Instalar).
+
+**Para usar o ícone da sua empresa:** substitua os arquivos PNG em `app/pwa/` mantendo os mesmos nomes e tamanhos:
+- `icon-192.png` e `icon-512.png`: ícone normal;
+- `icon-maskable-*.png`: ícone com margem de cerca de 20%, para os recortes redondos do Android;
+- `apple-touch-icon.png`: 180×180, sem transparência.
+
+Depois, faça o deploy de novo. Quem já instalou recebe o ícone novo nas próximas aberturas; em alguns aparelhos, só ao reinstalar.
 
 ---
 
@@ -201,7 +296,12 @@ Todas as rotas ficam em `/api`, usam JSON e exigem login (cookie), exceto `healt
 | Login volta para a tela de entrada | Site sem HTTPS com `COOKIE_SECURE=1`. Ative HTTPS ou, só em teste local, use `COOKIE_SECURE=0`. |
 | "Servidor indisponível" no topo | O app não alcança a API. Verifique os logs (`docker compose logs app`) e o `/api/health`. |
 | Erro de SSL ao conectar no banco | Ajuste `PGSSL=require` (bancos gerenciados) ou `PGSSL=disable` (rede interna). |
+| Supabase: `ENETUNREACH`, `ENOTFOUND` ou tempo esgotado | Use o endereço do **Session pooler** (`…pooler.supabase.com`), não a conexão direta `db.xxxx.supabase.co`, que usa só IPv6. |
+| Supabase: `password authentication failed` | Senha errada ou com símbolos sem codificação. O usuário do pooler é `postgres.SEU_PROJETO`, não só `postgres`. |
+| Supabase: projeto pausado | O plano gratuito pausa por inatividade. Reative no painel ou use um plano pago. |
+| Supabase: muitas conexões | Mantenha `PGPOOL_MAX=5` e não suba muitas instâncias do app. |
 | "Arquivo grande demais" ao salvar | Logo muito pesado. Use um logo menor ou aumente `BODY_LIMIT` e o limite do proxy. |
 | `node:sqlite` não encontrado | Node abaixo da versão 22.5. Atualize ou use PostgreSQL. |
+| Build falha com "faltando … rode npm install" | O build rodou sem as bibliotecas de desenvolvimento. Use `npm install --include=dev && npm run build`. |
 
 As fórmulas e o dimensionamento do Montador são de referência para pré-projeto: os projetos finais devem ser verificados e assinados por profissional habilitado.

@@ -35,6 +35,29 @@ const swaps = [
 for (const [a, b] of swaps) html = html.split(a).join(b);
 if (!html.includes('name="app-cloud"')) html = html.replace('<meta charset="utf-8">', '<meta charset="utf-8">\n<meta name="app-cloud" content="1">');
 if (!html.includes('/cloud.js')) html = html.replace(/<\/body>\s*<\/html>\s*$/, '<script src="/cloud.js"></script>\n</body>\n</html>\n');
+// --- Aplicativo instalável (PWA): manifesto, ícones e service worker ---
+const head = `<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#2F6BDB">
+<meta name="application-name" content="Montador">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Montador">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" href="/icons/icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">`;
+if (!html.includes('rel="manifest"')) html = html.replace('<meta name="app-cloud" content="1">', '<meta name="app-cloud" content="1">\n' + head);
+if (!html.includes('/pwa.js')) html = html.replace('<script src="/cloud.js"></script>', '<script src="/cloud.js"></script>\n<script src="/pwa.js"></script>');
+const pwa = R('app', 'pwa'), icons = path.join(out, 'icons');
+fs.mkdirSync(icons, { recursive: true });
+for (const f of fs.readdirSync(pwa)) {
+  if (/\.(png|svg)$/.test(f)) fs.copyFileSync(path.join(pwa, f), path.join(icons, f));
+}
+fs.copyFileSync(path.join(pwa, 'favicon.ico'), path.join(out, 'favicon.ico'));
+fs.copyFileSync(path.join(pwa, 'manifest.webmanifest'), path.join(out, 'manifest.webmanifest'));
+fs.copyFileSync(path.join(pwa, 'pwa.js'), path.join(out, 'pwa.js'));
+const build = new Date().toISOString().replace(/\D/g, '').slice(0, 14);
+fs.writeFileSync(path.join(out, 'sw.js'), fs.readFileSync(path.join(pwa, 'sw.js'), 'utf8').replace('__BUILD__', build));
 fs.writeFileSync(path.join(out, 'index.html'), html);
 fs.copyFileSync(R('app', 'cloud.js'), path.join(out, 'cloud.js'));
 console.log('[build] public/ gerado:', fs.readdirSync(out).join(', '));

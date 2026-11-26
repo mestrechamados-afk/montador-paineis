@@ -12,11 +12,12 @@ const ALLOW_SIGNUP = process.env.ALLOW_SIGNUP !== '0';
 const MAX_VERSIONS = Number(process.env.MAX_VERSIONS || 50);
 const id = () => crypto.randomUUID();
 const now = () => new Date().toISOString();
-const invite = () => crypto.randomBytes(5).toString('hex').toUpperCase();
+const invite = () => crypto.randomBytes(10).toString('hex').toUpperCase(); // 80 bits
 
 const app = express();
 app.disable('x-powered-by');
-app.set('trust proxy', 1);
+// Atrás de um proxy (Render, Railway, nginx…) use 1. Exposto direto na internet use 0, senão o IP pode ser forjado.
+app.set('trust proxy', process.env.TRUST_PROXY !== undefined ? Number(process.env.TRUST_PROXY) : 1);
 
 // Cabeçalhos de segurança
 app.use((req, res, next) => {
@@ -28,31 +29,46 @@ app.use((req, res, next) => {
   res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com data:; img-src 'self' data: blob:; connect-src 'self'; worker-src 'self' blob:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'");
   next();
 });
-app.use('/api', express.json({ limit: process.env.BODY_LIMIT || '15mb' }));
+// Limites de tamanho: projetos e configurações (logos) podem ser grandes; o resto da API, não
+app.use('/api/projects', express.json({ limit: process.env.BODY_LIMIT || '15mb' }));
+app.use('/api/settings', express.json({ limit: process.env.SETTINGS_LIMIT || '5mb' }));
+app.use('/api', express.json({ limit: '100kb' }));
 
 // Proteção simples contra CSRF: a API só aceita JSON vindo da mesma origem
 app.use('/api', (req, res, next) => {
   if (['POST', 'PUT', 'PATCH', 'DELETE'].includes(req.method)) {
     if (!req.is('application/json')) return res.status(415).json({ error: 'Envie JSON.' });
-    const o = req.headers.origin; if (o && new URL(o).host !== req.headers.host) return res.status(403).json({ error: 'Origem não permitida.' });
+    const o = req.headers.origin; let host = null; if (o) { try { host = new URL(o).host; } catch { host = null; } }
+    if (o && host !== req.headers.host) return res.status(403).json({ error: 'Origem não permitida.' });
   }
   next();
 });
 
-// Limite de tentativas de login (em memória, por IP)
+// Limite de tentativas (em memória, por instância). A chave usa um nome fixo por rota, não o caminho digitado.
 const hits = new Map();
-function limiter(max, winMs) {
+function hit(k, max, winMs) {
+  const t = Date.now(), h = (hits.get(k) || []).filter((x) => t - x < winMs);
+  if (h.length >= max) { hits.set(k, h); return false; }
+  h.push(t); hits.set(k, h); return true;
+}
+function limiter(name, max, winMs, byEmail) {
   return (req, res, next) => {
-    const k = req.ip + req.path, t = Date.now(), h = (hits.get(k) || []).filter((x) => t - x < winMs);
-    if (h.length >= max) return res.status(429).json({ error: 'Muitas tentativas. Aguarde alguns minutos.' });
-    h.push(t); hits.set(k, h); next();
+    const tooMany = () => res.status(429).json({ error: 'Muitas tentativas. Aguarde alguns minutos.' });
+    if (!hit(name + '|ip|' + req.ip, max, winMs)) return tooMany();
+    // Por e-mail também: não depende do IP (que pode mudar ou ser forjado)
+    if (byEmail) { const e = str(req.body && req.body.email, 160).toLowerCase(); if (e && !hit(name + '|em|' + e, max, winMs)) return tooMany(); }
+    next();
   };
 }
+setInterval(() => { const t = Date.now(); for (const [k, h] of hits) if (!h.length || t - h[h.length - 1] > 3600e3) hits.delete(k); }, 600e3).unref();
 
 const wrap = (fn) => (req, res, next) => fn(req, res, next).catch(next);
 async function user(req) {
   const s = auth.session(req); if (!s) return null;
-  return db.get('SELECT u.id,u.org_id,u.email,u.name,u.role,u.prefs,o.name AS org_name FROM users u JOIN orgs o ON o.id=u.org_id WHERE u.id=?', [s.uid]);
+  const u = await db.get('SELECT u.id,u.org_id,u.email,u.name,u.role,u.prefs,u.sess_ver,o.name AS org_name FROM users u JOIN orgs o ON o.id=u.org_id WHERE u.id=?', [s.uid]);
+  // Troca ou redefinição de senha incrementa sess_ver e invalida os logins antigos
+  if (!u || Number(s.v || 0) !== Number(u.sess_ver || 0)) return null;
+  return u;
 }
 const need = (role) => wrap(async (req, res, next) => {
   const u = await user(req); if (!u) return res.status(401).json({ error: 'Faça login.' });
@@ -67,7 +83,7 @@ const str = (v, max = 200) => String(v == null ? '' : v).trim().slice(0, max);
 app.get('/api/health', wrap(async (req, res) => { await db.get('SELECT 1 AS ok'); res.json({ ok: true, db: db.kind, time: now(), signup: ALLOW_SIGNUP }); }));
 
 // ---------- Autenticação ----------
-app.post('/api/auth/register', limiter(10, 15 * 60e3), wrap(async (req, res) => {
+app.post('/api/auth/register', limiter('register', 10, 15 * 60e3), wrap(async (req, res) => {
   const email = str(req.body.email, 160).toLowerCase(), name = str(req.body.name, 120), pw = String(req.body.password || '');
   const orgName = str(req.body.org_name, 160), code = str(req.body.invite_code, 20).toUpperCase();
   if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return res.status(400).json({ error: 'E-mail inválido.' });
@@ -86,28 +102,34 @@ app.post('/api/auth/register', limiter(10, 15 * 60e3), wrap(async (req, res) => 
     if (role === 'admin') { await t.run('INSERT INTO orgs (id,name,invite_code) VALUES (?,?,?)', [org.id, org.name, org.invite_code]); await t.run('INSERT INTO org_settings (org_id,data) VALUES (?,?)', [org.id, {}]); }
     await t.run('INSERT INTO users (id,org_id,email,name,pass_hash,role,prefs) VALUES (?,?,?,?,?,?,?)', [uid, org.id, email, name, auth.hashPassword(pw), role, {}]);
   });
-  auth.setSession(res, { uid }, SECURE);
+  auth.setSession(res, { uid, v: 0 }, SECURE);
   const row = await db.get('SELECT u.id,u.org_id,u.email,u.name,u.role,u.prefs,o.name AS org_name FROM users u JOIN orgs o ON o.id=u.org_id WHERE u.id=?', [uid]);
   await audit(row, 'register'); res.status(201).json({ user: pubUser(row) });
 }));
-app.post('/api/auth/login', limiter(12, 10 * 60e3), wrap(async (req, res) => {
+app.post('/api/auth/login', limiter('login', 12, 10 * 60e3, true), wrap(async (req, res) => {
   const email = str(req.body.email, 160).toLowerCase(), pw = String(req.body.password || '');
   const row = await db.get('SELECT u.*,o.name AS org_name FROM users u JOIN orgs o ON o.id=u.org_id WHERE u.email=?', [email]);
-  if (!row || !auth.checkPassword(pw, row.pass_hash)) return res.status(401).json({ error: 'E-mail ou senha incorretos. Confira se o Caps Lock está desligado ou use "Esqueci minha senha".' });
+  const okPw = auth.checkPassword(pw, row ? row.pass_hash : null); // roda o scrypt mesmo sem usuário
+  if (!row || !okPw) return res.status(401).json({ error: 'E-mail ou senha incorretos. Confira se o Caps Lock está desligado ou use "Esqueci minha senha".' });
   await db.run('UPDATE users SET last_login=NOW() WHERE id=?', [row.id]);
-  auth.setSession(res, { uid: row.id }, SECURE); await audit(row, 'login'); res.json({ user: pubUser(row) });
+  auth.setSession(res, { uid: row.id, v: Number(row.sess_ver || 0) }, SECURE); await audit(row, 'login'); res.json({ user: pubUser(row) });
 }));
 app.post('/api/auth/logout', (req, res) => { auth.clearSession(res, SECURE); res.json({ ok: true }); });
 app.get('/api/me', need(), (req, res) => res.json({ user: pubUser(req.user) }));
 app.put('/api/me/prefs', need(), wrap(async (req, res) => {
-  const prefs = { ...db.json(req.user.prefs || '{}'), ...(req.body || {}) };
+  const body = req.body && typeof req.body === 'object' && !Array.isArray(req.body) ? req.body : {};
+  const prefs = { ...db.json(req.user.prefs || '{}'), ...body };
+  if (JSON.stringify(prefs).length > 20000) return res.status(413).json({ error: 'Preferências grandes demais.' });
   await db.run('UPDATE users SET prefs=? WHERE id=?', [prefs, req.user.id]); res.json({ prefs });
 }));
-app.put('/api/me/password', need(), limiter(10, 15 * 60e3), wrap(async (req, res) => {
+app.put('/api/me/password', need(), limiter('password', 10, 15 * 60e3), wrap(async (req, res) => {
   const row = await db.get('SELECT pass_hash FROM users WHERE id=?', [req.user.id]);
   if (!auth.checkPassword(String(req.body.current || ''), row.pass_hash)) return res.status(400).json({ error: 'Senha atual incorreta.' });
   if (String(req.body.password || '').length < 8) return res.status(400).json({ error: 'A nova senha precisa ter pelo menos 8 caracteres.' });
-  await db.run('UPDATE users SET pass_hash=? WHERE id=?', [auth.hashPassword(String(req.body.password)), req.user.id]); res.json({ ok: true });
+  // Invalida os logins em outros aparelhos e renova o cookie deste
+  await db.run('UPDATE users SET pass_hash=?,sess_ver=sess_ver+1 WHERE id=?', [auth.hashPassword(String(req.body.password)), req.user.id]);
+  auth.setSession(res, { uid: req.user.id, v: Number(req.user.sess_ver || 0) + 1 }, SECURE);
+  await audit(req.user, 'password.change'); res.json({ ok: true });
 }));
 
 // ---------- Empresa (organização) ----------
@@ -120,11 +142,15 @@ app.get('/api/org', need(), wrap(async (req, res) => {
 app.post('/api/org/invite/rotate', need('admin'), wrap(async (req, res) => { const c = invite(); await db.run('UPDATE orgs SET invite_code=? WHERE id=?', [c, req.user.org_id]); res.json({ invite_code: c }); }));
 app.put('/api/org/members/:uid', need('admin'), wrap(async (req, res) => {
   const role = req.body.role === 'admin' ? 'admin' : 'membro';
+  if (role !== 'admin') {
+    const n = await db.get("SELECT COUNT(*) AS n FROM users WHERE org_id=? AND role='admin' AND id<>?", [req.user.org_id, req.params.uid]);
+    if (!Number(n.n)) return res.status(400).json({ error: 'A empresa precisa de pelo menos um administrador.' });
+  }
   const r = await db.run('UPDATE users SET role=? WHERE id=? AND org_id=?', [role, req.params.uid, req.user.org_id]); res.json({ ok: r.changes > 0 });
 }));
 app.post('/api/org/members/:uid/reset-password', need('admin'), wrap(async (req, res) => {
   const tmp = crypto.randomBytes(9).toString('base64url').replace(/[-_]/g, 'x').slice(0, 10);
-  const r = await db.run('UPDATE users SET pass_hash=? WHERE id=? AND org_id=?', [auth.hashPassword(tmp), req.params.uid, req.user.org_id]);
+  const r = await db.run('UPDATE users SET pass_hash=?,sess_ver=sess_ver+1 WHERE id=? AND org_id=?', [auth.hashPassword(tmp), req.params.uid, req.user.org_id]);
   if (!r.changes) return res.status(404).json({ error: 'Usuário não encontrado.' });
   await audit(req.user, 'password.reset', req.params.uid); res.json({ temp_password: tmp });
 }));
@@ -138,8 +164,12 @@ app.get('/api/settings', need(), wrap(async (req, res) => {
   const r = await db.get('SELECT data,updated_at FROM org_settings WHERE org_id=?', [req.user.org_id]);
   res.json({ data: r ? db.json(r.data) : {}, updated_at: r ? r.updated_at : null });
 }));
+// Membros só alteram o tema; dados da empresa e logos (que saem nos PDFs) são do administrador
+const SET_KEYS = ['company', 'logo', 'logoApp', 'logoSame', 'theme'];
 app.put('/api/settings', need(), wrap(async (req, res) => {
-  const data = req.body && typeof req.body.data === 'object' ? req.body.data : {};
+  const raw = req.body && req.body.data && typeof req.body.data === 'object' ? req.body.data : {};
+  const allowed = req.user.role === 'admin' ? SET_KEYS : ['theme'];
+  const data = {}; for (const k of allowed) if (k in raw) data[k] = raw[k];
   const cur = await db.get('SELECT data FROM org_settings WHERE org_id=?', [req.user.org_id]);
   const merged = { ...(cur ? db.json(cur.data) : {}), ...data };
   if (cur) await db.run('UPDATE org_settings SET data=?,updated_at=NOW() WHERE org_id=?', [merged, req.user.org_id]);
@@ -179,18 +209,21 @@ app.get('/api/projects/:id', need(), wrap(async (req, res) => {
 app.put('/api/projects/:id', need(), wrap(async (req, res) => {
   const p = await ownProject(req, res); if (!p) return;
   const tms = (v) => new Date(v).getTime();
-  if (req.body.base_updated_at && tms(req.body.base_updated_at) !== tms(p.updated_at) && !req.body.force)
-    return res.status(409).json({ error: 'O projeto foi alterado por outra pessoa.', updated_at: p.updated_at });
   const data = req.body.data && typeof req.body.data === 'object' ? req.body.data : db.json(p.data);
   const name = req.body.name ? str(req.body.name, 160) : p.name, kind = KINDS.includes(data.kind) ? data.kind : p.kind;
-  await db.tx(async (t) => {
+  const conflict = await db.tx(async (t) => {
+    // Confere a versão dentro da transação (com trava da linha no PostgreSQL) para dois salvamentos simultâneos não se sobrescreverem
+    const cur = await t.get(`SELECT updated_at FROM projects WHERE id=?${db.kind === 'sqlite' ? '' : ' FOR UPDATE'}`, [p.id]);
+    if (req.body.base_updated_at && tms(req.body.base_updated_at) !== tms(cur.updated_at) && !req.body.force) return cur.updated_at;
     await t.run('UPDATE projects SET name=?,kind=?,data=?,updated_by=?,updated_at=NOW() WHERE id=?', [name, kind, data, req.user.id, p.id]);
     if (req.body.version) {
       await t.run('INSERT INTO project_versions (id,project_id,data,note,created_by) VALUES (?,?,?,?,?)', [id(), p.id, data, str(req.body.note || 'Salvo', 200), req.user.id]);
       const old = await t.all('SELECT id FROM project_versions WHERE project_id=? ORDER BY created_at DESC', [p.id]);
       for (const v of old.slice(MAX_VERSIONS)) await t.run('DELETE FROM project_versions WHERE id=?', [v.id]);
     }
+    return null;
   });
+  if (conflict) return res.status(409).json({ error: 'O projeto foi alterado por outra pessoa.', updated_at: conflict });
   const r = await db.get('SELECT updated_at FROM projects WHERE id=?', [p.id]);
   res.json({ ok: true, updated_at: r.updated_at });
 }));
@@ -206,23 +239,38 @@ app.post('/api/projects/:id/restore/:vid', need(), wrap(async (req, res) => {
   const p = await ownProject(req, res); if (!p) return;
   const v = await db.get('SELECT data,created_at FROM project_versions WHERE id=? AND project_id=?', [req.params.vid, p.id]);
   if (!v) return res.status(404).json({ error: 'Versão não encontrada.' });
-  await db.run('UPDATE projects SET data=?,updated_by=?,updated_at=NOW() WHERE id=?', [db.json(v.data), req.user.id, p.id]);
-  await db.run('INSERT INTO project_versions (id,project_id,data,note,created_by) VALUES (?,?,?,?,?)', [id(), p.id, db.json(v.data), `Restaurado da versão de ${v.created_at}`, req.user.id]);
+  await db.tx(async (t) => {
+    await t.run('UPDATE projects SET data=?,updated_by=?,updated_at=NOW() WHERE id=?', [db.json(v.data), req.user.id, p.id]);
+    await t.run('INSERT INTO project_versions (id,project_id,data,note,created_by) VALUES (?,?,?,?,?)', [id(), p.id, db.json(v.data), `Restaurado da versão de ${v.created_at}`, req.user.id]);
+    const old = await t.all('SELECT id FROM project_versions WHERE project_id=? ORDER BY created_at DESC', [p.id]);
+    for (const o of old.slice(MAX_VERSIONS)) await t.run('DELETE FROM project_versions WHERE id=?', [o.id]);
+  });
+  await audit(req.user, 'project.restore', p.id);
   res.json({ ok: true, data: db.json(v.data) });
 }));
 
 // ---------- Front-end ----------
 const pub = path.join(__dirname, '..', 'public');
 app.use('/vendor', express.static(path.join(pub, 'vendor'), { maxAge: '30d', immutable: true }));
-app.use(express.static(pub, { index: 'index.html', maxAge: '5m' }));
+app.get(['/sw.js', '/manifest.webmanifest'], (req, res, next) => { res.setHeader('Cache-Control', 'no-cache'); if (req.path.endsWith('.webmanifest')) res.type('application/manifest+json'); next(); });
+app.use('/icons', express.static(path.join(pub, 'icons'), { maxAge: '7d' }));
+app.use(express.static(pub, { index: 'index.html', maxAge: '5m', setHeaders: (res, f) => { if (/index\.html$|cloud\.js$|pwa\.js$|sw\.js$/.test(f)) res.setHeader('Cache-Control', 'no-cache'); } }));
 app.use('/api', (req, res) => res.status(404).json({ error: 'Rota não encontrada.' }));
-app.use((err, req, res, next) => { console.error('[erro]', err); res.status(err.type === 'entity.too.large' ? 413 : 500).json({ error: err.type === 'entity.too.large' ? 'Arquivo grande demais.' : 'Erro interno.' }); });
+app.use((err, req, res, next) => {
+  const st = err.status && err.status < 500 ? err.status : 500;
+  if (st === 500) console.error('[erro]', err);
+  res.status(st).json({ error: err.type === 'entity.too.large' ? 'Arquivo grande demais.' : st === 400 ? 'Requisição inválida.' : st < 500 ? 'Requisição recusada.' : 'Erro interno.' });
+});
 
 async function emergencyReset() {
   const email = (process.env.RESET_PASSWORD_EMAIL || '').trim().toLowerCase(), pw = process.env.RESET_PASSWORD_NEW || '';
   if (!email) return;
   if (pw.length < 8) { console.warn('[auth] RESET_PASSWORD_NEW precisa ter pelo menos 8 caracteres'); return; }
-  const r = await db.run('UPDATE users SET pass_hash=? WHERE email=?', [auth.hashPassword(pw), email]);
+  // Aplica uma única vez por combinação e-mail + senha: reinícios não desfazem uma troca de senha feita depois
+  const tag = 'reset:' + crypto.createHash('sha256').update(email + '\0' + pw).digest('hex');
+  if (await db.get('SELECT name FROM schema_migrations WHERE name=?', [tag])) { console.warn('[auth] RESET_PASSWORD_* já aplicado antes. REMOVA essas variáveis.'); return; }
+  const r = await db.run('UPDATE users SET pass_hash=?,sess_ver=sess_ver+1 WHERE email=?', [auth.hashPassword(pw), email]);
+  if (r.changes) await db.run('INSERT INTO schema_migrations (name, applied_at) VALUES (?, ?)', [tag, now()]);
   console.warn(r.changes ? `[auth] senha de ${email} redefinida pelas variáveis RESET_PASSWORD_*. REMOVA essas variáveis agora.` : `[auth] RESET_PASSWORD_EMAIL: e-mail ${email} não encontrado`);
 }
 migrate().then(emergencyReset).then(() => app.listen(PORT, () => console.log(`[app] Montador de painéis em http://localhost:${PORT} (banco: ${db.kind})`)))

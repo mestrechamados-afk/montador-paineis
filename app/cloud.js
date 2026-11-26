@@ -40,7 +40,7 @@ function setStatus(st,msg){C.status=st;const c=$('#clChip');if(c){c.className='c
 function snap(){const d=JSON.parse(JSON.stringify(state));delete d._cloudAt;return JSON.stringify(d)}
 function queueSave(){if(!state||!state.cloudId){setStatus('ok','Projeto local · use "Salvar projeto"');return}if(snap()===C.last){if(!C.saveT&&!C.busy)setStatus('ok','Salvo na nuvem');return}setStatus('busy','Alterações pendentes…');if(!C.saveT)C.saveT=setTimeout(()=>{C.saveT=0;pushProject(false)},2500)}
 function queueSettings(){clearTimeout(C.setT);C.setT=setTimeout(pushSettings,1500)}
-function settingsData(){const d={};for(const [k,f] of Object.entries(SETKEYS)){if(!f)continue;const v=localStorage.getItem(k);d[f]=v===null?null:(k==='qc-logo'||k==='qc-logo-app'||k==='qc-logo-same')?v:JSON.parse(v)}return d}
+function settingsData(){const d={};for(const [k,f] of Object.entries(SETKEYS)){if(!f)continue;if(C.user&&C.user.role!=='admin'&&f!=='theme')continue;const v=localStorage.getItem(k);d[f]=v===null?null:(k==='qc-logo'||k==='qc-logo-app'||k==='qc-logo-same')?v:JSON.parse(v)}return d}
 async function pushSettings(){try{const r=await api('/settings',{method:'PUT',body:{data:settingsData()}});rawSet.call(localStorage,'qc-cloud-settings-at',r.updated_at||'')}catch(e){setStatus('err','Falha ao salvar configurações')}}
 async function pushProject(version,note){if(!state||!state.cloudId)return;if(C.busy){C.pending=true;return}C.busy=true;setStatus('busy','Salvando…');
   try{const data=JSON.parse(JSON.stringify(state));const r=await api('/projects/'+state.cloudId,{method:'PUT',body:{data,name:(curName?curName():''),version:!!version,note,base_updated_at:state._cloudAt||undefined,force:!!version}});
@@ -110,7 +110,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-act]
       b.outerHTML=`<span class="cl-code" title="Senha provisória">${esc(r.temp_password)}</span>`;say(`Senha provisória de ${b.dataset.w} gerada. Envie para a pessoa e peça que troque ao entrar.`);break}
     case 'clrole':await api('/org/members/'+v,{method:'PUT',body:{role:b.dataset.w}});userMenu();break;
     case 'clrm':if(b.dataset.c!=='1'){b.dataset.c='1';b.textContent='Confirmar remoção';return}await api('/org/members/'+v,{method:'DELETE'});userMenu();break;
-    case 'cllogout':await api('/auth/logout',{method:'POST',body:{}});C.applying=true;['qc-state-v1','qc-cloud-settings-at'].forEach(k=>rawRemove.call(localStorage,k));location.reload();break}}
+    case 'cllogout':await api('/auth/logout',{method:'POST',body:{}});C.applying=true;['qc-state-v1','qc-cloud-settings-at',...Object.keys(SETKEYS)].forEach(k=>rawRemove.call(localStorage,k));location.reload();break}}
   catch(err){say(err.message)}},true);
 
 /* ---------- login / cadastro ---------- */

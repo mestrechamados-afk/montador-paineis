@@ -96,7 +96,7 @@ select,input[type=text],input[type=number]{width:100%;padding:6px 8px;border:1px
 .load header input{flex:1}
 .x{border:0;background:none;cursor:pointer;color:var(--muted);font-size:20px;line-height:1;padding:0 4px}
 .presets{display:flex;flex-wrap:wrap;gap:6px}
-.center{display:grid;grid-template-rows:auto minmax(0,1fr) auto;min-height:0}
+.center{display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;min-height:0}
 .toolbar{display:flex;flex-wrap:wrap;gap:6px;align-items:center;padding:8px 12px;border-bottom:1px solid var(--line);background:var(--surface)}
 .toolbar .sp{flex:1}
 .seg{display:inline-flex;border:1px solid var(--line);border-radius:5px;overflow:hidden}
@@ -505,6 +505,50 @@ aside .btn.block,aside .row2 .btn{white-space:normal;line-height:1.2}
   .mnav .bd{position:absolute;top:4px;left:calc(50% + 8px);min-width:17px;height:17px;padding:0 4px;border-radius:999px;background:var(--stop);color:#fff;font-size:10.5px;line-height:17px;text-align:center}
 }
 @media (max-width:760px) and (orientation:landscape){.viewer{height:78dvh}}
+/* ===== Ajustes de layout (auditoria) ===== */
+.tag{white-space:nowrap;flex:0 0 auto}
+#full .ftool{row-gap:8px}
+#full .fnav{flex:1 1 100%;display:flex;gap:6px;overflow-x:auto;scrollbar-width:thin;padding-bottom:2px;scroll-snap-type:x proximity}
+#full .fnav .btn{flex:0 0 auto;white-space:nowrap;scroll-snap-align:start}
+@media (min-width:641px){.srow{grid-template-columns:minmax(96px,1fr) minmax(180px,1.2fr) auto}}
+.acts input[type=range]{width:72px}
+@media (min-width:641px){.srow .meas{flex-wrap:nowrap;gap:8px;min-width:0}.srow .meas .bar{flex:0 1 70px;min-width:20px}.srow .meas>span{white-space:nowrap}}
+.acts .more .mbtn{width:32px;height:30px;padding:0;justify-content:center}
+.acts .more .mlist{min-width:220px}
+.mlist hr{border:0;border-top:1px solid var(--line);margin:4px 2px}
+.mlist .mcap{margin:4px 10px 2px;font:600 11.5px/1.2 Barlow,sans-serif;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+/* Cabeçalho em uma linha: o resumo do projeto encolhe com reticências */
+@media (min-width:761px){
+  .app{grid-template-columns:minmax(0,1fr)}
+  .app>header{flex-wrap:nowrap;min-width:0}
+  .app>header h1{white-space:nowrap;flex:0 0 auto}
+  #hdrSub{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .hdr-r{flex:0 0 auto}
+}
+@media (min-width:761px) and (max-width:1180px){
+  #hdrSub{font-size:12.5px}
+  .hdr-r .btn:not(.mbtn){font-size:0;gap:0;padding:0 9px}.hdr-r .btn:not(.mbtn) .ic{margin:0}.hdr-r .btn:not(.mbtn) span{display:none}
+  .typesel button{font-size:13px;line-height:1.15;padding:6px 4px}
+}
+@media (min-width:761px) and (max-width:899px){.hdr-r .mbtn{font-size:0;gap:0;padding:0 9px}.hdr-r .mbtn .ic{margin:0}.hdr-r .mbtn .ic:last-child{display:none}}
+#full.fit .fsheet{width:auto;max-width:1120px}
+#full.fit .fsheet svg{width:100%;height:auto}
+#full .fnav .btn.on{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.sim{max-height:var(--simh,36vh)}
+.center.simset .sim{height:var(--simh);max-height:none}
+.split{height:9px;cursor:row-resize;background:var(--surface);border-top:1px solid var(--line);position:relative;touch-action:none}
+.split::after{content:"";position:absolute;left:50%;top:3px;width:44px;height:3px;margin-left:-22px;border-radius:3px;background:var(--line)}
+.split:hover::after,.split:focus-visible::after,.split.drag::after{background:var(--neutral)}
+.split+.sim{border-top:0}
+@media (max-width:1180px){.split{display:none}.sim{max-height:none}.center.simset .sim{height:auto}}
+/* Tablet na horizontal e notebooks pequenos: configuração ao lado, resumo abaixo da vista */
+@media (min-width:900px) and (max-width:1180px){
+  main{grid-template-columns:minmax(270px,300px) minmax(0,1fr);align-items:start}
+  #left{grid-column:1;grid-row:1 / span 2;position:sticky;top:8px;max-height:calc(100dvh - 16px);overflow:auto;border:1px solid var(--line) !important}
+  main>.center{grid-column:2;grid-row:1;order:0}
+  #right{grid-column:2;grid-row:2;border:1px solid var(--line) !important}
+}
+
 </style>
 </head>
 <body>
@@ -586,6 +630,7 @@ aside .btn.block,aside .row2 .btn{white-space:normal;line-height:1.2}
         <div id="wir" hidden></div>
         <div id="full" hidden></div>
       </div>
+      <div class="split" id="split" role="separator" aria-orientation="horizontal" aria-label="Arraste para redimensionar a simulação (duplo clique recolhe ou expande)" title="Arraste para redimensionar · duplo clique recolhe ou expande" tabindex="0"></div>
       <div class="sim" id="sim"></div>
     </section>
 
@@ -610,6 +655,8 @@ const MPCB=[[0.63,1],[1,1.6],[1.6,2.5],[2.5,4],[4,6.3],[6,10],[9,14],[13,18],[17
 const VFD=[2.6,4.3,7,10,13,16,24,31,38,45,58,72,88,105,142,180];
 const SOFT=[10,17,24,30,45,61,85,105,130,171,200];
 const PSU=[2.5,5,10,20];
+// NBR 5410 Tab. 36, método B1, cobre/PVC 70 °C. CABLE = 2 condutores carregados (mono/bifásico); CABLE3 = 3 condutores carregados (trifásico)
+const CABLE3=[[1.5,15.5],[2.5,21],[4,28],[6,36],[10,50],[16,68],[25,89],[35,110],[50,134],[70,171],[95,207],[120,239],[150,275],[185,314],[240,370]];
 const CABLE=[[1.5,17.5],[2.5,24],[4,32],[6,41],[10,57],[16,76],[25,101],[35,125],[50,151],[70,192],[95,232],[120,269],[150,309],[185,353],[240,415]];
 const FANS=[25,55,105,160,230,300,550,700];
 const START={direta:'Partida direta',estrela:'Estrela-triângulo',soft:'Soft-starter',inversor:'Inversor de frequência',servo:'Servoacionamento'};
@@ -633,7 +680,7 @@ const FAM={
   brk:{weg:c=>c.val<=63?{m:`MDW-C${c.val}-${c.poles||3}`}:{m:`DWB${frame(c.val,[160,250,400])} ${c.val} A`},
        schneider:c=>c.val<=63?{m:`Acti9 iC60N ${c.poles||3}P C${c.val}`}:{m:`ComPacT NSX${frame(c.val,[100,160,250,400])}F ${c.val} A`},
        siemens:c=>c.val<=63?{m:`5SL6${c.poles||3}${pad(c.val)}-7`}:{m:`3VA1 ${c.val} A`}},
-  mpcb:{weg:c=>{const w=up(WEG_MPW,c.val);return{m:`${w<=18?'MPW18':w<=40?'MPW40':w<=80?'MPW80':'MPW100'}-3-${wegSuf(w)}`}},
+  mpcb:{weg:c=>{const w=up(WEG_MPW,c.val);return{m:`${w<=18?'MPW18':w<=40?'MPW40':w<=65?'MPW65':w<=80?'MPW80':'MPW100'}-3-${wegSuf(w)}`}},
        schneider:c=>({m:`TeSys ${GV[c.sel]}`}),
        siemens:c=>({m:`SIRIUS ${c.val<=16?'3RV2011':c.val<=40?'3RV2021':c.val<=80?'3RV2031':'3RV2041'}`,x:`faixa ${c.label}`})},
   cont:{weg:c=>({m:`CWM${up(WEG_CONT,c.val)}`,x:state.ctrl==='24Vcc'?'bobina 24 Vcc':'bobina 220 Vca'}),
@@ -654,7 +701,7 @@ const FAM={
   psu:{meanwell:c=>({m:{2.5:'HDR-60-24',5:'SDR-120-24',10:'SDR-240-24',20:'SDR-480-24'}[c.val]}),
        phoenix:c=>({m:`QUINT4-PS/1AC/24DC/${String(c.val).replace('.',',')}`}),
        siemens:c=>({m:`SITOP PSU6200 24 V / ${fmt(c.val)} A`})},
-  plc:{unitronics:c=>{const u=uniMods(c);return{m:'UniStream 7" (CPU + IHM integrada na porta)',x:[`${u.di}× UID-1600 (16 ED)`,`${u.do}× UID-0016T (16 SD)`,u.an?`${u.an}× módulo analógico UID`:''].filter(Boolean).join(' + ')}},
+  plc:{unitronics:c=>{const u=uniMods(c);return{m:'UniStream USP-070-B10 (IHM 7") + CPU USC-P-B10',x:[`${u.di}× UID-1600 (16 ED)`,`${u.do}× UID-0016T (16 SD)`,u.an?`${u.an}× UIA-0402N (4 EA + 2 SA)`:''].filter(Boolean).join(' + ')}},
        siemens:c=>({m:'SIMATIC S7-1200 CPU 1214C DC/DC/DC',x:['6ES7214-1AG40-0XB0',c.expDI?`${c.expDI}× SM 1221 DI16`:'',c.expDO?`${c.expDO}× SM 1222 DQ16`:'',c.expAO?`${c.expAO}× SM 1232 AQ2`:''].filter(Boolean).join(' + ')}),
        schneider:c=>({m:'Modicon M221 TM221CE24T',x:[c.expDI?`${c.expDI}× TM3DI16`:'',c.expDO?`${c.expDO}× TM3DQ16T`:'',c.expAO?`${c.expAO}× TM3AQ2`:''].filter(Boolean).join(' + ')})},
   safe:{pilz:c=>({m:c.ctrl?'PNOZmulti 2 · base m B0':'PNOZ s4'}),schneider:c=>({m:c.ctrl?'Preventa XPSMCM':'Preventa XPSUAF'}),siemens:c=>({m:c.ctrl?'SIRIUS 3SK2':'SIRIUS 3SK1 Standard'})},
@@ -702,6 +749,7 @@ const XDEF={
   borne:{pre:'X',desc:'Borne de passagem',spec:'2,5 mm²',local:'placa',ic:'▤'},
   outro:{pre:'A',desc:'Outro componente',spec:'',local:'placa',ic:'＋'}};
 const XTYPE={rele:'Relé auxiliar',fusivel:'Fusível / porta-fusível',disjuntor:'Disjuntor',fonte:'Fonte',controlador:'Controlador / instrumento',temporizador:'Temporizador',contator:'Contator',clp:'CLP / módulo',transmissor:'Transmissor / conversor',sinaleiro:'Sinaleiro',botao:'Botão / chave',sensor:'Sensor',borne:'Borne',outro:'Outro'};
+const METER={cliente:'WEG MMW03',weg:'WEG MMW03',schneider:'Schneider Electric PowerLogic PM2110',siemens:'Siemens SENTRON PAC3200'};
 const PB={cliente:'WEG CSW',weg:'WEG CSW',schneider:'Harmony XB5',siemens:'SIRIUS ACT 3SU1'};
 const HMI={cliente:'Unitronics UniStream 7"',weg:'IHM 7" touch',schneider:'Harmony GTO 7"',siemens:'SIMATIC KTP700 Basic'};
 const FIELD={pilz:{g:'Pilz PSENcode',c:'Pilz PSENopt II',b:'Pilz PSENmlock / bimanual PNOZ s6 (monitoramento)'},schneider:{g:'Schneider Preventa XCSR',c:'Schneider Preventa XUSL4E',b:'Schneider Preventa XY2SB'},siemens:{g:'Siemens SIRIUS 3SE63',c:'cortina tipo 4 (ex.: SICK deTec4)',b:'Siemens SIRIUS ACT 3SU1 bimanual'}};
@@ -720,7 +768,7 @@ function DC(){const cs=getComputedStyle(document.documentElement),g=k=>cs.getPro
   o.dark=/^#/.test(o.bg)?lum(o.bg)<0.35:false;WC.m=o.dark?'#7FA3F0':'#12306E';return o}
 function cssVar(n){return getComputedStyle(document.documentElement).getPropertyValue(n).trim()}
 function motorI(kw,V){const cos=kw<1.5?0.78:kw<7.5?0.84:0.87, eta=kw<1.5?0.78:kw<7.5?0.87:0.92;return kw*1000/(Math.sqrt(3)*V*cos*eta)}
-function cableFor(I,min=1.5){const c=CABLE.find(c=>c[1]>=I&&c[0]>=min);return c?c[0]:CABLE[CABLE.length-1][0]}
+function cableFor(I,min=1.5,tri=true){const T=tri?CABLE3:CABLE,c=T.find(c=>c[1]>=I&&c[0]>=min);return c?c[0]:T[T.length-1][0]}
 
 /* ============ Estado ============ */
 function defaultState(){return{v:2,brand:'cliente',bov:{},inst:{tloops:0,sensor:'PT100',mode:'porta'},encl:'1000x800x300',V:380,Hz:60,ctrl:'24Vcc',amb:35,dps:true,plc:true,hmi:false,nr12:{on:true,cat:'3',loto:true,tower:true},
@@ -911,6 +959,11 @@ function build(){
   const Tint=state.amb+P/(5.5*A);
   let flow=0,fan=null;
   if(P>Pnat){flow=3.1*(P-Pnat)/Math.max(5,dT);fan=FANS.find(f=>f>=flow*1.2)||null}
+  // Cabos de alimentação e marca dos bornes (usados na lista de montagem)
+  const q0=comps.find(c=>c.key==='Q0');
+  const mainCable=cableFor(q0.val,2.5);
+  loads.forEach(l=>{l.cable=cableFor(l.start==='estrela'?l.In*0.58:l.In,2.5)});
+  const termBr=(comps.find(c=>c.kind==='term')||{}).brand;
   // Acessórios / porta
   const pb=PB[state.brand]||PB.weg;
   const uniPLC=(comps.find(c=>c.kind==='plc')||{}).brand==='unitronics';
@@ -939,7 +992,7 @@ function build(){
   }
   // Campo: sensores
   if(state.inst.tloops)acc.push({sec:'campo',tag:'-BT',desc:`Sensor de temperatura ${state.inst.sensor==='PT100'?'PT100 3 fios':'termopar tipo '+state.inst.sensor.slice(-1)} com bainha inox e cabeçote — MAFS Instrumentação`,qty:state.inst.tloops});
-  {const np=loads.reduce((a,l)=>a+(l.prox||0),0);if(np)acc.push({sec:'campo',tag:'-B·P',desc:'Sensor indutivo M18, PNP NA, 10–30 Vcc — Autonics série PR',qty:np});}
+  {const np=loads.reduce((a,l)=>a+(l.prox||0),0);if(np)acc.push({sec:'campo',tag:'-B·P',desc:'Sensor indutivo M18, PNP NA, 10–30 Vcc, 8 mm — Autonics PR18-8DP',qty:np});}
   // Fiação (estimativa) — 3M
   {const W={};const add=(k,m)=>W[k]=(W[k]||0)+m;const mc=cableFor(comps.find(c=>c.key==='Q0').val,2.5);
    add(`${fmt(mc)} mm² preto`,4*1.6);add(`${fmt(mc)} mm² verde-amarelo`,1.6);
@@ -952,16 +1005,47 @@ function build(){
    acc.push({sec:'fio',tag:'',desc:'Identificadores de condutores (anilhas) para numeração',qty:ends,br:'m3'});
    acc.push({sec:'fio',tag:'',desc:'Fita isolante Scotch 33+ 19 mm × 20 m',qty:2,br:'m3'});
    acc.push({sec:'fio',tag:'',desc:'Tubo termocontrátil para identificação de cabos de potência',qty:'2 m',br:'m3'});}
-  acc.push({tag:'',desc:'Trilho DIN 35 mm',qty:fmt(lay.railM,1)+' m'});
-  acc.push({tag:'',desc:'Canaleta recortada 50 × 50 mm',qty:fmt(lay.ductM,1)+' m'});
-  acc.push({tag:'',desc:`Barra de terra (PE) e neutro`,qty:1});
+  acc.push({sec:'mont',tag:'',desc:'Trilho DIN 35 × 7,5 mm perfurado',qty:fmt(lay.railM,1)+' m'});
+  acc.push({sec:'mont',tag:'',desc:'Canaleta recortada 50 × 50 mm com tampa',qty:fmt(lay.ductM,1)+' m'});
+  acc.push({sec:'mont',tag:'',desc:`Barra de terra (PE) e neutro com isoladores`,qty:1});
+  {const PH=termBr==='weidmuller',stops=lay.rows.length*2,parts=lay.rows.reduce((a,r)=>a+r.items.filter(it=>it.c.kind==='term').length,0)||1,
+     nX=(comps.find(c=>c.kind==='term')||{}).count||0;
+   acc.push({sec:'mont',tag:'',desc:`Batente (poste final) para trilho DIN — ${PH?'Weidmüller WEW 35/2':'Phoenix Contact CLIPFIX 35'}`,qty:stops});
+   acc.push({sec:'mont',tag:'-X1',desc:`Tampa final para régua de bornes — ${PH?'Weidmüller WAP 2.5-10':'Phoenix Contact D-UT 2,5/10'}`,qty:parts});
+   acc.push({sec:'mont',tag:'-X1',desc:`Marcadores de bornes (cartela de 10) — ${PH?'Weidmüller DEK 6':'Phoenix Contact ZB 6'}`,qty:Math.ceil(nX/10)});
+   // Bornes de potência: o UT 4 / WDU 4 aceita até 4 mm²; acima disso, borne do tamanho do cabo
+   const PT={6:6,10:10,16:16,25:35,35:35},pw={};
+   loads.forEach(l=>{if(l.cable<=4)return;const n=l.start==='estrela'?6:3;const k=PT[l.cable]?String(PT[l.cable]):'dir';pw[k]=pw[k]||{f:0,pe:0};pw[k].f+=n;pw[k].pe+=1});
+   Object.entries(pw).forEach(([k,v])=>{if(k==='dir'){acc.push({sec:'mont',tag:'-X1',desc:'Cabos de motor acima de 35 mm²: ligar direto nos terminais do equipamento ou usar borne de passagem de alta corrente',qty:v.f});return}
+     acc.push({sec:'mont',tag:'-X1',desc:`Borne de passagem para cabo de motor ${k} mm² — ${PH?'Weidmüller WDU '+k:'Phoenix Contact UT '+k}`,qty:v.f});
+     acc.push({sec:'mont',tag:'-X1',desc:`Borne de terra (PE) ${k} mm² — ${PH?'Weidmüller WPE '+k:'Phoenix Contact UT '+k+'-PE'}`,qty:v.pe})});
+   if(needPsu)acc.push({sec:'mont',tag:'-F2',desc:`Borne porta-fusível 5 × 20 mm para os circuitos de 24 Vcc (comando, CLP, IHM) — ${PH?'Weidmüller WSI 6':'Phoenix Contact UT 4-HESI (5X20)'}`,qty:2+(state.plc?1:0)+(state.hmi?1:0)});
+  }
+  // Contato auxiliar de disparo dos disjuntores-motor (sinal ao CLP) e barramento trifásico
+  {const byB={};comps.filter(c=>c.kind==='mpcb').forEach(c=>(byB[c.brand]=byB[c.brand]||[]).push(c));
+   Object.entries(byB).forEach(([b,l])=>{
+     if(state.plc)acc.push({sec:'mont',tag:'-Q·',desc:`Contato auxiliar 1NA + 1NF do disjuntor-motor (sinal de disparo ao CLP) — ${{schneider:'Schneider Electric GVAE11',siemens:'Siemens 3RV2901-1E',weg:'WEG (bloco frontal para MPW)'}[b]||BRANDS[b]}`,qty:l.length});
+     const small=l.filter(c=>c.val<=32).length;
+     if(small>=2)acc.push({sec:'mont',tag:'',desc:b==='schneider'?`Barramento trifásico para ${small} disjuntores-motor GV2 + borne de alimentação GV2G05 — Schneider Electric ${small<=5?['','','GV2G245','GV2G345','GV2G445','GV2G554'][small]:'GV2G554 (combinar)'}`:`Barramento trifásico de alimentação para ${small} disjuntores-motor (pente com borne de entrada) — ${BRANDS[b]||''}`,qty:1})});}
+  if(coils)acc.push({sec:'mont',tag:'-K·',desc:`Supressor de surto para bobina de contator (${state.ctrl==='24Vcc'?'diodo + zener, 24 Vcc':'RC, 220 Vca'})`,qty:coils});
+  acc.push({sec:'mont',tag:'',desc:'Barreira de policarbonato transparente sobre bornes de entrada e partes energizadas (NR-10, proteção contra contato direto)',qty:1});
+  {const gl={};const G=s=>s<=2.5?'M20':s<=6?'M25':s<=16?'M32':s<=35?'M40':s<=70?'M50':'M63';const ad=(k,n)=>gl[k]=(gl[k]||0)+n;
+   ad(G(mainCable),1);loads.forEach(l=>ad(G(l.cable),l.start==='estrela'?2:1));
+   const nf=acc.filter(a=>a.sec==='campo'&&a.tag).reduce((a,x)=>a+(+x.qty||0),0);if(nf)ad('M16',nf);
+   Object.entries(gl).sort().forEach(([k,n])=>acc.push({sec:'mont',tag:'',desc:`Prensa-cabo de poliamida IP68 ${k} com contraporca`,qty:n}));}
+  acc.push({sec:'mont',tag:'',desc:'Plaqueta de identificação em acrílico gravado (componentes da placa e dispositivos da porta)',qty:comps.length+acc.filter(a=>!a.sec&&a.tag).reduce((a,x)=>a+(+x.qty||1),0)});
+  acc.push({sec:'mont',tag:'',desc:'Bolsa porta-documentos A4 na porta (diagramas e manual)',qty:1});
+  if(fan)acc.push({sec:'mont',tag:'-B9',desc:'Termostato de painel (contato NA, ajuste 0–60 °C) para acionar o ventilador',qty:1});
+  if(!state.nr12.on)acc.push({tag:'',desc:'Placa de advertência "Perigo: risco de choque elétrico" (NR-10 / NR-26)',qty:1});
   acc.push({tag:'-E2',desc:'Luminária LED interna 24 Vcc com chave fim de curso da porta',qty:1});
-  if(state.meter!==false&&E.W>=500){acc.push({tag:'-P2',desc:'Multimedidor de grandezas elétricas 96 × 96 mm (V, A, kW, FP, Hz, kWh)',qty:1});acc.push({tag:'-T2',desc:'Transformador de corrente /5 A para o multimedidor',qty:3})}
+  if(state.meter!==false&&E.W>=500){const q0v=comps.find(c=>c.key==='Q0').val,rTC=[50,75,100,150,200,250,300,400,500,600,800,1000].find(r=>r>=q0v)||1200;
+    acc.push({tag:'-P2',desc:`Multimedidor de grandezas elétricas 96 × 96 mm (V, A, kW, FP, Hz, kWh, Modbus RTU) — ${METER[state.brand]||METER.cliente}`,qty:1});
+    acc.push({tag:'-T2',desc:`Transformador de corrente tipo janela ${rTC}/5 A, classe 1,0, 2,5 VA (para o multimedidor)`,qty:3});
+    acc.push({sec:'mont',tag:'-X3',desc:`Borne seccionável de teste para o circuito dos TCs (curto-circuitável) — ${termBr==='weidmuller'?'Weidmüller WTL 6/1':'Phoenix Contact URTK/S'}`,qty:4});
+    acc.push({sec:'mont',tag:'-F3',desc:`Borne porta-fusível 5 × 20 mm, fusível 2 A, para a medição de tensão — ${termBr==='weidmuller'?'Weidmüller WSI 6':'Phoenix Contact UT 4-HESI (5X20)'}`,qty:3})}
 
   // Cabos
-  const q0=comps.find(c=>c.key==='Q0');
-  const mainCable=cableFor(q0.val,2.5);
-  loads.forEach(l=>{l.cable=cableFor(l.start==='estrela'?l.In*0.58:l.In,1.5);l.cables=l.start==='estrela'?6:3;
+  loads.forEach(l=>{l.cable=cableFor(l.start==='estrela'?l.In*0.58:l.In,2.5);l.cables=l.start==='estrela'?6:3;
     l.Istart=l.In*({direta:6.2,estrela:2.1,soft:3.2,inversor:1.1,servo:1}[l.start]);});
 
   // Alertas
@@ -1317,9 +1401,10 @@ function renderRight(){
   <div class="bom">
   ${groups.map(g=>`<h3>${esc(g)}</h3>`+m.comps.filter(c=>c.group===g).map(c=>itemHTML(c)).join('')).join('')}
   <h3>Porta e acessórios</h3>
-  ${m.acc.filter(a=>!a.sec).map(a=>`<div class="item" style="cursor:default"><span class="tg">${a.tag||'—'}</span><span class="ds">${esc(a.desc)}</span><span class="mt"><span class="qty">Qtd: ${a.qty}</span></span></div>`).join('')}
+  ${m.acc.filter(a=>!a.sec).map(a=>`<div class="item" style="cursor:default"><span class="tg">${esc(a.tag||'—')}</span><span class="ds">${esc(a.desc)}</span><span class="mt"><span class="qty">Qtd: ${a.qty}</span></span></div>`).join('')}
   ${m.acc.some(a=>a.sec==='fio')?`<h3>Fiação e acessórios (3M, estimativa)</h3>`+m.acc.filter(a=>a.sec==='fio').map(a=>`<div class="item" style="cursor:default"><span class="tg">—</span><span class="ds">${esc(a.desc)}</span><span class="mt"><span class="qty">Qtd: ${a.qty}</span></span></div>`).join(''):''}
-  ${m.acc.some(a=>a.sec==='campo')?`<h3>Dispositivos de campo</h3>`+m.acc.filter(a=>a.sec==='campo').map(a=>`<div class="item" style="cursor:default"><span class="tg">${a.tag||'—'}</span><span class="ds">${esc(a.desc)}</span><span class="mt"><span class="qty">Qtd: ${a.qty}</span></span></div>`).join(''):''}
+  ${m.acc.some(a=>a.sec==='mont')?`<h3>Montagem e identificação</h3>`+m.acc.filter(a=>a.sec==='mont').map(a=>`<div class="item" style="cursor:default"><span class="tg">${esc(a.tag||'—')}</span><span class="ds">${esc(a.desc)}</span><span class="mt"><span class="qty">Qtd: ${a.qty}</span></span></div>`).join(''):''}
+  ${m.acc.some(a=>a.sec==='campo')?`<h3>Dispositivos de campo</h3>`+m.acc.filter(a=>a.sec==='campo').map(a=>`<div class="item" style="cursor:default"><span class="tg">${esc(a.tag||'—')}</span><span class="ds">${esc(a.desc)}</span><span class="mt"><span class="qty">Qtd: ${a.qty}</span></span></div>`).join(''):''}
   </div>
   <div class="foot"><button class="btn primary" data-act="bomxlsx">Gerar Excel (.xlsx)</button><button class="btn primary" data-act="bompdf">Gerar PDF</button><button class="btn" data-act="copy">Copiar lista</button><button class="btn" data-act="resetov">Voltar tudo ao recomendado</button></div>`;
 }
@@ -1327,12 +1412,12 @@ function itemHTML(c){
   let sel='';
   if(c.type){
     const opts=c.type==='simple'?c.list.map((v,i)=>({v,l:(c.unitLabel?c.unitLabel(v):fmtA(v))})):c.list.map((r,i)=>({v:i,l:`${fmt(r[0],2)}–${fmt(r[1],2)} A`}));
-    sel=`<select class="${c.status}" data-act="swap" data-key="${c.key}" aria-label="Trocar ${c.tag}">${opts.map(o=>`<option value="${o.v}" ${o.v===c.sel?'selected':''}>${o.l}${o.v===c.auto?' (recomendado)':''}</option>`).join('')}</select>`;
+    sel=`<select class="${c.status}" data-act="swap" data-key="${esc(c.key)}" aria-label="Trocar ${esc(c.tag)}">${opts.map(o=>`<option value="${o.v}" ${o.v===c.sel?'selected':''}>${o.l}${o.v===c.auto?' (recomendado)':''}</option>`).join('')}</select>`;
   }
   const req=c.req!==undefined?`<span>necessário ${c.type==='range'?'ajuste em':'≥'} ${fmtA(c.req)}</span>`:'';
-  return `<div class="item ${ui.sel===c.key?'sel':''}" data-sel="${c.key}"><span class="tg">${c.tag}</span><span class="ds">${esc(c.desc)}${c.kind==='term'?` · ${c.count} un.`:''}</span>
-  ${c.model?`<span class="mdl"><b>${esc(BRANDS[c.brand])} ${esc(c.model)}</b>${c.mx?` · ${esc(c.mx)}`:''}</span>`:''}
-  <span class="mt">${c.brandOpts&&c.brandOpts.length>1?`<select data-act="brand" data-key="${c.key}" aria-label="Fabricante de ${c.tag}">${c.brandOpts.map(b=>`<option value="${b}" ${b===c.brand?'selected':''}>${BRANDS[b]}</option>`).join('')}</select>`:''}${sel}${req}<span>${fmt(c.w,1)} × ${c.h} mm</span><span>${fmt(c.heat,1)} W</span></span></div>`;
+  return `<div class="item ${ui.sel===c.key?'sel':''}" data-sel="${esc(c.key)}"><span class="tg">${esc(c.tag)}</span><span class="ds">${esc(c.desc)}${c.kind==='term'?` · ${c.count} un.`:''}</span>
+  ${c.model?`<span class="mdl"><b>${c.brand?esc(BRANDS[c.brand])+' ':''}${esc(c.model)}</b>${c.mx?` · ${esc(c.mx)}`:''}</span>`:''}
+  <span class="mt">${c.brandOpts&&c.brandOpts.length>1?`<select data-act="brand" data-key="${esc(c.key)}" aria-label="Fabricante de ${esc(c.tag)}">${c.brandOpts.map(b=>`<option value="${b}" ${b===c.brand?'selected':''}>${BRANDS[b]}</option>`).join('')}</select>`:''}${sel}${req}<span>${fmt(c.w,1)} × ${c.h} mm</span><span>${fmt(c.heat,1)} W</span></span></div>`;
 }
 
 function buildSimRows(){
@@ -1361,11 +1446,11 @@ function buildSimRows(){
       <span><b data-i>0</b> <small>A</small></span><span class="bar" title="Velocidade"><i data-sp></i></span>${DRV(l)?`<span><b data-hz>0</b> <small>${l.start==='servo'?'rpm':'Hz'}</small></span>`:''}</div>
     <div class="acts">
       ${DRV(l)?`<input type="range" min="10" max="${state.Hz}" step="1" value="${Math.min(s.setHz,state.Hz)}" data-act="hz" data-id="${l.id}" aria-label="Frequência de ${l.tag}">`:''}
-      ${NR()&&l.guard?`<button class="btn small" data-act="guard" data-id="${l.id}" aria-pressed="${s.guardOpen}">${s.guardOpen?'Fechar proteção':'Abrir proteção'}</button>`:''}
-      ${NR()&&l.curtain?`<button class="btn small" data-act="curtain" data-id="${l.id}">Interromper cortina</button>`:''}
+      ${NR()&&l.guard&&s.guardOpen?`<button class="btn small" data-act="guard" data-id="${l.id}" aria-pressed="true">Fechar proteção</button>`:''}
       ${NR()&&l.twohand?`<button class="btn run small" data-act="bim" data-id="${l.id}" title="Segure para operar">Bimanual (segure)</button>`:`<button class="btn run small" data-act="start" data-id="${l.id}">Ligar</button>`}
       <button class="btn stop small" data-act="stop" data-id="${l.id}">Desligar</button>
-      <select data-act="fault" data-id="${l.id}" aria-label="Simular falha em ${l.tag}"><option value="">Simular falha…</option><option value="sobrecarga">Sobrecarga</option><option value="fase">Falta de fase</option><option value="curto">Curto-circuito</option>${WELDABLE.includes(l.start)?'<option value="solda">Contato colado</option>':''}</select>
+      ${moreMenu(l.tag,[...(NR()&&l.guard&&!s.guardOpen?[['guard','Abrir proteção móvel']]:[]),...(NR()&&l.curtain?[['curtain','Interromper cortina de luz']]:[])],
+        [['sobrecarga','Sobrecarga'],['fase','Falta de fase'],['curto','Curto-circuito'],...(WELDABLE.includes(l.start)?[['solda','Contato colado']]:[])],l.id,'faultb')}
       ${s.weld&&!isRun(s)?`<button class="btn small" data-act="reset" data-id="${l.id}">Substituir ${weldTag(l)}</button>`:s.state==='tripped'?`<button class="btn small" data-act="reset" data-id="${l.id}">Rearmar ${s.tripDev}</button>`:''}
     </div>
   </div>`}).join('')}
@@ -1376,6 +1461,10 @@ function buildSimRows(){
   </div>`;
   renderLog();
 }
+// Menu "⋯" das linhas da simulação: dispositivos de segurança e falhas simuladas
+function moreMenu(tag,acts,faults,id,fact){
+  return `<div class="menu more"><button class="btn small mbtn icbtn" data-menu aria-haspopup="menu" aria-expanded="false" aria-label="Mais ações de ${esc(tag)}" title="Mais ações"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="5" cy="12" r="1.6"/><circle cx="12" cy="12" r="1.6"/><circle cx="19" cy="12" r="1.6"/></svg></button>
+  <div class="mlist right" role="menu" hidden>${acts.map(([a,t])=>`<button role="menuitem" data-act="${a}" data-id="${esc(id)}">${t}</button>`).join('')}${acts.length?'<hr>':''}<p class="mcap">Simular falha</p>${faults.map(([v,t])=>`<button role="menuitem" data-act="${fact}" data-id="${esc(id)}" data-v="${v}">${t}</button>`).join('')}</div></div>`}
 function renderLog(){const el=$('#log');if(el)el.innerHTML=sim.log.map(l=>`<div class="${l.err?'e':''}">${l.t} · ${esc(l.msg)}</div>`).join('')||'<div>Energize o quadro e ligue um motor para começar.</div>'}
 function statusText(m,s){
   if(s.state==='tripped')return['trip','Desarmado ('+s.tripDev+')'];
@@ -2076,8 +2165,8 @@ function bomRows(){
   const splitQ=q=>{if(typeof q==='number')return[q,'un'];const t=String(q).trim(),mm=t.match(/^([\d.,]+)\s*(\D*)$/);return mm?[parseFloat(mm[1].replace(/\./g,'').replace(',','.')),mm[2]||'un']:[t,'']};
   const groups=[...new Set(m.comps.map(c=>c.group))];
   groups.forEach(g=>{rows.push({grp:g});m.comps.filter(c=>c.group===g).forEach(c=>rows.push({i:n++,tag:c.tag,desc:c.desc,brand:c.brand?BRANDS[c.brand]:'',model:[c.model,c.mx].filter(Boolean).join(' · '),spec:c.kind==='term'?`${c.count} bornes`:(c.label||''),qty:c.kind==='term'?c.count:1,un:c.kind==='term'?'un':'un'}))});
-  const sec={undefined:'Porta e acessórios',campo:'Dispositivos de campo',fio:'Fiação e acessórios'};
-  [undefined,'campo','fio'].forEach(k=>{const list=m.acc.filter(a=>a.sec===k);if(!list.length)return;rows.push({grp:sec[k]});
+  const sec={undefined:'Porta e acessórios',mont:'Montagem e identificação',campo:'Dispositivos de campo',fio:'Fiação e acessórios'};
+  [undefined,'mont','campo','fio'].forEach(k=>{const list=m.acc.filter(a=>a.sec===k);if(!list.length)return;rows.push({grp:sec[k]});
     list.forEach(a=>{const [q,u]=splitQ(a.qty);let d=a.desc,br=a.br?BRANDS[a.br]:'',md='';const mm=d.match(/^(.*?) — (.*)$/);if(mm){d=mm[1];md=mm[2];if(!br){const b=Object.values(BRANDS).find(b=>md.startsWith(b));if(b){br=b;md=md.slice(b.length).trim()}}}
       rows.push({i:n++,tag:a.tag||'',desc:d,brand:br,model:md,spec:'',qty:q,un:u||'un'})})});
   return rows;
@@ -2608,10 +2697,16 @@ function renderFull(force){
   const sh=fullSheets();const sig=sh.map(s=>s.svg.length).join(',')+':'+sh.map(s=>(s.svg.match(new RegExp(cssVar('--live'),'g'))||[]).length).join(',');
   if(!force&&el.dataset.sig===sig)return;el.dataset.sig=sig;
   const st=el.scrollTop,sl=el.scrollLeft;
-  const fh=!!state.ftoolHide;el.innerHTML=`<div class="ftool${fh?' min':''}"><button class="btn small" data-act="ftoggle" aria-expanded="${!fh}" title="${fh?'Mostrar a lista de folhas':'Ocultar a lista de folhas'}">${fh?'▸ Mostrar folhas':'▾ Ocultar'}</button><b>${sh.length} folhas</b>${fh?'':sh.map((s,i)=>`<button class="btn small" data-act="fgo" data-v="${i}">${i+1}. ${esc(s.title)}</button>`).join('')}<button class="btn small primary" data-act="dopen" data-v="full">⛶ Tela cheia / editar</button>${DL!==null?'<span class="fsp"></span><button class="btn small primary" data-act="fpdf">Gerar PDF (A3)</button><button class="btn small" data-act="fsave">Salvar SVG</button>':''}</div>`+
+  const fh=!!state.ftoolHide;el.innerHTML=`<div class="ftool${fh?' min':''}"><button class="btn small" data-act="ftoggle" aria-expanded="${!fh}" title="${fh?'Mostrar a lista de folhas':'Ocultar a lista de folhas'}">${fh?'▸ Mostrar folhas':'▾ Ocultar'}</button><b>${sh.length} folhas</b><button class="btn small" data-act="ffit" aria-pressed="${!state.fullReal}" title="Alternar entre ajustar à largura e tamanho real">${state.fullReal?'↔ Ajustar à largura':'1:1 Tamanho real'}</button><button class="btn small primary" data-act="dopen" data-v="full">⛶ Tela cheia / editar</button>${DL!==null?'<span class="fsp"></span><button class="btn small primary" data-act="fpdf">Gerar PDF (A3)</button><button class="btn small" data-act="fsave">Salvar SVG</button>':''}${fh?'':`<nav class="fnav" aria-label="Folhas do diagrama">${sh.map((s,i)=>`<button class="btn small${i===(ui.fcur||0)?' on':''}" data-act="fgo" data-v="${i}" aria-current="${i===(ui.fcur||0)?'true':'false'}">${i+1}. ${esc(s.title)}</button>`).join('')}</nav>`}</div>`+
     sh.map((s,i)=>`<div class="fsheet" id="fs${i}">${s.svg}</div>`).join('');
+  el.classList.toggle('fit',!state.fullReal);
   el.scrollTop=st;el.scrollLeft=sl;
+  if(!el.dataset.obs){el.dataset.obs=1;el.addEventListener('scroll',fullActive,{passive:true})}
 }
+// Destaca na faixa de folhas a folha que está visível
+function fullActive(){const el=$('#full');if(!el)return;const top=el.getBoundingClientRect().top+(el.querySelector('.ftool')?.offsetHeight||0)+20;
+  let cur=0;el.querySelectorAll('.fsheet').forEach((f,i)=>{if(f.getBoundingClientRect().top<=top)cur=i});if(cur===ui.fcur)return;ui.fcur=cur;
+  el.querySelectorAll('.fnav [data-act=fgo]').forEach((b,i)=>{b.classList.toggle('on',i===cur);b.setAttribute('aria-current',i===cur?'true':'false');if(i===cur)b.scrollIntoView({block:'nearest',inline:'nearest'})})}
 async function saveFull(btn){
   const sh=fullSheets(),W=1120,H=760,gap=30;
   const svg=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${sh.length*(H+gap)}" width="${W}" height="${sh.length*(H+gap)}">`+sh.map((s,i)=>s.svg.replace('<svg ',`<svg x="0" y="${i*(H+gap)}" `)).join('')+'</svg>';
@@ -2642,26 +2737,26 @@ function altNorm(){
   state.forca.feeders.forEach(d=>{if(d.dist===undefined)d.dist=25;if(!d.curva)d.curva='C';if(d.dr===undefined)d.dr=false});
   state.prim={mva:250,entrada:'aerea',med:'MT',cabMT:'auto',lig:'Dyn1',Z:'auto',prot:'auto',r2759:false,r81:false,r47:false,r67:false,ups:true,cabine:'metalica',ger:false,gerKva:250,capac:false,fpAlvo:0.95,...state.prim};
 }
-function typeSelHTML(){return `<div class="seg" style="display:flex;margin-bottom:12px">${KINDS.map(([k,l])=>`<button style="flex:1" data-act="kind" data-v="${k}" aria-selected="${state.kind===k}">${l}</button>`).join('')}</div>`}
+function typeSelHTML(){return `<div class="seg typesel" style="display:flex;margin-bottom:12px">${KINDS.map(([k,l])=>`<button style="flex:1" data-act="kind" data-v="${k}" aria-selected="${state.kind===k}">${l}</button>`).join('')}</div>`}
 
 /* ---------- cálculo do quadro de força ---------- */
 function buildForca(){
   const f=state.forca,V=f.V,Vf=V/Math.sqrt(3);let k=0;
   const FT={25:1.06,30:1,35:0.94,40:0.87,45:0.79,50:0.71}[f.tamb]||1,FG={1:1,2:0.8,3:0.7,4:0.65,6:0.57,9:0.5}[f.agrup]||1,FM={B1:1,B2:0.9,C:1.1,E:1.2,D:0.95}[f.metodo]||1,FC=FT*FG*FM;
   const rho=0.0216;
-  const feeders=f.feeders.map((x,i)=>{const tri=x.fase==='tri',Ib=tri?x.kw*1000/(Math.sqrt(3)*V*x.fp):x.kw*1000/(Vf*x.fp);
+  const feeders=f.feeders.map((x,i)=>{const tri=x.fase==='tri',CT=tri?CABLE3:CABLE,Ib=tri?x.kw*1000/(Math.sqrt(3)*V*x.fp):x.kw*1000/(Vf*x.fp);
     const In=BRK.find(v=>v>=Math.max(10,Ib*1.15))||BRK[BRK.length-1];
-    let ci=CABLE.findIndex(c=>c[1]*FC>=In&&c[0]>=2.5);if(ci<0)ci=CABLE.length-1;
+    let ci=CT.findIndex(c=>c[1]*FC>=In&&c[0]>=2.5);if(ci<0)ci=CT.length-1;
     const dvOf=s=>(tri?Math.sqrt(3):2)*rho*(x.dist||0)*Ib/s/(tri?V:Vf)*100;
-    let dv=dvOf(CABLE[ci][0]);const ciAmp=ci;while(dv>f.dvmax&&ci<CABLE.length-1){ci++;dv=dvOf(CABLE[ci][0])}
-    const cab=CABLE[ci][0],ph=tri?null:(k++)%3,poles=tri?3:2,mccb=In>63,bw=mccb?(In>250?140:105):18*poles,drw=x.dr?(tri?72:36):0;
+    let dv=dvOf(CT[ci][0]);const ciAmp=ci;while(dv>f.dvmax&&ci<CT.length-1){ci++;dv=dvOf(CT[ci][0])}
+    const cab=CT[ci][0],ph=tri?null:(k++)%3,poles=tri?3:2,mccb=In>63,bw=mccb?(In>250?140:105):18*poles,drw=x.dr?(tri?72:36):0;
     const drIn=[25,40,63,80,100,125].find(v=>v>=In)||125;
     return {...x,n:i+1,tag:'-Q'+(i+1),Ib,In,cab,dv,dvUp:ci>ciAmp,ph,poles,mccb,bw,drw,drIn,curva:x.curva||'C'}});
   const Iph=[0,0,0];feeders.forEach(d=>{if(d.ph===null)Iph.forEach((_,j)=>Iph[j]+=d.Ib);else Iph[d.ph]+=d.Ib});
   const Imax=Math.max(...Iph)*f.dem,Iavg=(Iph[0]+Iph[1]+Iph[2])/3,deseq=Iavg?(Math.max(...Iph)-Math.min(...Iph))/Iavg:0;
   const mainIn=LVMAIN.find(v=>v>=Math.max(63,Imax*1.1))||4000;const matF=f.material==='al'?0.78:1;
   const bus=BUSBAR.find(b=>b[0]*matF>=mainIn)||BUSBAR[BUSBAR.length-1];
-  const par=mainIn>300?Math.ceil(mainIn/(415*0.8)):1,mainCab=par>1?240:cableFor(mainIn,10);
+  const par=mainIn>300?Math.ceil(mainIn/(370*0.8)):1,mainCab=par>1?240:cableFor(mainIn,10);
   const entrada=f.entrada==='auto'?(mainIn>=800?'acb':'mccb'):f.entrada;
   const nfd=feeders.length,autoW=nfd>16?1200:nfd>9?1000:800,W=f.encW==='auto'?autoW:+f.encW;
   const avail=W-240;const rows=[];let row=null;
@@ -2902,7 +2997,7 @@ function buildSimRowsAlt(){const m=AM;if(!m)return;let h='';
     ${m.feeders.map(d=>{const s=FD(d.id);return `<div class="srow" data-fid="${d.id}"><div class="nm"><span class="tag">${d.tag}</span><span class="t">${esc(d.name)}</span></div>
       <div class="meas"><span class="status"><span class="lamp" data-lamp></span><span data-st></span></span><span><b data-i>0</b> <small>A de ${d.In} A</small></span><span class="bar"><i data-sp></i></span></div>
       <div class="acts"><button class="btn small ${s.trip?'':s.on?'stop':'run'}" data-act="afd" data-id="${d.id}">${s.trip?'Rearmar':s.on?'Desligar':'Ligar'}</button>
-      <select data-act="afault" data-id="${d.id}"><option value="">Simular falha…</option><option value="sobrecarga">Sobrecarga</option><option value="curto">Curto-circuito</option></select></div></div>`}).join('')}`}
+      ${moreMenu(d.tag,[],[['sobrecarga','Sobrecarga'],['curto','Curto-circuito']],d.id,'afaultb')}</div></div>`}).join('')}`}
   else{const P=AS.P,row=(tag,name,st,lc,btns)=>`<div class="srow"><div class="nm"><span class="tag">${tag}</span><span class="t">${name}</span></div><div class="meas"><span class="status"><span class="lamp ${lc}"></span>${st}</span></div><div class="acts">${btns}</div></div>`;
     h=`<div class="simtop"><span class="status">Concessionária: <b style="color:var(--ink)">${P.fault==='semrede'?'sem tensão':fmt(m.kV,1)+' kV presente'}</b></span>${P.fault==='semrede'?'<button class="btn small" data-act="pfault" data-v="rede">Restabelecer rede</button>':''}
       <label class="status" style="margin-left:auto">Carga da instalação <input type="range" min="0" max="120" step="5" value="${m.carga}" data-act="pload" style="width:120px"> <b id="ploadv">${m.carga}%</b></label></div>
@@ -4086,7 +4181,7 @@ function selectKey(key,scroll){
   if(key.startsWith('motor:')){const l=model.loads.find(x=>'motor:'+x.id===key);if(!l){pk.hidden=true;return}
     const s=S_(l.id);pk.innerHTML=`<b>${l.tag} · ${esc(l.name)}</b><br>${kwLabel(l.kw)}<br>In ${fmtA(l.In)} · partida ${START[l.start].toLowerCase()}<br>Cabo ${l.cables}× ${fmt(l.cable)} mm²<div class="live" id="pickLive">${liveInfo(key)}</div>`;pk.hidden=false;return}
   const c=model.comps.find(x=>x.key===key);if(!c){pk.hidden=true;return}
-  pk.innerHTML=`<b>${c.tag}</b> ${esc(c.desc)}<br>${c.model?`<b style="font-size:14px">${esc(BRANDS[c.brand])} ${esc(c.model)}</b>${c.mx?` · ${esc(c.mx)}`:''}<br>`:''}${c.label?`Especificação: ${c.label}<br>`:''}${c.req!==undefined?`Necessário: ${fmtA(c.req)}<br>`:''}Dimensões: ${fmt(c.w,1)} × ${c.h} × ${c.d} mm · ${fmt(c.heat,1)} W${c.status==='under'?'<br><span style="color:var(--stop)">Subdimensionado</span>':c.status==='over'?'<br><span style="color:var(--warn)">Faixa acima da corrente</span>':''}<div class="live" id="pickLive">${liveInfo(key)}</div>`;
+  pk.innerHTML=`<b>${esc(c.tag)}</b> ${esc(c.desc)}<br>${c.model?`<b style="font-size:14px">${c.brand?esc(BRANDS[c.brand])+' ':''}${esc(c.model)}</b>${c.mx?` · ${esc(c.mx)}`:''}<br>`:''}${c.label?`Especificação: ${esc(c.label)}<br>`:''}${c.req!==undefined?`Necessário: ${fmtA(c.req)}<br>`:''}Dimensões: ${fmt(c.w,1)} × ${c.h} × ${c.d} mm · ${fmt(c.heat,1)} W${c.status==='under'?'<br><span style="color:var(--stop)">Subdimensionado</span>':c.status==='over'?'<br><span style="color:var(--warn)">Faixa acima da corrente</span>':''}<div class="live" id="pickLive">${liveInfo(key)}</div>`;
   pk.hidden=false;
   const it=document.querySelector(`.item[data-sel="${CSS.escape(key)}"]`);if(it){it.classList.add('sel');if(scroll)it.scrollIntoView({block:'nearest',behavior:'smooth'})}
 }
@@ -4230,7 +4325,7 @@ document.addEventListener('click',e=>{
     case 'xrm':state.extras=state.extras.filter(e=>e.id!==b.dataset.id);refresh(true);break;
     case 'add':{const i=state.loads.length+1;state.loads.push({id:uid(),name:'Máquina '+i,kw:3,start:'direta',tp:0,guard:true,curtain:false,twohand:false,estop:1});refresh(true);break}
     case 'rm':state.loads=state.loads.filter(l=>l.id!==id);Object.keys(state.ov).forEach(k=>{if(k.startsWith(id+':'))delete state.ov[k]});delete sim.L[id];refresh(true);break;
-    case 'preset':Object.assign(state,{extras:[],extraTerms:0,plc:true},PRESETS[b.dataset.v](),{ov:{}});norm();sim.L={};sim.log=[];R&&(R.viewSet=false);refresh(true);log('Exemplo carregado');break;
+    case 'preset':Object.assign(state,{extras:[],extraTerms:0,plc:true,nr12:{...defaultState().nr12}},PRESETS[b.dataset.v](),{ov:{}});norm();sim.L={};sim.log=[];R&&(R.viewSet=false);refresh(true);log('Exemplo carregado');break;
     case 'auto':autoSize();log(`Invólucro dimensionado: ${model.E.H} × ${model.E.W} × ${model.E.D} mm`);break;
     case 'resetov':state.ov={};state.bov={};refresh(false);break;
     case 'copy':copyBom(b);break;
@@ -4264,6 +4359,7 @@ document.addEventListener('click',e=>{
     case 'themecycle':themeCycle();break;
     case 'mtab':setMTab(b.dataset.v);break;
     case 'ftoggle':state.ftoolHide=!state.ftoolHide;save();renderFull(true);break;
+    case 'ffit':state.fullReal=!state.fullReal;save();renderFull(true);break;
     case 'fpdf':makePDF(b);break;
     case 'proj':openProj();break;
     case 'cfg':openCfg();break;
@@ -4285,7 +4381,9 @@ document.addEventListener('click',e=>{
     case 'logoload':logoTarget=b.dataset.v||'rep';$('#logoFile').click();break;
     case 'logoclear':if(b.dataset.v==='app'){LOGO_APP='';try{localStorage.setItem('qc-logo-app','')}catch(e){}}else{LOGO='';try{localStorage.removeItem('qc-logo')}catch(e){}}afterLogo();break;
     case 'phreset':Object.assign(PH,PH_DEF());syncPhotoUI(true);break;
-    case 'q0':case 'emerg':case 'start':case 'stop':case 'reset':case 'sreset':case 'loto':case 'guard':case 'curtain':cmd(a,id);break;
+    case 'q0':case 'emerg':case 'start':case 'stop':case 'reset':case 'sreset':case 'loto':case 'guard':case 'curtain':closeMenus();cmd(a,id);break;
+    case 'faultb':closeMenus();cmd('fault',id,b.dataset.v);break;
+    case 'afaultb':closeMenus();altCmd('afault',id,b.dataset.v);break;
   }
 });
 function setMach(v){state.showMach=v;save();updMachBtn();if(!R)return;
@@ -4351,6 +4449,26 @@ refresh(false);
 updDoorBtn();updMachBtn();updEnvBtn();updThemeBtn();setMTab((()=>{try{return sessionStorage.getItem('mtab')}catch(e){return null}})()||'center',false);sectionize($('#left'));sectionize($('#right'));
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(()=>rebuild3D(true));
 requestAnimationFrame(loop);
+
+/* ============ Menu "⋯" da simulação: posição fixa para não ser cortado pela rolagem ============ */
+document.addEventListener('click',e=>{const mb=e.target.closest('.sim .more .mbtn');if(!mb||matchMedia('(max-width:760px)').matches)return;
+  const l=mb.parentNode.querySelector('.mlist');if(l.hidden)return;const r=mb.getBoundingClientRect();
+  Object.assign(l.style,{position:'fixed',left:'auto',right:Math.max(8,innerWidth-r.right)+'px',top:'',bottom:''});
+  const h=l.offsetHeight;if(r.bottom+6+h>innerHeight-8)l.style.top=Math.max(8,r.top-6-h)+'px';else l.style.top=(r.bottom+6)+'px'});
+$('#sim').addEventListener('scroll',()=>{if(document.querySelector('.sim .more .mlist:not([hidden])'))closeMenus()},{passive:true});
+/* ============ Divisor entre a vista e a simulação ============ */
+(function(){const sp=$('#split'),sim=$('#sim'),ctr=sp&&sp.closest('.center');if(!sp)return;
+  const maxH=()=>Math.max(80,ctr.clientHeight-260);
+  const set=h=>{if(h==null){ctr.classList.remove('simset');ctr.style.removeProperty('--simh');try{localStorage.removeItem('qc-simh')}catch(e){}return}
+    h=Math.round(Math.min(maxH(),Math.max(0,h)));ctr.style.setProperty('--simh',h+'px');ctr.classList.add('simset');try{localStorage.setItem('qc-simh',h)}catch(e){}};
+  try{const v=localStorage.getItem('qc-simh');if(v!==null&&matchMedia('(min-width:1181px)').matches)set(+v)}catch(e){}
+  let y0=0,h0=0;
+  sp.addEventListener('pointerdown',e=>{y0=e.clientY;h0=sim.offsetHeight;sp.setPointerCapture(e.pointerId);sp.classList.add('drag');e.preventDefault()});
+  sp.addEventListener('pointermove',e=>{if(sp.classList.contains('drag'))set(h0-(e.clientY-y0))});
+  const end=()=>sp.classList.remove('drag');sp.addEventListener('pointerup',end);sp.addEventListener('pointercancel',end);
+  sp.addEventListener('dblclick',()=>sim.offsetHeight>40?set(0):set(null));
+  sp.addEventListener('keydown',e=>{const d={ArrowUp:32,ArrowDown:-32}[e.key];if(d){set(sim.offsetHeight+d);e.preventDefault()}else if(e.key==='Enter'){sp.dispatchEvent(new Event('dblclick'))}});
+})();
 </script>
 </body>
 </html>
