@@ -718,9 +718,9 @@ const WEG_CONT=[9,12,18,25,32,40,50,65,80,95,105,150,180];
 const up=(list,v)=>list.find(x=>x>=v-1e-9)??list[list.length-1];
 const frame=(v,f)=>f.find(x=>x>=v)??f[f.length-1];
 const FAM={
-  brk:{weg:c=>mccbOf(c,'weg')?{m:`DWB${frame(Math.max(16,c.val),[160,250,400])} ${Math.max(16,c.val)} A`}:{m:`MDW-C${c.val}-${c.poles||3}`},
-       schneider:c=>mccbOf(c,'schneider')?{m:`ComPacT NSX${frame(Math.max(16,c.val),[100,160,250,400])}${nsxLetter()} ${Math.max(16,c.val)} A`}:{m:`Acti9 iC60N ${c.poles||3}P C${c.val}`},
-       siemens:c=>mccbOf(c,'siemens')?{m:`3VA1 ${Math.max(16,c.val)} A`}:{m:`5SL6${c.poles||3}${pad(c.val)}-7`}},
+  brk:{weg:c=>mccbOf(c,'weg')?{m:`DWB${frame(Math.max(16,c.val),[160,250,400])} ${Math.max(16,c.val)} A`}:{m:`MDW-${c.curve||'C'}${c.val}-${c.poles||3}`},
+       schneider:c=>mccbOf(c,'schneider')?{m:`ComPacT NSX${frame(Math.max(16,c.val),[100,160,250,400])}${nsxLetter()} ${Math.max(16,c.val)} A`}:{m:`Acti9 iC60N ${c.poles||3}P ${c.curve||'C'}${c.val}`},
+       siemens:c=>mccbOf(c,'siemens')?{m:`3VA1 ${Math.max(16,c.val)} A`}:{m:c.curve==='D'?`5SY6${c.poles||3}${pad(c.val)}-8`:`5SL6${c.poles||3}${pad(c.val)}-7`}},
   mpcb:{weg:c=>{const w=up(WEG_MPW,c.val);return{m:`${w<=18?'MPW18':w<=40?'MPW40':w<=65?'MPW65':w<=80?'MPW80':'MPW100'}-3-${wegSuf(w)}`}},
        schneider:c=>({m:`TeSys ${GV[c.sel]}`}),
        siemens:c=>({m:`SIRIUS ${c.val<=16?'3RV2011':c.val<=40?'3RV2021':c.val<=80?'3RV2031':'3RV2041'}`,x:`faixa ${c.label}`})},
@@ -774,7 +774,7 @@ function applyBrand(c){
   const r=f[c.brand](c);c.model=r.m;c.mx=r.x||'';
 }
 // Ícones de linha das máquinas e componentes (mesmo estilo dos demais ícones do app)
-const MI={"bomba": "<circle cx=\"10\" cy=\"13\" r=\"6\"/><circle cx=\"10\" cy=\"13\" r=\"2\"/><path d=\"M10 7V3h8v4M16 13h5\"/>", "tanque_v": "<path d=\"M6 5c0-1.1 2.7-2 6-2s6 .9 6 2v14c0 1.1-2.7 2-6 2s-6-.9-6-2z\"/><path d=\"M6 12c0 1.1 2.7 2 6 2s6-.9 6-2\"/>", "tanque_comb": "<rect x=\"2\" y=\"6\" width=\"15\" height=\"8\" rx=\"4\"/><path d=\"M5 14v5M14 14v5\"/><path d=\"M20 9c1 1.5 1.5 2.4 1.5 3a1.5 1.5 0 0 1-3 0c0-.6.5-1.5 1.5-3z\"/>", "ibc": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"14\" rx=\"1\"/><path d=\"M4 9h16M4 14h16M9 4v14M15 4v14M6 18v2M18 18v2\"/>", "compressor": "<rect x=\"3\" y=\"12\" width=\"18\" height=\"7\" rx=\"3.5\"/><circle cx=\"8\" cy=\"7\" r=\"3\"/><path d=\"M8 10v2M15 12V7h4\"/>", "esteira": "<rect x=\"2\" y=\"13\" width=\"20\" height=\"5\" rx=\"2.5\"/><circle cx=\"5\" cy=\"15.5\" r=\".8\"/><circle cx=\"19\" cy=\"15.5\" r=\".8\"/><rect x=\"8\" y=\"6\" width=\"7\" height=\"7\" rx=\"1\"/>", "ventilador": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 12c0-4 1-6 3-6s1 4-3 6zM12 12c4 0 6 1 6 3s-4 1-6-3zM12 12c0 4-1 6-3 6s-1-4 3-6zM12 12c-4 0-6-1-6-3s4-1 6 3z\"/>", "misturador": "<path d=\"M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8\"/><path d=\"M12 5v11M8.5 16h7\"/><rect x=\"9\" y=\"2\" width=\"6\" height=\"3\" rx=\"1\"/>", "rosca": "<path d=\"M3 17 19 7M5 20 21 10M7 15l2 3.2M10 13.2l2 3.2M13 11.4l2 3.2M16 9.6l2 3.2\"/>", "eixo": "<rect x=\"2\" y=\"15\" width=\"20\" height=\"4\" rx=\"1\"/><rect x=\"9\" y=\"8\" width=\"6\" height=\"7\" rx=\"1\"/><path d=\"M3 11h3M18 11h3M4.5 9.5 3 11l1.5 1.5M19.5 9.5 21 11l-1.5 1.5\"/>", "redutor": "<circle cx=\"12\" cy=\"12\" r=\"3\"/><circle cx=\"12\" cy=\"12\" r=\"7\"/><path d=\"M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1\"/>", "rele": "<rect x=\"5\" y=\"3\" width=\"14\" height=\"18\" rx=\"2\"/><rect x=\"8.5\" y=\"7\" width=\"7\" height=\"5\"/><path d=\"M9 16h6\"/>", "fusivel": "<rect x=\"4\" y=\"8.5\" width=\"16\" height=\"7\" rx=\"1\"/><path d=\"M2 12h20\"/>", "disjuntor": "<rect x=\"6\" y=\"3\" width=\"12\" height=\"18\" rx=\"2\"/><rect x=\"10\" y=\"7\" width=\"4\" height=\"7\" rx=\"1\"/><path d=\"M10 17h4\"/>", "fonte": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M8 10h8M8 14h2M11 14h2M14 14h2\"/>", "controlador": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\"/><rect x=\"7\" y=\"7\" width=\"10\" height=\"5\"/><path d=\"M8 16h2M14 16h2\"/>", "temporizador": "<circle cx=\"12\" cy=\"13\" r=\"8\"/><path d=\"M12 9v4l3 2M10 2h4\"/>", "contator": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\"/><path d=\"M8 8v3M12 8v3M16 8v3M8 15h8\"/>", "clp": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M7 9h1M10 9h1M13 9h1M16 9h1M7 15h10\"/>", "transmissor": "<path d=\"M2 12c2.5-5 4.5-5 7 0s4.5 5 7 0 4-4.5 6-1\"/>", "sinaleiro": "<circle cx=\"12\" cy=\"10\" r=\"6\"/><path d=\"M9 19h6M10 22h4M12 2v2\"/>", "botao": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/>", "sensor": "<rect x=\"2\" y=\"9\" width=\"12\" height=\"6\" rx=\"1\"/><path d=\"M14 12h2M18 8.5a5 5 0 0 1 0 7M20.5 6a8.5 8.5 0 0 1 0 12\"/>", "borne": "<rect x=\"4\" y=\"4\" width=\"4\" height=\"16\"/><rect x=\"10\" y=\"4\" width=\"4\" height=\"16\"/><rect x=\"16\" y=\"4\" width=\"4\" height=\"16\"/><path d=\"M5.5 8h1M11.5 8h1M17.5 8h1\"/>", "outro": "<path d=\"M12 5v14M5 12h14\"/>"};
+const MI={"desbobinador":"<circle cx=\"8\" cy=\"12\" r=\"5\"/><circle cx=\"8\" cy=\"12\" r=\"1.5\"/><path d=\"M13 9h8M13 12h8M13 15h8\"/>","alimentador":"<circle cx=\"6\" cy=\"9\" r=\"2\"/><circle cx=\"12\" cy=\"15\" r=\"2\"/><circle cx=\"18\" cy=\"9\" r=\"2\"/><path d=\"M2 12h20\"/>","solda_gradil":"<path d=\"M4 5v14M9 5v14M14 5v14M19 5v14M2 9h20M2 15h20\"/><path d=\"m17 2 1 2 2-1\"/>","transp_aereo":"<path d=\"M2 4h20\"/><path d=\"M8 4v4M16 4v4\"/><rect x=\"5\" y=\"8\" width=\"14\" height=\"10\" rx=\"1\"/><path d=\"M9 8v10M14 8v10\"/>","cabine_pintura":"<path d=\"M3 10h9l3-3h3v6h-3l-3-3\"/><path d=\"M7 10v8h3\"/><path d=\"M19 15h.01M21 17h.01M20 19h.01\"/>","estufa":"<rect x=\"2\" y=\"7\" width=\"20\" height=\"12\" rx=\"1\"/><path d=\"M12 10c1.5 1.8 2 2.8 2 4a2 2 0 0 1-4 0c0-1.2.5-2.2 2-4z\"/><path d=\"M17 7V3\"/>","bomba": "<circle cx=\"10\" cy=\"13\" r=\"6\"/><circle cx=\"10\" cy=\"13\" r=\"2\"/><path d=\"M10 7V3h8v4M16 13h5\"/>", "tanque_v": "<path d=\"M6 5c0-1.1 2.7-2 6-2s6 .9 6 2v14c0 1.1-2.7 2-6 2s-6-.9-6-2z\"/><path d=\"M6 12c0 1.1 2.7 2 6 2s6-.9 6-2\"/>", "tanque_comb": "<rect x=\"2\" y=\"6\" width=\"15\" height=\"8\" rx=\"4\"/><path d=\"M5 14v5M14 14v5\"/><path d=\"M20 9c1 1.5 1.5 2.4 1.5 3a1.5 1.5 0 0 1-3 0c0-.6.5-1.5 1.5-3z\"/>", "ibc": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"14\" rx=\"1\"/><path d=\"M4 9h16M4 14h16M9 4v14M15 4v14M6 18v2M18 18v2\"/>", "compressor": "<rect x=\"3\" y=\"12\" width=\"18\" height=\"7\" rx=\"3.5\"/><circle cx=\"8\" cy=\"7\" r=\"3\"/><path d=\"M8 10v2M15 12V7h4\"/>", "esteira": "<rect x=\"2\" y=\"13\" width=\"20\" height=\"5\" rx=\"2.5\"/><circle cx=\"5\" cy=\"15.5\" r=\".8\"/><circle cx=\"19\" cy=\"15.5\" r=\".8\"/><rect x=\"8\" y=\"6\" width=\"7\" height=\"7\" rx=\"1\"/>", "ventilador": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 12c0-4 1-6 3-6s1 4-3 6zM12 12c4 0 6 1 6 3s-4 1-6-3zM12 12c0 4-1 6-3 6s-1-4 3-6zM12 12c-4 0-6-1-6-3s4-1 6 3z\"/>", "misturador": "<path d=\"M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8\"/><path d=\"M12 5v11M8.5 16h7\"/><rect x=\"9\" y=\"2\" width=\"6\" height=\"3\" rx=\"1\"/>", "rosca": "<path d=\"M3 17 19 7M5 20 21 10M7 15l2 3.2M10 13.2l2 3.2M13 11.4l2 3.2M16 9.6l2 3.2\"/>", "eixo": "<rect x=\"2\" y=\"15\" width=\"20\" height=\"4\" rx=\"1\"/><rect x=\"9\" y=\"8\" width=\"6\" height=\"7\" rx=\"1\"/><path d=\"M3 11h3M18 11h3M4.5 9.5 3 11l1.5 1.5M19.5 9.5 21 11l-1.5 1.5\"/>", "redutor": "<circle cx=\"12\" cy=\"12\" r=\"3\"/><circle cx=\"12\" cy=\"12\" r=\"7\"/><path d=\"M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9 7 7M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1\"/>", "rele": "<rect x=\"5\" y=\"3\" width=\"14\" height=\"18\" rx=\"2\"/><rect x=\"8.5\" y=\"7\" width=\"7\" height=\"5\"/><path d=\"M9 16h6\"/>", "fusivel": "<rect x=\"4\" y=\"8.5\" width=\"16\" height=\"7\" rx=\"1\"/><path d=\"M2 12h20\"/>", "disjuntor": "<rect x=\"6\" y=\"3\" width=\"12\" height=\"18\" rx=\"2\"/><rect x=\"10\" y=\"7\" width=\"4\" height=\"7\" rx=\"1\"/><path d=\"M10 17h4\"/>", "fonte": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M8 10h8M8 14h2M11 14h2M14 14h2\"/>", "controlador": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\"/><rect x=\"7\" y=\"7\" width=\"10\" height=\"5\"/><path d=\"M8 16h2M14 16h2\"/>", "temporizador": "<circle cx=\"12\" cy=\"13\" r=\"8\"/><path d=\"M12 9v4l3 2M10 2h4\"/>", "contator": "<rect x=\"4\" y=\"4\" width=\"16\" height=\"16\" rx=\"2\"/><path d=\"M8 8v3M12 8v3M16 8v3M8 15h8\"/>", "clp": "<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M7 9h1M10 9h1M13 9h1M16 9h1M7 15h10\"/>", "transmissor": "<path d=\"M2 12c2.5-5 4.5-5 7 0s4.5 5 7 0 4-4.5 6-1\"/>", "sinaleiro": "<circle cx=\"12\" cy=\"10\" r=\"6\"/><path d=\"M9 19h6M10 22h4M12 2v2\"/>", "botao": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><circle cx=\"12\" cy=\"12\" r=\"5\"/>", "sensor": "<rect x=\"2\" y=\"9\" width=\"12\" height=\"6\" rx=\"1\"/><path d=\"M14 12h2M18 8.5a5 5 0 0 1 0 7M20.5 6a8.5 8.5 0 0 1 0 12\"/>", "borne": "<rect x=\"4\" y=\"4\" width=\"4\" height=\"16\"/><rect x=\"10\" y=\"4\" width=\"4\" height=\"16\"/><rect x=\"16\" y=\"4\" width=\"4\" height=\"16\"/><path d=\"M5.5 8h1M11.5 8h1M17.5 8h1\"/>", "outro": "<path d=\"M12 5v14M5 12h14\"/>"};
 const miIcon=k=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${MI[k]||MI.outro}</svg>`;
 const MDEF={
   bomba:{name:'Bomba centrífuga',kw:5.5,start:'direta',ic:'💧'},
@@ -787,7 +787,13 @@ const MDEF={
   misturador:{name:'Misturador',kw:5.5,start:'soft',ic:'🥣'},
   rosca:{name:'Rosca transportadora',kw:2.2,start:'inversor',ic:'🔩'},
   eixo:{name:'Eixo linear',kw:0.75,start:'servo',ic:'↔'},
-  redutor:{name:'Redutor com tambor',kw:3,start:'direta',ic:'⚙'}};
+  redutor:{name:'Redutor com tambor',kw:3,start:'direta',ic:'⚙'},
+  desbobinador:{name:'Desbobinador de arames',kw:2.2,start:'inversor'},
+  alimentador:{name:'Endireitador e alimentador de arames',kw:4,start:'inversor'},
+  solda_gradil:{name:'Avanço da malha e solda',kw:3,start:'servo'},
+  transp_aereo:{name:'Transportador aéreo',kw:1.5,start:'inversor'},
+  cabine_pintura:{name:'Exaustor da cabine de pintura',kw:5.5,start:'inversor'},
+  estufa:{name:'Ventilador de recirculação da estufa',kw:7.5,start:'inversor'}};
 const XDEF={
   rele:{pre:'K',desc:'Relé auxiliar com base',spec:'24 Vcc · 2 reversíveis',local:'placa',ic:'⎍'},
   fusivel:{pre:'F',desc:'Fusível com porta-fusível seccionável',spec:'2 A',local:'placa',ic:'▭'},
@@ -826,7 +832,7 @@ function motorI(kw,V){const cos=kw<1.5?0.78:kw<7.5?0.84:0.87, eta=kw<1.5?0.78:kw
 function cableFor(I,min=1.5,tri=true){const T=tri?CABLE3:CABLE,c=T.find(c=>c[1]>=I&&c[0]>=min);return c?c[0]:T[T.length-1][0]}
 
 /* ============ Estado ============ */
-function defaultState(){return{v:2,icc:4.5,brand:'cliente',bov:{},inst:{tloops:0,sensor:'PT100',mode:'porta'},encl:'1000x800x300',V:380,Hz:60,ctrl:'24Vcc',amb:35,dps:true,plc:true,hmi:false,nr12:{on:true,cat:'3',loto:true,tower:true},
+function defaultState(){return{v:2,icc:4.5,weld:{on:false,kva:100,duty:20,tipo:'mfdc'},brand:'cliente',bov:{},inst:{tloops:0,sensor:'PT100',mode:'porta'},encl:'1000x800x300',V:380,Hz:60,ctrl:'24Vcc',amb:35,dps:true,plc:true,hmi:false,nr12:{on:true,cat:'3',loto:true,tower:true},
   loads:[{id:uid(),name:'Esteira transportadora',kw:5.5,start:'direta',tp:0},
          {id:uid(),name:'Bomba de recalque',kw:11,start:'estrela',tp:4},
          {id:uid(),name:'Exaustor',kw:3,start:'inversor',tp:5}],ov:{}}}
@@ -837,6 +843,17 @@ const PRESETS={
  celula:()=>({loads:[{id:uid(),name:'Eixo X',kw:0.75,start:'servo',tp:0.5,guard:true},{id:uid(),name:'Eixo Y',kw:0.75,start:'servo',tp:0.5,guard:true},{id:uid(),name:'Eixo Z',kw:0.4,start:'servo',tp:0.5,guard:true},{id:uid(),name:'Bomba de refrigeração',kw:0.75,start:'direta',tp:0,guard:true},{id:uid(),name:'Transportador de cavacos',kw:0.37,start:'direta',tp:0,guard:true},{id:uid(),name:'Exaustor',kw:0.55,start:'direta',tp:0,guard:true},{id:uid(),name:'Fuso principal',kw:7.5,start:'inversor',tp:3,guard:true}],encl:'1200x800x300',hmi:true,plate:'laranja'}),
  util:()=>({loads:[{id:uid(),name:'Bomba de recalque do tanque',kw:7.5,start:'direta',tp:0,mtype:'tanque_v'},{id:uid(),name:'Transferência de diesel',kw:2.2,start:'direta',tp:0,mtype:'tanque_comb'},{id:uid(),name:'Bomba dosadora de cloro',kw:0.37,start:'inversor',tp:0.5,mtype:'ibc'},{id:uid(),name:'Compressor de ar',kw:15,start:'estrela',tp:5,mtype:'compressor'}],encl:'1200x800x300',hmi:true}),
  nivel:()=>({loads:[],plc:false,hmi:false,nr12:{...defaultState().nr12,on:false},extras:[...[1,2,3].map(n=>({id:uid(),tag:'-F'+n,tipo:'fusivel',desc:'Fusível do controle de nível TQ 0'+n,spec:'2 A',qty:1,local:'placa'})),...[1,2,3].map(n=>({id:uid(),tag:'-A'+n,tipo:'controlador',desc:'Controlador de nível TQ 0'+n,spec:'24 Vcc',qty:1,local:'placa'})),...[1,2,3].map(n=>({id:uid(),tag:'-K'+n,tipo:'rele',desc:'Relé de sinal de nível TQ 0'+n,spec:'24 Vcc',qty:1,local:'placa'})),{id:uid(),tag:'-B1',tipo:'sensor',desc:'Eletrodos de nível (3 hastes)',spec:'',qty:3,local:'campo'}],extraTerms:33,encl:'600x500x250'}),
+  gradil:()=>({loads:[{id:uid(),name:'Desbobinador de arames',kw:2.2,start:'inversor',tp:3,mtype:'desbobinador',guard:true,estop:1},
+    {id:uid(),name:'Endireitador e alimentador de arames',kw:4,start:'inversor',tp:2,mtype:'alimentador',guard:true,estop:0},
+    {id:uid(),name:'Avanço da malha e solda',kw:3,start:'servo',tp:0.3,mtype:'solda_gradil',guard:true,curtain:true,estop:1},
+    {id:uid(),name:'Transportador aéreo',kw:1.5,start:'inversor',tp:4,mtype:'transp_aereo',guard:true,estop:1},
+    {id:uid(),name:'Exaustor da cabine de pintura',kw:5.5,start:'inversor',tp:6,mtype:'cabine_pintura',guard:true,estop:1},
+    {id:uid(),name:'Ventilador de recirculação da estufa',kw:7.5,start:'inversor',tp:8,mtype:'estufa',guard:true,estop:1}],
+    weld:{on:true,kva:150,duty:20,tipo:'mfdc'},inst:{tloops:2,sensor:'PT100',mode:'porta'},hmi:true,encl:'2000x1200x600',
+    extras:[{id:uid(),tag:'-A21',tipo:'controlador',desc:'Programador de chama do queimador a gás da estufa',spec:'220 Vca · supervisão UV',qty:1,local:'placa'},
+      {id:uid(),tag:'-B21',tipo:'sensor',desc:'Sensor de chama UV do queimador',spec:'',qty:1,local:'campo'},
+      {id:uid(),tag:'-Y21',tipo:'outro',desc:'Válvula solenoide dupla de gás (trem de válvulas do queimador)',spec:'24 Vcc',qty:1,local:'campo'},
+      {id:uid(),tag:'-B22',tipo:'sensor',desc:'Pressostato de ar da exaustão da cabine (intertravamento da pistola)',spec:'',qty:1,local:'campo'}]}),
  bomba:()=>({loads:[{id:uid(),name:'Bomba principal',kw:22,start:'estrela',tp:5},{id:uid(),name:'Bomba reserva',kw:22,start:'estrela',tp:5},{id:uid(),name:'Ventilador torre',kw:5.5,start:'inversor',tp:8}],encl:'1800x800x500',hmi:true})
 };
 let state;
@@ -847,6 +864,7 @@ function norm(){
   if(!state.nr12)state.nr12={on:true,cat:'3',loto:true,tower:true};
   if(!state.brand)state.brand='cliente';if(!state.bov)state.bov={};
   if(!(+state.icc>0))state.icc=4.5;
+  if(!state.weld||typeof state.weld!=='object')state.weld={on:false,kva:100,duty:20,tipo:'mfdc'};
   if(state.v!==2){state.v=2;state.brand='cliente';state.bov={}}
   if(!state.inst)state.inst={tloops:0,sensor:'PT100',mode:'porta'};
   state.loads.forEach(l=>{if(l.prox===undefined)l.prox=0});
@@ -874,6 +892,7 @@ function dims(c){
     case 'psu': return v<=2.5?{w:36,h:90,d:90}:v<=5?{w:60,h:125,d:100}:v<=10?{w:90,h:125,d:120}:{w:125,h:125,d:125};
     case 'plc': if(c.brand==='unitronics'){const u=uniMods(c);return{w:26*(u.di+u.do+u.an)+30,h:100,d:75}} return {w:110+(c.exp||0)*40,h:100,d:75};
     case 'tx': return {w:17.5,h:90,d:60};
+    case 'weld': return c.mf?{w:200,h:380,d:260}:{w:160,h:300,d:220};
     case 'dps': return {w:72,h:90,d:70};
     case 'safe': return c.ctrl?{w:45*(1+(c.exp||0)),h:100,d:115}:{w:22.5,h:100,d:115};
     case 'term': return {w:c.count*5.2,h:55,d:45};
@@ -897,6 +916,8 @@ function heatOf(c,load){
     case 'gen': return ({fonte:6,controlador:2,rele:0.6,contator:1.5,clp:8,temporizador:1})[c.sub]||0.5;
     case 'plc': return 10+(c.exp||0)*2;
     case 'tx': return 1;
+    // perdas de ~1% da potência média; refrigerado a água, só ~20% vai para o ar do painel
+    case 'weld': return Math.round((c.kva||100)*1000*(c.duty||20)/100*0.01*(c.mf?0.2:0.35));
     case 'dps': return 0.3;
     case 'safe': return c.ctrl?5+2*(c.exp||0):2;
     case 'term': return c.count*0.1;
@@ -908,7 +929,11 @@ function build(){
   const V=state.V, E=ENCL.find(e=>e.id===state.encl)||ENCL[3];
   const comps=[], acc=[];
   const loads=state.loads.map((l,i)=>({...l,n:i+1,tag:'M'+(i+1),In:motorI(l.kw,V)}));
-  const Itot=loads.reduce((a,l)=>a+l.In,0);
+  // Solda por resistência: corrente de pico (Ip) e corrente térmica equivalente pelo fator de serviço (Ieq = Ip·√FS)
+  let weld=null;
+  if(state.weld&&state.weld.on){const w=state.weld,kva=Math.max(5,+w.kva||100),duty=Math.min(100,Math.max(5,+w.duty||20)),mf=w.tipo==='mfdc';
+    const Ip=mf?kva*1000/(Math.sqrt(3)*V):kva*1000/V,Ieq=Ip*Math.sqrt(duty/100);weld={kva,duty,mf,Ip,Ieq,cable:cableFor(Ieq,4,mf)}}
+  const Itot=loads.reduce((a,l)=>a+l.In,0)+(weld?weld.Ieq:0);
   function mk(o){
     if(o.type){
       const auto=o.type==='simple'?(o.list.find(v=>v>=o.req-1e-9)??o.list[o.list.length-1]):(()=>{const i=o.list.findIndex(r=>r[1]>=o.req);return i<0?o.list.length-1:i})();
@@ -964,6 +989,12 @@ function build(){
     }
     DI+=3+(l.prox||0);
   });
+  if(weld){const g='Solda por resistência';
+    weld.Q=mk({key:'Q20',tag:'-Q20',kind:'brk',poles:weld.mf?3:2,curve:'D',group:g,desc:`Disjuntor ${weld.mf?'tripolar':'bipolar'} curva D do primário da solda (corrente de magnetização)`,type:'simple',list:BRK,req:Math.max(10,weld.Ieq*1.4)});
+    weld.K=mk({key:'K20',tag:'-K20',kind:'cont',group:g,desc:'Contator de linha da solda (seccionamento em AC-1, aberto sem corrente)',type:'simple',list:CONT,req:weld.Ieq});
+    weld.A=mk({key:'A20',tag:'-A20',kind:'weld',group:g,mf:weld.mf,kva:weld.kva,duty:weld.duty,desc:weld.mf?`Controlador de solda por resistência em média frequência (1 kHz), ${fmt(weld.kva)} kVA`:`Controlador de solda por resistência com tiristores (CA), ${fmt(weld.kva)} kVA`,
+      model:weld.mf?'Referência: Bosch Rexroth PSI 6000 (inversor MF)':'Referência: Bosch Rexroth PST 6000 (tiristores CA)',label:`${fmt(weld.kva)} kVA · FS ${fmt(weld.duty)}%`});
+    DO+=2;DI+=3;}
   const AI=state.inst.mode==='clp'?state.inst.tloops:0;
   // Comando
   const needPsu=state.plc||state.ctrl==='24Vcc'||state.hmi;
@@ -1046,6 +1077,9 @@ function build(){
     if(nb)acc.push({sec:'campo',tag:'-S·B',desc:`Comando bimanual tipo IIIC (ABNT NBR 14152) — ${FD.b}`,qty:nb});
     if(ng)acc.push({sec:'campo',tag:'',desc:'Proteção fixa/móvel em chapa ou tela (conforme ABNT NBR ISO 13857)',qty:ng});
   }
+  if(weld){acc.push({sec:'campo',tag:'-T20',desc:weld.mf?`Transformador de solda de média frequência com retificador, ${fmt(weld.kva)} kVA (na máquina)`:`Transformador de solda monofásico ${fmt(weld.kva)} kVA, ligado entre duas fases (na máquina)`,qty:1});
+    acc.push({sec:'campo',tag:'-B20',desc:'Fluxostato da água de refrigeração dos eletrodos e do transformador',qty:1});
+    acc.push({sec:'campo',tag:'',desc:`Cabo de força flexível ${weld.mf?'3':'2'} × ${fmt(weld.cable)} mm² + PE até o transformador de solda`,qty:'10 m'});}
   // Campo: sensores
   if(state.inst.tloops)acc.push({sec:'campo',tag:'-BT',desc:`Sensor de temperatura ${state.inst.sensor==='PT100'?'PT100 3 fios':'termopar tipo '+state.inst.sensor.slice(-1)} com bainha inox e cabeçote — MAFS Instrumentação`,qty:state.inst.tloops});
   {const np=loads.reduce((a,l)=>a+(l.prox||0),0);if(np)acc.push({sec:'campo',tag:'-B·P',desc:'Sensor indutivo M18, PNP NA, 10–30 Vcc, 8 mm — Autonics PR18-8DP',qty:np});}
@@ -1147,8 +1181,11 @@ function build(){
     if(state.nr12.cat==='4')loads.filter(DRV).forEach(l=>alerts.push({lv:'i',t:`${l.tag}: para categoria 4 / PL e, confirme no manual do acionamento que a função STO atinge esse nível.`}));
     if(loads.some(l=>l.curtain))alerts.push({lv:'i',t:'Cortinas de luz: calcule a distância de segurança até a zona de perigo com o tempo de parada da máquina (ABNT NBR ISO 13855).'});
   }else alerts.push({lv:'w',t:'Adequação à NR-12 desativada: o quadro não tem redundância, intertravamento nem rearme de segurança.'});
+  if(weld){alerts.push({lv:'i',t:`Solda: ${fmt(weld.kva)} kVA ${weld.mf?'em média frequência (trifásica)':'CA (entre duas fases)'} · pico ${fmtA(weld.Ip)} · corrente térmica equivalente ${fmtA(weld.Ieq)} com fator de serviço de ${fmt(weld.duty)}% · cabo ${fmt(weld.cable)} mm².`});
+    if(!weld.mf&&weld.kva>=100)alerts.push({lv:'w',t:`Solda CA de ${fmt(weld.kva)} kVA entre duas fases desequilibra a rede e provoca cintilação (flicker). Para 100 kVA ou mais, prefira solda em média frequência, que carrega as três fases por igual.`});
+    const q0w=comps.find(c=>c.key==='Q0');if(q0w&&weld.Ip>q0w.val*4)alerts.push({lv:'i',t:'O pico de corrente da solda é alto em relação ao disjuntor geral: confirme a curva do -Q0 e a queda de tensão com a concessionária.'});}
   if(!alerts.some(a=>a.lv==='e'||a.lv==='w')) alerts.unshift({lv:'ok',t:'Dimensionamento consistente: nenhuma incompatibilidade encontrada.'});
-  return {E,V,loads,comps,acc,Itot,lay,P,Pnat,A,Tint,flow,fan,mainCable,q0,plcInfo,alerts,nr,icc};
+  return {E,V,loads,comps,acc,Itot,lay,P,Pnat,A,Tint,flow,fan,mainCable,q0,plcInfo,alerts,nr,icc,weld};
 }
 
 function layout(comps,E){
@@ -1322,12 +1359,14 @@ function step(dt){
     if(tot>model.q0.val*1.1){sim.q0acc+=dt;if(sim.q0acc>5){sim.q0trip=true;sim.q0=false;log(`-Q0: disjuntor geral desarmou por sobrecarga (${fmtA(tot)})`,true)}}
     else sim.q0acc=Math.max(0,sim.q0acc-dt);
   }
+  // solda por resistência: corrente média pulsante enquanto a máquina de solda trabalha
+  {let wI=0;if(model.weld&&sim.q0&&!sim.q0trip){const wl=model.loads.find(l=>mtypeOf(l)==='solda_gradil');if(wl&&isRun(S_(wl.id)))wI=model.weld.Ieq*(0.8+0.4*Math.abs(Math.sin(sim.t*5)))}sim.weldI=wI;tot+=wI}
   sim.tot=tot;
   {const on=sim.q0&&!sim.q0trip,T=sim.tel||(sim.tel={kwh:0,tOn:0,Tint:state.amb,fan:false,V:[0,0,0],I:[0,0,0],P:0,S:0,pf:0,Hz:0});
    if(on)T.tOn+=dt;const ld=Math.min(1.5,tot/Math.max(1,model.q0.val)),drop=Math.min(0.05,ld*0.025),t=sim.t;
    T.V=[0,1,2].map(i=>on?model.V*(1-drop+0.003*Math.sin(t*0.9+i*2.1)+0.0015*Math.sin(t*3.7+i)):0);
    T.I=[1,0.986,1.013].map((f,i)=>on?tot*f*(1+0.004*Math.sin(t*2.3+i)):0);
-   let ipf=0;model.loads.forEach(l=>{const x=S_(l.id);if(!x.I)return;let pf=DRV(l)?0.95:0.84;if(x.state==='starting'&&(l.start==='direta'||l.start==='estrela'))pf=0.38;if(l.start==='soft'&&x.state==='starting')pf=0.55;ipf+=x.I*pf});
+   let ipf=0;model.loads.forEach(l=>{const x=S_(l.id);if(!x.I)return;let pf=DRV(l)?0.95:0.84;if(x.state==='starting'&&(l.start==='direta'||l.start==='estrela'))pf=0.38;if(l.start==='soft'&&x.state==='starting')pf=0.55;ipf+=x.I*pf});ipf+=(sim.weldI||0)*(model.weld&&model.weld.mf?0.92:0.6);
    T.pf=tot>0.05?ipf/tot:0;const Va=(T.V[0]+T.V[1]+T.V[2])/3,Ia=(T.I[0]+T.I[1]+T.I[2])/3;T.S=Math.sqrt(3)*Va*Ia/1000;T.P=T.S*T.pf;T.kwh+=T.P*dt/3600;T.Hz=on?state.Hz+0.03*Math.sin(t*0.4):0;
    // térmico interno (acelerado para a simulação)
    const lf=model.Itot>0?Math.min(1.3,tot/model.Itot):0,Ph=on?model.P*(0.3+0.7*lf*lf):0,kN=5.5*model.A,kF=(T.fan&&model.fan)?0.335*model.fan:0;
@@ -1397,6 +1436,14 @@ function renderLeft(){
     <label class="f"><span>Sensor (MAFS)</span><select data-inst="sensor">${opt(['PT100','Termopar J','Termopar K'],state.inst.sensor)}</select></label>
   </div>
   ${state.inst.tloops?`<label class="f"><span>Leitura</span><select data-inst="mode">${opt(['porta','clp'],state.inst.mode,v=>v==='porta'?'Controlador NOVUS N1040 na porta':'Transmissor NOVUS TxRail para o CLP')}</select></label>`:''}
+  <h2>Solda por resistência</h2>
+  <div class="checks"><label><input type="checkbox" data-weld="on" ${state.weld.on?'checked':''}> Máquina de solda por resistência (malha, gradil, ponto)</label></div>
+  ${state.weld.on?`<div class="row2">
+    <label class="f"><span>Potência do transformador</span><select data-weld="kva">${opt([25,50,75,100,150,200,250,315,400],+state.weld.kva,v=>v+' kVA')}</select></label>
+    <label class="f"><span>Fator de serviço</span><select data-weld="duty">${opt([10,15,20,30,40,50],+state.weld.duty,v=>v+'%')}</select></label>
+  </div>
+  <label class="f"><span>Tecnologia</span><select data-weld="tipo">${opt(['mfdc','ca'],state.weld.tipo,v=>v==='mfdc'?'Média frequência (inversor, trifásico)':'CA com tiristores (entre duas fases)')}</select></label>
+  <p class="cap">O cabo e o disjuntor seguem a corrente térmica equivalente (pico × √fator de serviço). Confirme os dados de placa do transformador.</p>`:''}
   <h2>Máquinas</h2>
   ${state.loads.map((l,i)=>`
   <div class="load" data-id="${l.id}">
@@ -1434,6 +1481,7 @@ function renderLeft(){
     <button class="btn small" data-act="preset" data-v="celula">Máquina CNC com servos</button>
     <button class="btn small" data-act="preset" data-v="util">Tanques e utilidades</button>
     <button class="btn small" data-act="preset" data-v="nivel">Controle de nível (sem motores)</button>
+    <button class="btn small" data-act="preset" data-v="gradil">Fábrica de gradil (solda, pintura e estufa)</button>
   </div>`;
 }
 
@@ -1451,7 +1499,8 @@ function renderRight(){
     <dt>Disjuntor geral</dt><dd>${m.q0.label}${m.q0.mccb?' · caixa moldada':''}</dd>
     <dt>Curto-circuito (Icc / Icu do -Q0)</dt><dd${m.q0.icu<m.icc?' style="color:var(--stop)"':''}>${fmt(m.icc,1)} kA / ${fmt(m.q0.icu,1)} kA</dd>
     <dt>Cabo de alimentação</dt><dd>${fmt(m.mainCable)} mm² Cu</dd>
-    <dt>Potência instalada</dt><dd>${fmt(m.loads.reduce((a,l)=>a+l.kw,0),2)} kW</dd>
+    <dt>Potência instalada</dt><dd>${fmt(m.loads.reduce((a,l)=>a+l.kw,0),2)} kW${m.weld?` + solda ${fmt(m.weld.kva)} kVA`:''}</dd>
+    ${m.weld?`<dt>Solda (pico / equivalente)</dt><dd>${fmtA(m.weld.Ip)} / ${fmtA(m.weld.Ieq)} · ${fmt(m.weld.cable)} mm²</dd>`:''}
     ${m.plcInfo?`<dt>E/S do CLP</dt><dd>${m.plcInfo.DI} ED · ${m.plcInfo.DO} SD${m.plcInfo.AO?` · ${m.plcInfo.AO} SA`:''}</dd>`:''}
   </dl>
   <div class="meter"><p><span>Ocupação da placa</span><span>${Math.round(L.used)} / ${L.Bh} mm</span></p><div class="track"><i class="${cls(occ)}" style="width:${Math.min(100,occ*100)}%"></i></div></div>
@@ -1618,7 +1667,7 @@ function drawSpark(){
 /* ============ Diagrama unifilar ============ */
 function diagramSVG(){
   if(isAlt())return altDiagram();
-  const m=model,n=m.loads.length,colW=165,x0=70,bx0=140;
+  const m=model,n=m.loads.length+(m.weld?1:0),colW=165,x0=70,bx0=140;
   const W=Math.max(640,bx0+colW*n+40),H=640;
   const dc=DC(),live=cssVar('--live'),ink=dc.ink,mut=dc.mut;
   const on=sim.q0&&!sim.q0trip;
@@ -1665,6 +1714,12 @@ function diagramSVG(){
     s+=T(x,my+48,`${l.tag} · ${fmt(l.kw,2)} kW`,{a:'middle',w:600})+T(x,my+64,`${l.cables}× ${fmt(l.cable)} mm² · In ${fmtA(l.In)}`,{a:'middle',s:12,f:mut});
     if(y<my-28)s+=T(x+8,(y+my-28)/2+4,START[l.start],{s:11,f:mut});
   });
+  if(m.weld){const wd=m.weld,x=bx0+m.loads.length*colW+colW/2,act=m.loads.some(l=>mtypeOf(l)==='solda_gradil'&&isRun(S_(l.id)));
+    s+=Ln(x,150,x,170,on)+brk(x,170,true,on,on,wd.Q.tag,wd.Q.label+' D')+brk(x,230,on,on,on,wd.K.tag,wd.K.label,false);
+    s+=`<rect x="${x-26}" y="300" width="52" height="42" rx="3" fill="none" stroke="${col(on&&act)}" stroke-width="${sw(on&&act)}"/>`+T(x,327,wd.mf?'MF':'SCR',{a:'middle',s:15,w:700})+T(x+32,318,wd.A.tag,{w:700})+T(x+32,334,fmt(wd.kva)+' kVA',{s:12,f:mut});
+    const my=560;s+=Ln(x,290,x,300,on)+Ln(x,342,x,my-40,on&&act);
+    s+=`<circle cx="${x}" cy="${my-20}" r="20" fill="none" stroke="${col(on&&act)}" stroke-width="${sw(on&&act)}"/><circle cx="${x}" cy="${my+8}" r="20" fill="none" stroke="${col(on&&act)}" stroke-width="${sw(on&&act)}"/>`;
+    s+=T(x,my+48,`-T20 · solda ${fmt(wd.kva)} kVA`,{a:'middle',w:600})+T(x,my+64,`${wd.mf?3:2}× ${fmt(wd.cable)} mm² · Ieq ${fmtA(wd.Ieq)}`,{a:'middle',s:12,f:mut});}
   s+=`<g transform="translate(${W-150},22)"><line x1="0" y1="-4" x2="22" y2="-4" stroke="${live}" stroke-width="3"/>`+T(28,0,'Trecho energizado',{s:12,f:mut})+`</g>`;
   if(NR()){const st=safeState(),c=st==='ok'?cssVar('--run'):st==='emerg'?cssVar('--stop'):cssVar('--warn');
     s+=`<g transform="translate(${W-230},44)"><rect width="200" height="52" rx="4" fill="none" stroke="${c}" stroke-width="2"/>`+T(10,20,'Interface de segurança',{w:700,s:13})+T(10,40,st==='ok'?'Liberada: KS podem fechar':st==='emerg'?'Emergência: KS abertos':'Aguardando rearme (-S01)',{s:12,f:c,w:600})+`</g>`;}
@@ -2480,6 +2535,12 @@ function wireList(){
     else{const U=p.U,isS=l.start==='soft';ser(U,isS?['1L1','3L2','5L3']:['L1','L2','L3']);
       tri(T(U.tag,isS?['2T1','4T2','6T3']:['U','V','W']),[xt(l.id,'U'),xt(l.id,'V'),xt(l.id,'W')],s,P(U.key),X1,fn+' · saída ao motor'+(DRV(l)?' (cabo blindado)':''),pre,['U','V','W'])}
     add({an:pre+'-PE',de:xt(l.id,'PE'),para:'Barra PE',sec:sec(s),cor:CPE,len:len(X1,PE),fn:fn+' · terra do motor'})});
+  if(m.weld){const wd=m.weld,ph=wd.mf?['L1','L2','L3']:['L1','L2'],pins=wd.mf?['1','3','5']:['1','3'],outs=wd.mf?['2','4','6']:['2','4'],fn='Solda por resistência';
+    ph.forEach((f,i)=>{add({an:'W-'+f,de:`${q0.tag}:${['2','4','6'][i]}`,para:`${wd.Q.tag}:${pins[i]}`,sec:sec(wd.cable),cor:CP,len:len(P('Q0'),P('Q20')),fn});
+      add({an:'W-'+f,de:`${wd.Q.tag}:${outs[i]}`,para:`${wd.K.tag}:${pins[i]}`,sec:sec(wd.cable),cor:CP,len:len(P('Q20'),P('K20')),fn});
+      add({an:'W-'+f,de:`${wd.K.tag}:${outs[i]}`,para:`${wd.A.tag}:${f}`,sec:sec(wd.cable),cor:CP,len:len(P('K20'),P('A20')),fn});
+      add({an:'W-'+f,de:`${wd.A.tag}:saída ${i+1}`,para:'-T20 (transformador de solda)',sec:sec(wd.cable),cor:CP,len:'',fn:fn+' (cabo de campo direto, sem borne)'})});
+    add({an:'W-PE',de:'Barra PE',para:'-T20 (PE)',sec:sec(Math.max(wd.cable/2,6)),cor:CPE,len:'',fn:fn+' (terra do transformador)'})}
   // Comando
   const q9=m.comps.find(c=>c.key==='Q9'),t1=m.comps.find(c=>c.key==='T1');
   if(q9){add({an:'L',de:q0.tag+':2',para:q9.tag+':1',sec:'1,5 mm²',cor:CAC,len:len(P('Q0'),P('Q9')),fn:'Alimentação do comando'});
@@ -3617,7 +3678,7 @@ function canvasTex(wmm,hmm,draw,ppm=4){
   const c=document.createElement('canvas');c.width=cw;c.height=ch;const x=c.getContext('2d');draw(x,cw,ch);
   const t=new THREE.CanvasTexture(c);t.anisotropy=4;return{t,c,x,cw,ch};
 }
-const LOOK={gen:['#E6E7E4','#1d2327'],brk:['#ECEDEA','#1d2327'],mpcb:['#D5D9D6','#1d2327'],cont:['#4A5258','#F2F2F2'],olr:['#5B636A','#F2F2F2'],timer:['#E6E7E4','#1d2327'],vfd:['#2E3B45','#E9EEF0'],soft:['#34434E','#E9EEF0'],psu:['#BCC2C5','#1d2327'],plc:['#353F48','#E9EEF0'],dps:['#E6E0CF','#1d2327'],safe:['#E3B81F','#1d2327'],servo:['#1E2226','#E9EEF0'],rlyb:['#2E8B3E','#F2F2F2'],tx:['#DADDD9','#1d2327'],term:['#9FA6AA','#1d2327']};
+const LOOK={weld:['#27384A','#E9EEF0'],gen:['#E6E7E4','#1d2327'],brk:['#ECEDEA','#1d2327'],mpcb:['#D5D9D6','#1d2327'],cont:['#4A5258','#F2F2F2'],olr:['#5B636A','#F2F2F2'],timer:['#E6E7E4','#1d2327'],vfd:['#2E3B45','#E9EEF0'],soft:['#34434E','#E9EEF0'],psu:['#BCC2C5','#1d2327'],plc:['#353F48','#E9EEF0'],dps:['#E6E0CF','#1d2327'],safe:['#E3B81F','#1d2327'],servo:['#1E2226','#E9EEF0'],rlyb:['#2E8B3E','#F2F2F2'],tx:['#DADDD9','#1d2327'],term:['#9FA6AA','#1d2327']};
 
 /* ---------- detalhes de realismo dos componentes da placa ---------- */
 const CDM={};function cdMat(k,o){return CDM[k]||(CDM[k]=o())}
@@ -3773,7 +3834,11 @@ function rebuild3D(keepView){
   buildDoor(E);
   // Motores
   let mx=(E.W/2+260)*S;
-  model.loads.forEach(l=>{const w=buildMotor(l,mx,floorY);mx+=w+0.5});
+  R.gl={};model.loads.forEach(l=>{const w=buildMotor(l,mx,floorY);mx+=w+0.5});
+  buildOverhead(floorY);
+  // linhas longas (ex.: fábrica de gradil): o piso acompanha o comprimento das máquinas
+  if(mx>90&&R.floor){const Wf=mx+130,cxF=(mx-130)/2+50,mp=R.floor.material.map;R.floor.geometry.dispose();R.floor.geometry=new THREE.PlaneGeometry(Wf,200);R.floor.position.x=cxF;
+    if(mp&&mp.repeat){mp.repeat.x=mp.repeat.y*Wf/200;mp.needsUpdate=true}}
   buildFieldCables(E,floorY,mx);
   if(PH.img){if(R.wall)R.wall.visible=false;if(R.wallStripe)R.wallStripe.visible=false}
   buildAirflow(E);buildRoute(E);
@@ -4059,8 +4124,10 @@ function plateLabel(g,txt,x,y,fz,w=60,bold,h=16){
   const p=new THREE.Mesh(new THREE.PlaneGeometry(w*S,h*S),new THREE.MeshBasicMaterial({map:t.t}));p.position.set(x,y,(fz+0.6)*S);g.add(p);
 }
 /* ============ Máquinas acionadas (ilustração 3D realista) ============ */
-const MTYPES={auto:'Automático (pelo nome)',bomba:'Bomba centrífuga',tanque_v:'Tanque vertical de armazenamento (líquidos)',tanque_comb:'Tanque aéreo de combustível (diesel)',ibc:'Bomba dosadora + IBC 1000 L',compressor:'Compressor de ar + reservatório',esteira:'Esteira transportadora',ventilador:'Ventilador / exaustor',misturador:'Misturador (tanque)',rosca:'Rosca transportadora',eixo:'Eixo linear (servo)',redutor:'Redutor + tambor'};
+const MTYPES={auto:'Automático (pelo nome)',bomba:'Bomba centrífuga',tanque_v:'Tanque vertical de armazenamento (líquidos)',tanque_comb:'Tanque aéreo de combustível (diesel)',ibc:'Bomba dosadora + IBC 1000 L',compressor:'Compressor de ar + reservatório',esteira:'Esteira transportadora',ventilador:'Ventilador / exaustor',misturador:'Misturador (tanque)',rosca:'Rosca transportadora',eixo:'Eixo linear (servo)',redutor:'Redutor + tambor',desbobinador:'Desbobinador de arames',alimentador:'Endireitador e alimentador de arames',solda_gradil:'Máquina de solda de malha (gradil)',transp_aereo:'Transportador aéreo (monovia)',cabine_pintura:'Cabine de pintura a pó',estufa:'Estufa de cura'};
 function mtypeOf(l){if(l.mtype&&l.mtype!=='auto'&&MTYPES[l.mtype])return l.mtype;const n=(l.name||'').toLowerCase();
+  if(/desbobin/.test(n))return 'desbobinador';if(/endireit|alimentador de arame/.test(n))return 'alimentador';if(/solda|malha/.test(n))return 'solda_gradil';
+  if(/a[ée]reo|suspens|monovia/.test(n))return 'transp_aereo';if(/cabine|pintura/.test(n))return 'cabine_pintura';if(/estufa|forno|cura/.test(n))return 'estufa';
   if(/compress/.test(n))return 'compressor';if(/diesel|combust|gasolin|etanol|óleo|oleo|gerador/.test(n))return 'tanque_comb';if(/ibc|químic|quimic|cloro|soda|hipoclorito/.test(n)||/bomba.*dosador/.test(n))return 'ibc';if(/tanque|reservat|armazen|caixa d|cisterna|recalque/.test(n))return 'tanque_v';
   if(/bomba/.test(n))return 'bomba';if(/esteira|transport|correia|cavaco/.test(n))return 'esteira';if(/exaust|ventil/.test(n))return 'ventilador';
   if(/mistur|agita/.test(n))return 'misturador';if(/rosca|helic|dosad/.test(n))return 'rosca';if(l.start==='servo'||/eixo/.test(n))return 'eixo';return 'redutor'}
@@ -4094,6 +4161,122 @@ function buildDriven(l,g,r,len){
     const val=P(bx(dR*2.4,dR*2.4,dR*2.4,paint('#c0392b')));val.position.set(vx,R0*0.9+dh*0.3,dz);const hw=P(new THREE.Mesh(new THREE.TorusGeometry(dR*1.4,dR*0.18,8,20),paint('#c0392b')));hw.position.set(vx,R0*0.9+dh*0.3+dR*1.9,dz);hw.rotation.x=Math.PI/2;
     const gau=P(cyl(dR*0.9,dR*0.9,dR*0.4,mat('#f2f2f2')));gau.rotation.x=Math.PI/2;gau.position.set(vx+dR*1.4,R0*0.9+dh*0.7,dz+dR*0.2);
     ext=vx+dR*2.4+r*2.3;top=R0*0.9+dh+dR*3.4;depth=R0*2.4;
+  }else if(type==='desbobinador'){
+    // Desbobinadores dos arames longitudinais: carretéis em dois níveis, arames seguindo para o endireitador
+    const H=9,yW=yF+H,zc=-g.position.z,reels=[],wireM=mat('#b8bfc4',{metalness:0.9,roughness:0.3});
+    const zs=[-7.5,-4.5,-1.5,1.5,4.5,7.5];
+    zs.forEach((z,i)=>{const x=cx+3+(i%2)*5.2,rr=2.4,yc=yF+rr+0.9;
+      [-0.75,0.75].forEach(dz=>{const up=P(bx(0.35,yc-yF+0.6,0.35,paint('#2F5E7A')));up.position.set(x,(yF+yc+0.6)/2,zc+z+dz)});
+      const base=P(bx(2.2,0.3,2.2,paint('#2F5E7A')));base.position.set(x,yF+0.15,zc+z);
+      const rg=new THREE.Group();rg.position.set(x,yc,zc+z);g.add(rg);
+      const drum=cyl(rr,rr,1.1,mat('#7d6a4f',{roughness:0.8}),26);drum.rotation.x=Math.PI/2;drum.castShadow=true;rg.add(drum);
+      const coil=cyl(rr*0.82,rr*0.82,1.12,mat('#9aa3a8',{metalness:0.85,roughness:0.35}),26);coil.rotation.x=Math.PI/2;rg.add(coil);
+      [0,1,2].forEach(k=>{const sp=bx(rr*2.05,0.18,0.18,dark);sp.rotation.z=k*Math.PI/3;sp.position.z=0.6;rg.add(sp)});
+      reels.push(rg);
+      const x1=cx+13,dx=x1-x,dy=yW-(yc+rr*0.82),zt=z*0.62,dz=zt-z,Lw=Math.hypot(dx,dy,dz);
+      const w=P(cyl(0.05,0.05,Lw,wireM,6));w.position.set((x+x1)/2,(yc+rr*0.82+yW)/2,zc+(z+zt)/2);
+      w.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),new THREE.Vector3(dx,dy,dz).normalize())});
+    upd=(dt,sp)=>reels.forEach((rg,i)=>rg.rotation.z-=sp*dt*(2.2+0.2*i));
+    ext=cx+13.2;top=yF+7;depth=20;
+  }else if(type==='alimentador'){
+    // Endireitador de rolos e alimentador dos arames
+    const H=9,yW=yF+H,zc=-g.position.z,L=10,x0=cx+1.5,rolls=[],wireM=mat('#b8bfc4',{metalness:0.9,roughness:0.3});
+    const fr=paint('#2F5E7A');
+    const base=P(bx(L,H-1.6,11,fr));base.position.set(x0+L/2,yF+(H-1.6)/2,zc);
+    const tbl=P(bx(L,0.4,11.6,steel));tbl.position.set(x0+L/2,yF+H-1.4,zc);
+    for(let i=0;i<7;i++){const up=i%2,rl=P(cyl(0.42,0.42,10.4,steel,16));rl.rotation.x=Math.PI/2;rl.position.set(x0+1+i*1.3,yW+(up?0.5:-0.5),zc);rolls.push(rl)}
+    [x0+L-1.2].forEach(xx=>{[1,-1].forEach(sd=>{const fr2=P(cyl(0.8,0.8,10.4,mat('#5b6268',{metalness:0.6,roughness:0.35}),20));fr2.rotation.x=Math.PI/2;fr2.position.set(xx,yW+sd*0.85,zc);rolls.push(fr2)})});
+    const cover=P(new THREE.Mesh(new THREE.BoxGeometry(L+0.4,2.6,11.8),new THREE.MeshStandardMaterial({color:'#E8B80E',roughness:0.45,transparent:true,opacity:0.35})));cover.position.set(x0+L/2,yW+1.2,zc);
+    [-4.65,-2.79,-0.93,0.93,2.79,4.65].forEach(z=>{const w=P(cyl(0.05,0.05,L+2.4,wireM,6));w.rotation.z=Math.PI/2;w.position.set(x0+L/2+0.6,yW,zc+z)});
+    upd=(dt,sp)=>rolls.forEach(rl=>rl.rotation.y+=sp*dt*8);
+    ext=x0+L+1.4;top=yW+2.6;depth=13;
+  }else if(type==='solda_gradil'){
+    // Máquina de solda de malha: pórtico com eletrodos, alimentação dos arames transversais e mesa de saída
+    const H=9,yW=yF+H,zc=-g.position.z,x0=cx+1.2,fr=paint('#2F5E7A'),cu=mat('#b8703c',{metalness:0.85,roughness:0.3});
+    const base=P(bx(9,H-0.6,16,fr));base.position.set(x0+4.5,yF+(H-0.6)/2,zc);
+    const trafo=P(bx(4,3.4,5,paint('#3a4a58')));trafo.position.set(x0+3,yF+H+1.2,zc+10.6);
+    const tf2=P(bx(3,2.2,3,dark));tf2.position.set(x0+3,yF+1.1,zc+10.2);
+    [-8.3,8.3].forEach(z=>{const col=P(bx(1.6,16.5-0.6,1.6,fr));col.position.set(x0+5,yF+(16.5)/2,zc+z)});
+    const beam=P(bx(2.4,2.2,18.2,fr));beam.position.set(x0+5,yF+16.4,zc);
+    const head=new THREE.Group();head.position.set(x0+5,0,zc);g.add(head);
+    const hb=bx(1.8,1.2,15.4,mat('#4a5258',{metalness:0.5,roughness:0.4}));hb.position.y=yF+14.6;head.add(hb);
+    for(let i=0;i<8;i++){const z=-5.6+i*1.6;const cyl1=cyl(0.35,0.35,2.6,steel,12);cyl1.position.set(0,yF+12.9,z);head.add(cyl1);const el=cyl(0.28,0.2,1.6,cu,12);el.position.set(0,yF+11,z);head.add(el)}
+    const low=P(bx(1.4,0.5,13.4,cu));low.position.set(x0+5,yW-0.45,zc);
+    // alimentação dos arames transversais (funil inclinado com arames cortados)
+    const hop=P(bx(3.2,0.3,14,steel));hop.position.set(x0+2.3,yW+3.4,zc);hop.rotation.z=-0.5;
+    for(let i=0;i<6;i++){const tw=P(cyl(0.06,0.06,13,mat('#b8bfc4',{metalness:0.9,roughness:0.3}),6));tw.rotation.x=Math.PI/2;tw.position.set(x0+1+i*0.45,yW+4.1-i*0.22,zc)}
+    // faíscas
+    const sparks=[];const sm=new THREE.MeshBasicMaterial({color:'#ffd27a',transparent:true,opacity:0});
+    for(let i=0;i<24;i++){const sp=new THREE.Mesh(new THREE.SphereGeometry(0.09,6,4),sm);sp.position.set(x0+5+(Math.random()-0.5)*1.2,yW+Math.random()*0.8,zc-5.6+Math.random()*11.2);g.add(sp);sparks.push(sp)}
+    // mesa de saída com a malha soldada
+    const Lt=24,xt=x0+9;
+    const tab=P(bx(Lt,0.4,12,steel));tab.position.set(xt+Lt/2,yW-1,zc);
+    [1,Lt/2,Lt-1].forEach(px=>[-5.4,5.4].forEach(z=>{const lg=P(bx(0.4,H-1.2,0.4,dark));lg.position.set(xt+px,yF+(H-1.2)/2,zc+z)}));
+    const mtx=gradilTex();const mesh=new THREE.Mesh(new THREE.PlaneGeometry(20,10.3),new THREE.MeshStandardMaterial({map:mtx,color:'#c9d0d4',metalness:0.8,roughness:0.35,transparent:true,alphaTest:0.4,side:THREE.DoubleSide}));
+    mesh.rotation.x=-Math.PI/2;mesh.position.set(xt+10,yW-0.7,zc);g.add(mesh);
+    if(state.nr12.on&&(l.guard||l.curtain)){const ym=new THREE.MeshStandardMaterial({color:'#E8B80E',roughness:0.5});
+      [-9.6,9.6].forEach(z=>{const gp=P(new THREE.Mesh(new THREE.BoxGeometry(10,9,0.15),new THREE.MeshStandardMaterial({map:gradilTex(),color:'#E8B80E',transparent:true,alphaTest:0.4,side:THREE.DoubleSide})));gp.position.set(x0+5,yF+5.5,zc+z);
+        const fr3=P(bx(10.2,0.3,0.3,ym));fr3.position.set(x0+5,yF+10,zc+z)})}
+    let t=0;const y0=yF+14.6,ee=head.children;
+    upd=(dt,sp)=>{t+=dt*sp;const ph=(t*2.2)%1,down=sp>0.05&&ph>0.55&&ph<0.8;head.position.y=down?-1.3:0;
+      sm.opacity=down?0.95:0;if(down)sparks.forEach(s2=>{s2.position.y=yW+Math.random()*1.4;s2.position.x=x0+5+(Math.random()-0.5)*2.4});
+      mesh.position.x=xt+10+((t*4)%6)-3};
+    if(!R.gl)R.gl={};R.gl.weldX1=g.position.x+xt+Lt;
+    ext=xt+Lt+0.6;top=yF+17.6;depth=22;
+  }else if(type==='transp_aereo'){
+    // Estação de acionamento do transportador aéreo (monovia); o trilho e os gradis são montados depois (buildOverhead)
+    const zc=-g.position.z,yr=yF+24,xs=cx+1.5;
+    [-1,1].forEach(sd=>{const c=P(bx(0.6,yr-yF+1.2,0.6,paint('#3b4a56')));c.position.set(xs+sd*1.6,(yF+yr+1.2)/2,zc-3.2)});
+    const beam=P(bx(4,0.5,4,paint('#3b4a56')));beam.position.set(xs,yr+1.3,zc-1.6);
+    const wheel=P(cyl(2.4,2.4,0.35,steel,28));wheel.position.set(xs,yr+0.4,zc);
+    for(let k=0;k<4;k++){const sp=bx(4.6,0.2,0.3,dark);sp.rotation.y=k*Math.PI/4;wheel.add(sp)}
+    const drv=P(bx(1.6,1.4,1.4,paint('#2F5E7A')));drv.position.set(xs,yr+2.3,zc);
+    const mot=P(cyl(0.6,0.6,1.8,paint('#2F5E7A'),18));mot.rotation.z=Math.PI/2;mot.position.set(xs+1.6,yr+2.3,zc);
+    if(!R.gl)R.gl={};R.gl.conv={x:g.position.x+xs,id:l.id};
+    upd=(dt,sp)=>{wheel.rotation.y+=sp*dt*1.6;if(R.gl&&R.gl.tick)R.gl.tick(dt,sp)};
+    ext=xs+3;top=yr+3.2;depth=8;
+  }else if(type==='cabine_pintura'){
+    // Cabine de pintura a pó com reciprocadores e unidade de recuperação com filtros de cartucho
+    const zc=-g.position.z,Lb=34,x0=cx+4,yb=yF+10,yt=yF+23.6,wall=mat('#e8ecee',{roughness:0.55,metalness:0.1}),fr=paint('#2F5E7A');
+    [-6,6].forEach(z=>{const w=P(bx(Lb,yt-yb,0.25,wall));w.position.set(x0+Lb/2,(yb+yt)/2,zc+z)});
+    const fl=P(bx(Lb,0.3,12.2,wall));fl.position.set(x0+Lb/2,yb,zc);
+    [-3.2,3.2].forEach(z=>{const rf=P(bx(Lb,0.25,5.6,wall));rf.position.set(x0+Lb/2,yt,zc+z)});
+    [0.5,Lb/2,Lb-0.5].forEach(px=>[-5.8,5.8].forEach(z=>{const lg=P(bx(0.4,yb-yF,0.4,fr));lg.position.set(x0+px,(yF+yb)/2,zc+z)}));
+    const rec=[];[-1,1].forEach(sd=>{const z=zc+sd*8.2,xm=x0+Lb*0.38;
+      const col=P(bx(0.8,yt-yF,0.8,fr));col.position.set(xm,(yF+yt)/2,z);
+      const car=new THREE.Group();car.position.set(xm,yF+16,z);g.add(car);rec.push(car);
+      [-1.2,1.2].forEach(dy=>{const gun=cyl(0.25,0.18,3,mat('#d9dde0',{metalness:0.4,roughness:0.4}),12);gun.rotation.x=Math.PI/2;gun.position.set(0,dy,-sd*1.6);car.add(gun)})});
+    const pw=[];const pm=new THREE.MeshBasicMaterial({color:'#6fb486',transparent:true,opacity:0});
+    for(let i=0;i<40;i++){const s2=new THREE.Mesh(new THREE.SphereGeometry(0.22,6,4),pm);s2.position.set(x0+Lb*0.38+(Math.random()-0.5)*4,yF+12+Math.random()*9,zc+(Math.random()-0.5)*9);g.add(s2);pw.push(s2)}
+    const fb=P(bx(6,14,5,paint('#c7ccd0')));fb.position.set(x0+Lb*0.8,yF+7,zc-9.2);
+    [0,1,2].forEach(k=>{const ct=P(cyl(0.9,0.9,5,mat('#6d7479',{roughness:0.7}),16));ct.position.set(x0+Lb*0.8-2+k*2,yF+9,zc-9.2)});
+    const duct=P(bx(4,4,3.2,paint('#c7ccd0')));duct.position.set(x0+Lb*0.8,yF+16,zc-7.2);
+    const stack=P(cyl(1,1,6,steel,18));stack.position.set(x0+Lb*0.8,yF+17+3,zc-9.2);
+    let t=0;upd=(dt,sp)=>{t+=dt;rec.forEach((c,i)=>c.position.y=yF+16+Math.sin(t*1.6+i)*3*Math.min(1,sp*1.5));pm.opacity=Math.min(0.35,sp*0.4);
+      if(sp>0.05)pw.forEach(s2=>{s2.position.y+=dt*(0.6+Math.random());if(s2.position.y>yF+22)s2.position.y=yF+12})};
+    if(!R.gl)R.gl={};R.gl.booth=[g.position.x+x0,g.position.x+x0+Lb];
+    ext=x0+Lb+1.2;top=yF+23;depth=24;
+  }else if(type==='estufa'){
+    // Estufa de cura (túnel isolado) com queimador a gás, chaminé e ventilador de recirculação no teto
+    const zc=-g.position.z,Le=52,x0=cx+4,yb=yF+9.2,yt=yF+24.6,fr=paint('#3b4a56');
+    const pt=texOnce('ovenpanel',64,64,(x,w,h)=>{x.fillStyle='#c9cfd3';x.fillRect(0,0,w,h);x.fillStyle='#aab1b6';x.fillRect(0,0,2,h);x.fillStyle='#d8dde0';x.fillRect(3,0,2,h)},[Le/6,2]);
+    const panel=new THREE.MeshStandardMaterial({map:pt,metalness:0.55,roughness:0.4});
+    [-6.6,6.6].forEach(z=>{const w=P(bx(Le,yt-yb,1.2,panel));w.position.set(x0+Le/2,(yb+yt)/2,zc+z)});
+    const fl=P(bx(Le,1,14.4,panel));fl.position.set(x0+Le/2,yb,zc);
+    [-3.7,3.7].forEach(z=>{const rf=P(bx(Le,1,6.2,panel));rf.position.set(x0+Le/2,yt,zc+z)});
+    for(let px=0.6;px<Le;px+=Le/5)[-6.4,6.4].forEach(z=>{const lg=P(bx(0.5,yb-yF,0.5,fr));lg.position.set(x0+px,(yF+yb)/2,zc+z)});
+    const glow=new THREE.MeshBasicMaterial({color:'#ff7a2e',transparent:true,opacity:0,side:THREE.DoubleSide});
+    [-5.9,5.9].forEach(z=>{const gp=new THREE.Mesh(new THREE.PlaneGeometry(Le-1,yt-yb-1.2),glow);gp.position.set(x0+Le/2,(yb+yt)/2,zc+z);g.add(gp)});
+    const burner=P(bx(5,5,4,paint('#b0302a')));burner.position.set(x0+Le*0.3,yF+5,zc+9.4);
+    const bdu=P(bx(2,4,2,steel));bdu.position.set(x0+Le*0.3,yF+9.5,zc+8.4);
+    const chim=P(cyl(0.9,0.9,14,steel,18));chim.position.set(x0+Le*0.7,yt+7,zc+3.7);
+    const fan=P(cyl(2.4,2.4,1.6,mat('#aeb5ba',{metalness:0.75,roughness:0.35}),28));fan.position.set(x0+Le*0.45,yt+1.4,zc-3.7);
+    const imp=new THREE.Group();imp.position.set(x0+Le*0.45,yt+2.3,zc-3.7);g.add(imp);for(let k=0;k<3;k++){const b=bx(3.6,0.15,0.5,dark);b.rotation.y=k*Math.PI/3;imp.add(b)}
+    const sign=canvasTex(120,46,(x,cw,ch)=>{x.fillStyle='#15212C';x.fillRect(0,0,cw,ch);x.fillStyle='#ffb347';x.font=`700 ${ch*0.42}px "Barlow Condensed",sans-serif`;x.fillText('ESTUFA 180–200 °C',cw*0.06,ch*0.62)},4);
+    const sp1=new THREE.Mesh(new THREE.PlaneGeometry(12,4.6),new THREE.MeshStandardMaterial({map:sign.t}));sp1.position.set(x0+6.5,yt-3,zc+7.25);g.add(sp1);
+    upd=(dt,sp)=>{imp.rotation.y+=sp*dt*14;glow.opacity=Math.min(0.55,glow.opacity+(sp>0.05?dt*0.08:-dt*0.2))};
+    if(!R.gl)R.gl={};R.gl.oven=[g.position.x+x0,g.position.x+x0+Le];
+    ext=x0+Le+1.2;top=yt+14;depth=26;
   }else if(type==='esteira'){
     const Lc=Math.max(14,10+l.kw*1.2),Wc=5,hb=yF+8.2,x0=cx+1.2;
     // transmissão por corrente com proteção
@@ -4332,6 +4515,41 @@ function buildEnv(E,floorY,xEnd){
     const cb=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,2.6,6),mat('#555'));cb.position.set(x,floorY+H-1.9,zb+6);grp.add(cb)}
   const sw=new THREE.Mesh(new THREE.PlaneGeometry(40,H),wm);sw.rotation.y=Math.PI/2;sw.position.set(cx-L/2,floorY+H/2,zb+20);sw.receiveShadow=true;grp.add(sw);
   if(PH.img)grp.visible=false;
+}
+/* ============ Linha de gradil: malha soldada e transportador aéreo ============ */
+// Textura da malha (gradil 2,00 × 1,03 m: verticais a cada 50 mm, horizontais a cada 200 mm, com dobras em V)
+function gradilTex(){return texOnce('gradil',256,132,(x,w,h)=>{x.clearRect(0,0,w,h);x.fillStyle='#fff';
+  for(let i=0;i<=40;i++)x.fillRect(Math.round(i*(w-2)/40),0,2,h);
+  for(let j=0;j<=5;j++)x.fillRect(0,Math.round(j*(h-3)/5),w,3);
+  [0.32,0.68].forEach(f=>{x.fillRect(0,Math.round(h*f)-3,w,6)})})}
+// Trilho do transportador aéreo da saída da solda até depois da estufa, com gradis pendurados que mudam de cor
+function buildOverhead(floorY){
+  const G=R.gl;if(!G||!G.conv)return;
+  const x0=(G.weldX1!=null?G.weldX1-6:G.conv.x-4),x1=Math.max(G.oven?G.oven[1]:0,G.booth?G.booth[1]:0,G.conv.x)+28,yr=floorY+24,L=x1-x0;
+  const grp=new THREE.Group();R.root.add(grp);
+  const dark=mat('#2a2f33',{roughness:0.6,metalness:0.3}),stl=mat('#3b4a56',{roughness:0.5,metalness:0.4});
+  const rail=new THREE.Mesh(new THREE.BoxGeometry(L,0.55,0.35),dark);rail.position.set(x0+L/2,yr,0);rail.castShadow=true;grp.add(rail);
+  const fl=new THREE.Mesh(new THREE.BoxGeometry(L,0.12,1.1),dark);fl.position.set(x0+L/2,yr-0.33,0);grp.add(fl);
+  const inside=x=>[G.booth,G.oven].some(r=>r&&x>r[0]-1.5&&x<r[1]+1.5);
+  for(let x=x0+2;x<x1;x+=24){if(inside(x))continue;
+    const post=new THREE.Mesh(new THREE.BoxGeometry(0.6,yr-floorY+1.2,0.6),stl);post.position.set(x,(floorY+yr+1.2)/2,-8.2);post.castShadow=true;grp.add(post);
+    const arm=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.5,8.6),stl);arm.position.set(x,yr+0.9,-4);grp.add(arm)}
+  const tex=gradilTex(),N=Math.max(3,Math.floor(L/26)),sp=L/N,panels=[];
+  const cRaw=new THREE.Color('#c9d0d4'),cPow=new THREE.Color('#7fb592'),cCur=new THREE.Color('#1d6a3c');
+  for(let i=0;i<N;i++){const pg=new THREE.Group();grp.add(pg);
+    const m=new THREE.MeshStandardMaterial({map:tex,color:cRaw.clone(),metalness:0.8,roughness:0.35,transparent:true,alphaTest:0.4,side:THREE.DoubleSide});
+    const pl=new THREE.Mesh(new THREE.PlaneGeometry(20,10.3),m);pl.position.y=-7.6;pl.castShadow=true;pg.add(pl);
+    const tr=new THREE.Mesh(new THREE.BoxGeometry(1.2,0.5,0.8),stl);tr.position.y=-0.2;pg.add(tr);
+    [-8,8].forEach(dx=>{const h=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,2.4,6),dark);h.position.set(dx,-1.4,0);pg.add(h);
+      const bar=new THREE.Mesh(new THREE.BoxGeometry(17,0.18,0.18),dark);bar.position.set(0,-2.5,0);if(dx<0)pg.add(bar)});
+    pg.position.y=yr;panels.push({g:pg,m,o:i*sp})}
+  // cor do gradil conforme a etapa: cru até o meio da cabine, pó aplicado (fosco) até a saída da estufa, curado (brilhante) depois
+  const bm=G.booth?(G.booth[0]+G.booth[1])/2:null,ox=G.oven?G.oven[1]:null;
+  let off=0;
+  const place=()=>panels.forEach(p=>{const x=x0+((p.o+off)%L+L)%L;p.g.position.x=x;
+    const st=bm!=null&&x>bm?(ox!=null&&x>ox?2:1):(bm==null&&ox!=null&&x>ox?2:0);
+    if(p.st!==st){p.st=st;p.m.color.copy(st===2?cCur:st===1?cPow:cRaw);p.m.metalness=st?0.15:0.8;p.m.roughness=st===2?0.3:st===1?0.85:0.35}});
+  place();G.tick=(dt,s)=>{off+=s*dt*3.2;place()};
 }
 function buildMotor(l,x,floorY){
   const r=(55+42*Math.cbrt(l.kw))*S,len=r*2.4;
@@ -4619,6 +4837,7 @@ document.addEventListener('change',e=>{
   if(t.dataset.ap){const k=t.dataset.ap;state.prim[k]=t.type==='checkbox'?t.checked:(t.value!==''&&!isNaN(+t.value)?+t.value:t.value);refresh(true);return}
   if(t.dataset.ff){const id=t.closest('[data-fid]').dataset.fid,d=state.forca.feeders.find(x=>x.id===id),k=t.dataset.ff;d[k]=k==='name'||k==='fase'||k==='curva'?t.value:k==='dr'?t.checked:k==='dist'?Math.max(0,+t.value||0):Math.max(0.1,+t.value||0.1);refresh(k!=='name');return}
   if(t.dataset.cfg){const k=t.dataset.cfg;state[k]=t.type==='checkbox'?t.checked:(['V','Hz','amb','icc'].includes(k)?+t.value:t.value);refresh(k==='encl'?false:false);return}
+  if(t.dataset.weld){const k=t.dataset.weld;state.weld[k]=k==='on'?t.checked:k==='tipo'?t.value:+t.value;refresh(true);return}
   if(t.dataset.inst){const k=t.dataset.inst;state.inst[k]=k==='tloops'?+t.value:t.value;refresh(true);return}
   if(t.dataset.nr){const k=t.dataset.nr;state.nr12[k]=t.type==='checkbox'?t.checked:t.value;if(k==='on'){sim.safeLatch=false;model&&model.loads.forEach(l=>{const x=S_(l.id);x.latch=false;x.guardOpen=false;x.weldLock=false})}if(!state.nr12.loto)sim.loto=false;refresh(true);return}
   if(t.dataset.xterms!==undefined){state.extraTerms=Math.max(0,Math.round(+t.value||0));refresh(true);return}
@@ -4645,11 +4864,11 @@ document.addEventListener('click',e=>{
   switch(a){
     case 'xadd':{const k=XDEF[b.dataset.v]?b.dataset.v:'rele',d=XDEF[k];const n=state.extras.filter(e=>String(e.tag||'').replace(/^-/,'').replace(/\d+$/,'')===d.pre).length+1;
       state.extras.push({id:uid(),tag:'-'+d.pre+n,tipo:k,desc:d.desc,spec:d.spec,qty:1,local:d.local});refresh(true);toast(`${XTYPE[k]} -${d.pre}${n} adicionado`);break}
-    case 'addm':{const k=MDEF[b.dataset.v]?b.dataset.v:'bomba',d=MDEF[k];state.loads.push({id:uid(),name:d.name,kw:d.kw,start:d.start,tp:TP_DEFAULT[d.start]||0,mtype:k,guard:true,curtain:false,twohand:false,estop:1,prox:0});refresh(true);toast(`${MTYPES[k]} adicionado(a) como M${state.loads.length}`);break}
+    case 'addm':{const k=MDEF[b.dataset.v]?b.dataset.v:'bomba',d=MDEF[k];state.loads.push({id:uid(),name:d.name,kw:d.kw,start:d.start,tp:TP_DEFAULT[d.start]||0,mtype:k,guard:true,curtain:false,twohand:false,estop:1,prox:0});if(k==='solda_gradil'&&state.weld&&!state.weld.on){state.weld.on=true;toast('Circuito de solda por resistência ativado no quadro (seção Solda por resistência).')}refresh(true);toast(`${MTYPES[k]} adicionado(a) como M${state.loads.length}`);break}
     case 'xrm':state.extras=state.extras.filter(e=>e.id!==b.dataset.id);refresh(true);break;
     case 'add':{const i=state.loads.length+1;state.loads.push({id:uid(),name:'Máquina '+i,kw:3,start:'direta',tp:0,guard:true,curtain:false,twohand:false,estop:1});refresh(true);break}
     case 'rm':state.loads=state.loads.filter(l=>l.id!==id);Object.keys(state.ov).forEach(k=>{if(k.startsWith(id+':'))delete state.ov[k]});delete sim.L[id];refresh(true);break;
-    case 'preset':Object.assign(state,{extras:[],extraTerms:0,plc:true,nr12:{...defaultState().nr12}},PRESETS[b.dataset.v](),{ov:{}});norm();sim.L={};sim.log=[];R&&(R.viewSet=false);refresh(true);log('Exemplo carregado');break;
+    case 'preset':Object.assign(state,{extras:[],extraTerms:0,plc:true,nr12:{...defaultState().nr12},weld:{...defaultState().weld},inst:{...defaultState().inst}},PRESETS[b.dataset.v](),{ov:{}});norm();sim.L={};sim.log=[];R&&(R.viewSet=false);refresh(true);log('Exemplo carregado');break;
     case 'auto':autoSize();log(`Invólucro dimensionado: ${model.E.H} × ${model.E.W} × ${model.E.D} mm`);break;
     case 'resetov':state.ov={};state.bov={};refresh(false);break;
     case 'copy':copyBom(b);break;
@@ -4749,7 +4968,7 @@ document.addEventListener('keydown',e=>{const l=e.target.closest&&e.target.close
 function toast(msg){let t=$('#toast');if(!t){t=document.createElement('div');t.id='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.textContent=msg;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2600)}
 function themeCycle(){const order=['auto','light','dark'];THEME.mode=order[(order.indexOf(THEME.mode)+1)%3];THEME_SAVED={...THEME_SAVED,mode:THEME.mode};try{localStorage.setItem('qc-theme',JSON.stringify(THEME_SAVED))}catch(e){}themeChanged();themeDirty=false;updThemeBtn();toast('Tema: '+({auto:'automático (sistema)',light:'claro',dark:'escuro'})[THEME.mode])}
 function updThemeBtn(){const b=$('#btnTheme');if(b)b.querySelector('span').textContent=({auto:'Auto',light:'Claro',dark:'Escuro'})[THEME.mode]||'Tema'}
-const SECIC={'Tipo de painel':'grid','Projeto':'folder','Quadro':'cpu','Segurança NR-12':'shield','Instrumentação':'thermo','Máquinas':'motor','Resumo técnico':'gauge','Adequação à NR-12':'shield','Alertas':'alert','Lista de materiais':'list','Alimentação e entrada':'bolt','Invólucro':'cpu','Cabos':'bolt','Circuitos de saída':'list','Fornecimento':'bolt','Transformador':'gauge','Proteção geral':'shield','Instalação e opcionais':'grid','Quadro de força':'cpu','Cabine primária':'bolt'};
+const SECIC={'Solda por resistência':'bolt','Tipo de painel':'grid','Projeto':'folder','Quadro':'cpu','Segurança NR-12':'shield','Instrumentação':'thermo','Máquinas':'motor','Resumo técnico':'gauge','Adequação à NR-12':'shield','Alertas':'alert','Lista de materiais':'list','Alimentação e entrada':'bolt','Invólucro':'cpu','Cabos':'bolt','Circuitos de saída':'list','Fornecimento':'bolt','Transformador':'gauge','Proteção geral':'shield','Instalação e opcionais':'grid','Quadro de força':'cpu','Cabine primária':'bolt'};
 let SECBUSY=false;
 function sectionize(root){if(SECBUSY||!root)return;SECBUSY=true;try{const kids=[...root.childNodes];if(!kids.some(n=>n.tagName==='H2')){SECBUSY=false;return}
   const frag=document.createDocumentFragment();let cur=null;const closed=state.secClosed||(state.secClosed={});
