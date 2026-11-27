@@ -596,6 +596,22 @@ aside .btn.block,aside .row2 .btn{white-space:normal;line-height:1.2}
 .navctl .mlist{max-height:min(360px,60vh);overflow:auto}
 #c3d:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
 @media (max-width:760px){.navctl{top:8px;right:8px}.navctl .navgrp:nth-of-type(3){display:none}.navctl .navgo .mbtn span{display:none}}
+
+/* Tela cheia da vista 3D */
+.viewer.fs{background:var(--scene)}
+.viewer.fs-pseudo{position:fixed!important;inset:0;z-index:1000;width:100vw!important;height:100dvh!important;margin:0;border-radius:0}
+body.fs-lock{overflow:hidden}
+.viewer:not(.fs) .fsbar{display:none}
+.fsbar{position:absolute;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:6;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;
+  max-width:calc(100% - 24px);padding:8px 10px;border-radius:16px;background:color-mix(in srgb,var(--surface) 88%,transparent);backdrop-filter:blur(10px);border:1px solid var(--line);box-shadow:var(--sh-3)}
+.fsbar .fst{font:700 16px/1.1 "Barlow Condensed","Arial Narrow",sans-serif;padding:0 6px;max-width:260px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fsbar .fss{font-size:12.5px;color:var(--muted);padding:0 6px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.fsbar .fss[data-s=on]{color:var(--run)}.fsbar .fss[data-s=e]{color:var(--stop);font-weight:600}
+.fsbar .btn[aria-pressed=true]:not(.run):not(.stop){background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.viewer.fs .hint{display:none}
+.viewer.fs-notele .tele{display:none!important}
+.viewer.fs .tele{top:16px;left:16px}
+@media (max-width:760px){.fsbar{gap:6px;padding:6px}.fsbar .btn span{display:none}.fsbar .fst{display:none}.fsbar .fss{flex-basis:100%;text-align:center;order:9}}
 </style>
 </head>
 <body>
@@ -4196,7 +4212,7 @@ function buildDriven(l,g,r,len){
   }else if(type==='desbobinador'){
     // Desbobinadores dos arames longitudinais: carretéis em dois níveis, arames seguindo para o endireitador
     const H=9,yW=yF+H,zc=-g.position.z,reels=[],wireM=mat('#b8bfc4',{metalness:0.9,roughness:0.3});
-    const zs=[-9,-6,-3,0,3,6,9];
+    const zs=GR_H.map(y=>-y*1.45);
     zs.forEach((z,i)=>{const x=cx+3+(i%2)*5.2,rr=2.4,yc=yF+rr+0.9;
       [-0.75,0.75].forEach(dz=>{const up=P(bx(0.35,yc-yF+0.6,0.35,paint('#2F5E7A')));up.position.set(x,(yF+yc+0.6)/2,zc+z+dz)});
       const base=P(bx(2.2,0.3,2.2,paint('#2F5E7A')));base.position.set(x,yF+0.15,zc+z);
@@ -4206,90 +4222,91 @@ function buildDriven(l,g,r,len){
       [0,1,2].forEach(k=>{const sp=bx(rr*2.05,0.18,0.18,dark);sp.rotation.z=k*Math.PI/3;sp.position.z=0.6;rg.add(sp)});
       reels.push(rg);if(!R.gl)R.gl={};(R.gl.reels=R.gl.reels||[]).push({x:g.position.x+x,y:g.position.y+yc+rr*0.82,z:g.position.z+zc+z})});
     upd=(dt,sp)=>reels.forEach((rg,i)=>rg.rotation.z-=sp*dt*(2.2+0.2*i));
-    ext=cx+13.2;top=yF+7;depth=20;
+    ext=cx+13.2;top=yF+7;depth=32;
   }else if(type==='alimentador'){
     // Endireitador de rolos e alimentador dos arames
     const H=9,yW=yF+H,zc=-g.position.z,L=10,x0=cx+1.5,rolls=[],wireM=mat('#b8bfc4',{metalness:0.9,roughness:0.3});
     const fr=paint('#2F5E7A');
-    const base=P(bx(L,H-1.6,11,fr));base.position.set(x0+L/2,yF+(H-1.6)/2,zc);
-    const tbl=P(bx(L,0.4,11.6,steel));tbl.position.set(x0+L/2,yF+H-1.4,zc);
-    for(let i=0;i<7;i++){const up=i%2,rl=P(cyl(0.42,0.42,10.4,steel,16));rl.rotation.x=Math.PI/2;rl.position.set(x0+1+i*1.3,yW+(up?0.5:-0.5),zc);rolls.push(rl)}
-    [x0+L-1.2].forEach(xx=>{[1,-1].forEach(sd=>{const fr2=P(cyl(0.8,0.8,10.4,mat('#5b6268',{metalness:0.6,roughness:0.35}),20));fr2.rotation.x=Math.PI/2;fr2.position.set(xx,yW+sd*0.85,zc);rolls.push(fr2)})});
-    const cover=P(new THREE.Mesh(new THREE.BoxGeometry(L+0.4,2.6,11.8),new THREE.MeshStandardMaterial({color:'#E8B80E',roughness:0.45,transparent:true,opacity:0.35})));cover.position.set(x0+L/2,yW+1.2,zc);
+    const base=P(bx(L,H-1.6,2*GP.zt-1,fr));base.position.set(x0+L/2,yF+(H-1.6)/2,zc);
+    const tbl=P(bx(L,0.4,2*GP.zt-0.4,steel));tbl.position.set(x0+L/2,yF+H-1.4,zc);
+    for(let i=0;i<7;i++){const up=i%2,rl=P(cyl(0.42,0.42,2*GP.hz+0.6,steel,16));rl.rotation.x=Math.PI/2;rl.position.set(x0+1+i*1.3,yW+(up?0.5:-0.5),zc);rolls.push(rl)}
+    [x0+L-1.2].forEach(xx=>{[1,-1].forEach(sd=>{const fr2=P(cyl(0.8,0.8,2*GP.hz+0.6,mat('#5b6268',{metalness:0.6,roughness:0.35}),20));fr2.rotation.x=Math.PI/2;fr2.position.set(xx,yW+sd*0.85,zc);rolls.push(fr2)})});
+    const cover=P(new THREE.Mesh(new THREE.BoxGeometry(L+0.4,2.6,2*GP.zt-0.2),new THREE.MeshStandardMaterial({color:'#E8B80E',roughness:0.45,transparent:true,opacity:0.35})));cover.position.set(x0+L/2,yW+1.2,zc);
     if(!R.gl)R.gl={};R.gl.str={x0:g.position.x+x0,x1:g.position.x+x0+L,y:g.position.y+yW};
     upd=(dt,sp)=>rolls.forEach(rl=>rl.rotation.y+=sp*dt*8);
-    ext=x0+L+1.4;top=yW+2.6;depth=13;
+    ext=x0+L+1.4;top=yW+2.6;depth=2*GP.zt+2;
   }else if(type==='solda_gradil'){
     // Máquina de solda de malha: magazine de arames transversais já cortados com tambor dosador, pórtico de eletrodos e mesa de saída
     const H=9,yW=yF+H,zc=-g.position.z,x0=cx+1.2,ex=x0+5,fr=paint('#2F5E7A'),cu=mat('#b8703c',{metalness:0.85,roughness:0.3}),wm=mat('#b8bfc4',{metalness:0.9,roughness:0.3});
     const hasPress=model.loads.some(q=>mtypeOf(q)==='vincadeira');
-    const base=P(bx(9,H-0.6,16,fr));base.position.set(x0+4.5,yF+(H-0.6)/2,zc);
-    const trafo=P(bx(4,3.4,5,paint('#3a4a58')));trafo.position.set(x0+3,yF+H+1.2,zc+10.6);
-    const tf2=P(bx(3,2.2,3,dark));tf2.position.set(x0+3,yF+1.1,zc+10.2);
-    [-8.3,8.3].forEach(z=>{const col=P(bx(1.6,16.5-0.6,1.6,fr));col.position.set(ex,yF+(16.5)/2,zc+z)});
-    const beam=P(bx(2.4,2.2,18.2,fr));beam.position.set(ex,yF+16.4,zc);
+    const W5=GP.hz-5.15;   // acréscimo de meia largura em relação ao painel de 1,03 m
+    const base=P(bx(9,H-0.6,16+2*W5,fr));base.position.set(x0+4.5,yF+(H-0.6)/2,zc);
+    const trafo=P(bx(4,3.4,5,paint('#3a4a58')));trafo.position.set(x0+3,yF+H+1.2,zc+10.6+W5);
+    const tf2=P(bx(3,2.2,3,dark));tf2.position.set(x0+3,yF+1.1,zc+10.2+W5);
+    [-1,1].forEach(sd=>{const col=P(bx(1.6,16.5-0.6,1.6,fr));col.position.set(ex,yF+(16.5)/2,zc+sd*(8.3+W5))});
+    const beam=P(bx(2.4,2.2,18.2+2*W5,fr));beam.position.set(ex,yF+16.4,zc);
     const head=new THREE.Group();head.position.set(ex,0,zc);g.add(head);
-    const hb=bx(1.8,1.2,15.4,mat('#4a5258',{metalness:0.5,roughness:0.4}));hb.position.y=yF+14.6;head.add(hb);
+    const hb=bx(1.8,1.2,2*GP.hz+1.2,mat('#4a5258',{metalness:0.5,roughness:0.4}));hb.position.y=yF+14.6;head.add(hb);
     GR_H.forEach(y=>{const z=-y;const c1=cyl(0.35,0.35,2.6,steel,12);c1.position.set(0,yF+12.9,z);head.add(c1);const el=cyl(0.28,0.2,1.6,cu,12);el.position.set(0,yF+11,z);head.add(el)});
-    const low=P(bx(1.4,0.5,11,cu));low.position.set(ex,yW-0.35,zc);
+    const low=P(bx(1.4,0.5,2*GP.hz+0.7,cu));low.position.set(ex,yW-0.35,zc);
     // magazine de arames transversais cortados (feixe) + tambor dosador + calha até a linha dos eletrodos
     const mx=x0+1.6,my=yW+4.2;
     // estrutura aberta do magazine (laterais em quadro, fundo inclinado) para ver o feixe
     const mag=new THREE.Group();mag.position.set(mx,my,zc);mag.rotation.z=-0.35;g.add(mag);
-    [-5.7,5.7].forEach(z=>{[[-1.5,0],[1.5,0]].forEach(([dx])=>{const b2=bx(0.22,4.4,0.22,fr);b2.position.set(dx,0,z);b2.castShadow=true;mag.add(b2)});
+    [-GP.hz-0.55,GP.hz+0.55].forEach(z=>{[[-1.5,0],[1.5,0]].forEach(([dx])=>{const b2=bx(0.22,4.4,0.22,fr);b2.position.set(dx,0,z);b2.castShadow=true;mag.add(b2)});
       [-2.2,2.2].forEach(dy=>{const b3=bx(3.2,0.22,0.22,fr);b3.position.set(0,dy,z);mag.add(b3)})});
-    const floorM=bx(3.2,0.12,11.6,steel);floorM.position.set(0,-1.75,0);mag.add(floorM);
-    const backM=bx(0.12,1.6,11.6,steel);backM.position.set(-1.5,-1.1,0);mag.add(backM);
+    const floorM=bx(3.2,0.12,2*GP.hz+1.3,steel);floorM.position.set(0,-1.75,0);mag.add(floorM);
+    const backM=bx(0.12,1.6,2*GP.hz+1.3,steel);backM.position.set(-1.5,-1.1,0);mag.add(backM);
     const bundle=new THREE.Group();bundle.position.set(mx,my,zc);bundle.rotation.z=-0.35;g.add(bundle);
-    for(let r2=0;r2<7;r2++)for(let c2=0;c2<5;c2++){const w=cyl(0.055,0.055,10.6,wm,6);w.rotation.x=Math.PI/2;w.position.set(-0.9+c2*0.42+(r2%2)*0.2,-1.4+r2*0.42,0);bundle.add(w)}
+    for(let r2=0;r2<7;r2++)for(let c2=0;c2<5;c2++){const w=cyl(0.035,0.035,2*GP.hz+0.3,wm,6);w.rotation.x=Math.PI/2;w.position.set(-0.9+c2*0.42+(r2%2)*0.2,-1.4+r2*0.42,0);bundle.add(w)}
     const drum=new THREE.Group();drum.position.set(x0+2.9,yW+1.85,zc);g.add(drum);
-    const dc=cyl(0.62,0.62,11.2,mat('#5b6268',{metalness:0.6,roughness:0.35}),24);dc.rotation.x=Math.PI/2;drum.add(dc);
-    for(let i=0;i<8;i++){const n=bx(0.22,0.22,11.3,dark);const a=i/8*Math.PI*2;n.position.set(Math.cos(a)*0.6,Math.sin(a)*0.6,0);n.rotation.z=a;drum.add(n)}
-    const chute=P(bx(2.6,0.12,11,steel));chute.position.set((x0+2.9+ex)/2,yW+0.95,zc);chute.rotation.z=-0.42;
-    const dmot=P(cyl(0.5,0.5,1.4,paint('#2F5E7A'),16));dmot.rotation.x=Math.PI/2;dmot.position.set(x0+2.9,yW+1.85,zc+6.4);
+    const dc=cyl(0.62,0.62,2*GP.hz+0.9,mat('#5b6268',{metalness:0.6,roughness:0.35}),24);dc.rotation.x=Math.PI/2;drum.add(dc);
+    for(let i=0;i<8;i++){const n=bx(0.22,0.22,2*GP.hz+1,dark);const a=i/8*Math.PI*2;n.position.set(Math.cos(a)*0.6,Math.sin(a)*0.6,0);n.rotation.z=a;drum.add(n)}
+    const chute=P(bx(2.6,0.12,2*GP.hz+0.7,steel));chute.position.set((x0+2.9+ex)/2,yW+0.95,zc);chute.rotation.z=-0.42;
+    const dmot=P(cyl(0.5,0.5,1.4,paint('#2F5E7A'),16));dmot.rotation.x=Math.PI/2;dmot.position.set(x0+2.9,yW+1.85,zc+GP.hz+1.3);
     // pneumática: ilha de válvulas no lado da rede de ar, feixe pela coluna, distribuidor na viga e espirais até os cilindros dos eletrodos
-    valveIsland(g,8,new THREE.Vector3(x0+2.4,yF+H+0.25,zc-7.4));airUse(g,new THREE.Vector3(x0+2.4-2.3,yF+H+0.4,zc-7.4),'Solda');
-    hose(g,[[x0+2.4,yF+H+1,zc-7.6],[ex-1.6,yF+H+2.4,zc-9],[ex-1.4,yF+15,zc-9.1],[ex+1.4,yF+15.6,zc-7.6],[ex+1.4,yF+15.6,zc-5.4]],0.16,PCOL.hoseB);
-    rigid(g,[[ex+1.4,yF+15.6,zc-5.4],[ex+1.4,yF+15.6,zc+5.4]],0.14,'#9aa3a8');
+    valveIsland(g,8,new THREE.Vector3(x0+2.4,yF+H+0.25,zc-7.4-W5));airUse(g,new THREE.Vector3(x0+2.4-2.3,yF+H+0.4,zc-7.4-W5),'Solda');
+    hose(g,[[x0+2.4,yF+H+1,zc-7.6-W5],[ex-1.6,yF+H+2.4,zc-9-W5],[ex-1.4,yF+15,zc-9.1-W5],[ex+1.4,yF+15.6,zc-7.6-W5],[ex+1.4,yF+15.6,zc-GP.hz-0.25]],0.16,PCOL.hoseB);
+    rigid(g,[[ex+1.4,yF+15.6,zc-GP.hz-0.25],[ex+1.4,yF+15.6,zc+GP.hz+0.25]],0.14,'#9aa3a8');
     const coils=[];GR_H.forEach(y=>{const z=zc-y;hose(g,[[ex+1.4,yF+15.6,z],[ex+0.9,yF+15.5,z],[ex+0.55,yF+15.3,z]],0.035,PCOL.hose);const cH=coilHose(g,0.16,5,0.03,PCOL.hose);cH.position.set(ex+0.55,yF+15.3,z);coils.push(cH)});
     const setCoils=hy=>coils.forEach(cH=>cH.scale.y=Math.max(0.25,1.1-hy));setCoils(0);
     // guilhotina: dois cilindros pneumáticos com mangueiras
-    [-4,4].forEach(dz=>{const cb=P(cyl(0.3,0.3,1.5,mat('#c9cdd0',{metalness:0.6,roughness:0.3}),14));cb.position.set(ex+1.2,yW+3.2,zc+dz);
-      hose(g,[[x0+3.6,yF+H+0.9,zc-7.4],[ex+1.2,yF+H+4.6,zc-6],[ex+1.2,yW+4,zc+dz]],0.035,PCOL.hose)});
+    [-GP.hz*0.75,GP.hz*0.75].forEach(dz=>{const cb=P(cyl(0.3,0.3,1.5,mat('#c9cdd0',{metalness:0.6,roughness:0.3}),14));cb.position.set(ex+1.2,yW+3.2,zc+dz);
+      hose(g,[[x0+3.6,yF+H+0.9,zc-7.4-W5],[ex+1.2,yF+H+4.6,zc-6-W5],[ex+1.2,yW+4,zc+dz]],0.035,PCOL.hose)});
     // água de refrigeração (ida azul, retorno vermelho) para eletrodos e transformador
-    [[PCOL.water,0],[PCOL.hot,0.35]].forEach(([c,o])=>{hose(g,[[x0+3.6+o,yF+H+1.4,zc+8.1],[ex-1,yF+H+0.8,zc+7.2],[ex-0.75,yW-0.35,zc+5.6+o]],0.08,c);
-      hose(g,[[x0+3+o,yF+H+2.9,zc+9.2],[ex-0.4,yF+17.4,zc+8.3],[ex-1.2,yF+17.6,zc+6.4]],0.08,c);
-      hose(g,[[x0+2.2+o,yF+0.2,zc+12.5],[x0+2.2+o,yF+1.5,zc+11.5],[x0+2.6+o,yF+H+1.2,zc+9]],0.09,c)});
+    [[PCOL.water,0],[PCOL.hot,0.35]].forEach(([c,o])=>{hose(g,[[x0+3.6+o,yF+H+1.4,zc+8.1+W5],[ex-1,yF+H+0.8,zc+7.2+W5],[ex-0.75,yW-0.35,zc+5.6+o+W5]],0.08,c);
+      hose(g,[[x0+3+o,yF+H+2.9,zc+9.2+W5],[ex-0.4,yF+17.4,zc+8.3+W5],[ex-1.2,yF+17.6,zc+6.4+W5]],0.08,c);
+      hose(g,[[x0+2.2+o,yF+0.2,zc+12.5+W5],[x0+2.2+o,yF+1.5,zc+11.5+W5],[x0+2.6+o,yF+H+1.2,zc+9+W5]],0.09,c)});
     // faíscas
     const sparks=[];const sm=new THREE.MeshBasicMaterial({color:'#ffd27a',transparent:true,opacity:0});
-    for(let i=0;i<28;i++){const s2=new THREE.Mesh(new THREE.SphereGeometry(0.09,6,4),sm);s2.position.set(ex,yW,zc-GR_H[i%7]);g.add(s2);sparks.push(s2)}
+    for(let i=0;i<44;i++){const s2=new THREE.Mesh(new THREE.SphereGeometry(0.09,6,4),sm);s2.position.set(ex,yW,zc-GR_H[i%GR_H.length]);g.add(s2);sparks.push(s2)}
     if(state.nr12.on&&(l.guard||l.curtain)){const ym=new THREE.MeshStandardMaterial({color:'#E8B80E',roughness:0.5});
-      [-9.6,9.6].forEach(z=>{const gp=P(new THREE.Mesh(new THREE.BoxGeometry(10,9,0.15),new THREE.MeshStandardMaterial({map:gradilTex(),color:'#E8B80E',transparent:true,alphaTest:0.4,side:THREE.DoubleSide})));gp.position.set(ex,yF+5.5,zc+z);
+      [-9.6-W5,9.6+W5].forEach(z=>{const gp=P(new THREE.Mesh(new THREE.BoxGeometry(10,9,0.15),new THREE.MeshStandardMaterial({map:gradilTex(),color:'#E8B80E',transparent:true,alphaTest:0.4,side:THREE.DoubleSide})));gp.position.set(ex,yF+5.5,zc+z);
         const fr3=P(bx(10.2,0.3,0.3,ym));fr3.position.set(ex,yF+10,zc+z)})}
     // mesa de saída
-    const PANEL=20,STEPS=40,pitch=PANEL/STEPS,yr=yF+24,xt=ex+4,Lt=hasPress?18:24,xEnd=xt+Lt;
-    const tab=P(bx(Lt,0.4,12,steel));tab.position.set(xt+Lt/2,yW-0.85,zc);
-    [1,Lt/2,Lt-1].forEach(px=>[-5.4,5.4].forEach(z=>{const lg=P(bx(0.4,H-1.2,0.4,dark));lg.position.set(xt+px,yF+(H-1.2)/2,zc+z)}));
-    for(let i=0;i<Math.floor(Lt/3);i++){const rl=P(cyl(0.22,0.22,11.6,steel,12));rl.rotation.x=Math.PI/2;rl.position.set(xt+1.5+i*3,yW-0.45,zc)}
+    const PANEL=GP.L,STEPS=GP.nv-1,pitch=GP.pv,yr=yF+GP.yr,xt=ex+4,Lt=hasPress?24:32,xEnd=xt+Lt;
+    const tab=P(bx(Lt,0.4,2*GP.zt,steel));tab.position.set(xt+Lt/2,yW-0.85,zc);
+    [1,Lt/2,Lt-1].forEach(px=>[-GP.zt+0.6,GP.zt-0.6].forEach(z=>{const lg=P(bx(0.4,H-1.2,0.4,dark));lg.position.set(xt+px,yF+(H-1.2)/2,zc+z)}));
+    for(let i=0;i<Math.floor(Lt/3);i++){const rl=P(cyl(0.22,0.22,2*GP.zt-0.4,steel,12));rl.rotation.x=Math.PI/2;rl.position.set(xt+1.5+i*3,yW-0.45,zc)}
     if(!R.renderer.localClippingEnabled)R.renderer.localClippingEnabled=true;
     const clip=new THREE.Plane(new THREE.Vector3(1,0,0),-(g.position.x+ex-0.05));
     const mkPanel=(c)=>{const m=new THREE.Mesh(gradilGeo(false),gradilMat());m.rotation.x=-Math.PI/2;m.castShadow=true;if(c)m.material.clippingPlanes=[clip];g.add(m);return m};
     const grow=mkPanel(true);const setGrow=kf=>{grow.position.set(ex-PANEL/2+kf*pitch,yW,zc)};setGrow(0);
-    const cross=P(cyl(0.055,0.055,10.6,wm,6));cross.rotation.x=Math.PI/2;cross.visible=false;
-    const shear=P(bx(0.5,1.4,12.4,mat('#5b6268',{metalness:0.6,roughness:0.35})));const shY=yW+1.6;shear.position.set(ex+1.2,shY,zc);
+    const cross=P(cyl(GP.r,GP.r,2*GP.hz,wm,6));cross.rotation.x=Math.PI/2;cross.visible=false;
+    const shear=P(bx(0.5,1.4,2*GP.zt,mat('#5b6268',{metalness:0.6,roughness:0.35})));const shY=yW+1.6;shear.position.set(ex+1.2,shY,zc);
     const xfer=mkPanel(false);xfer.visible=false;
     const ease=x=>x<0?0:x>1?1:x*x*(3-2*x),lerp=(a,b,f)=>a+(b-a)*f;
     // sem vincadeira na linha: pórtico próprio pendura o gradil plano no trilho
     let gp=null,G=[],xc=xEnd-PANEL/2-0.6;
-    if(!hasPress){const zg=zc+5.15,yPark=yW+13,yHook=yr-2.45+0.3,yT=yW;
-      const stop=P(bx(0.4,1.2,10,mat('#c3302a',{roughness:0.5})));stop.position.set(xEnd-0.3,yW-0.2,zc);
+    if(!hasPress){const zg=zc+GP.hz,yPark=yW+13,yHook=yr-2.45+0.3,yT=yW;
+      const stop=P(bx(0.4,1.2,2*GP.hz,mat('#c3302a',{roughness:0.5})));stop.position.set(xEnd-0.3,yW-0.2,zc);
       gp=gripGantry(g,{xc,floor:yF,topY:yr+3,z0:zc,z1:zg});gp.set(zg,yPark,0,false);
       G=[[0.9,f=>gp.set(zg,lerp(yPark,yT+0.3,f),0,false)],[0.4,f=>{gp.set(zg,yT+0.3,0,f>0.5);if(f>0.5){xfer.visible=false;gp.held.visible=true}}],
         [1.1,f=>gp.set(zg,lerp(yT+0.3,yHook,f),0,true)],[1.3,f=>gp.set(zg,yHook,-Math.PI/2*f,true)],[0.9,f=>gp.set(lerp(zg,zc,f),yHook,-Math.PI/2,true)],
         [0.5,f=>{gp.set(zc,yHook-0.3*f,-Math.PI/2,f<0.6);if(f>=0.6&&gp.held.visible){gp.held.visible=false;if(R.gl&&R.gl.spawn)R.gl.spawn(g.position.x+xc)}}],
         [1.4,f=>gp.set(lerp(zc,zg,f),lerp(yHook,yPark,f),-Math.PI/2*(1-f),false)]]}
     let t=0,k=0,mode=null,mt=0,prevStep=0,gi=-1,gt=0,drumA=0;
-    const goHead=down=>{head.position.y=down?-1.3:0;setCoils(head.position.y);sm.opacity=down?0.95:0;if(down)sparks.forEach((s2,i)=>{s2.position.set(ex+(Math.random()-0.5)*0.9,yW+Math.random()*0.9,zc-GR_H[i%7]+(Math.random()-0.5)*0.5)})};
+    const goHead=down=>{head.position.y=down?-1.3:0;setCoils(head.position.y);sm.opacity=down?0.95:0;if(down)sparks.forEach((s2,i)=>{s2.position.set(ex+(Math.random()-0.5)*0.9,yW+Math.random()*0.9,zc-GR_H[i%GR_H.length]+(Math.random()-0.5)*0.5)})};
     upd=(dt,sp)=>{const d=dt*sp;t+=d*2.5;
       const step=Math.floor(t),ph=t-step;
       // ciclo: 0–0,35 avanço de 50 mm; 0,35–0,55 tambor libera um arame cortado que desce pela calha; 0,55–0,8 solda; 0,8–1 subida
@@ -4309,42 +4326,43 @@ function buildDriven(l,g,r,len){
       if(gi>=0&&sp>0.02){gt+=d;const [dur,fn]=G[gi];fn(ease(Math.min(1,gt/dur)));if(gt>=dur){gi++;gt=0;if(gi>=G.length)gi=-1}}};
     if(!R.gl)R.gl={};R.gl.weldLine={x:g.position.x+ex,y:g.position.y+yW};R.gl.panelY=g.position.y+yW;R.gl.weldTableEnd=g.position.x+xEnd;
     if(!hasPress)R.gl.weldX1=g.position.x+xEnd;
-    ext=xEnd+0.6;top=yr+1;depth=24;
+    ext=xEnd+0.6;top=yr+1;depth=2*GP.zt+14;
   }else if(type==='vincadeira'){
     // Vincadeira: prensa hidráulica com estampos em V que forma os 3 vincos do gradil; depois, o pórtico pendura o gradil no trilho
-    const zc=-g.position.z,G0=R.gl||{},yP=(G0.panelY!=null?G0.panelY-g.position.y:yF+9),PANEL=20,yr=yF+24;
-    const xIn=G0.weldTableEnd!=null?G0.weldTableEnd-g.position.x:cx+1,xP=Math.max(xIn+12,cx+10),xc=xP+23,xEnd=xc+11;
+    const zc=-g.position.z,G0=R.gl||{},yP=(G0.panelY!=null?G0.panelY-g.position.y:yF+9),PANEL=GP.L,yr=yF+GP.yr,hx=GP.L/2+1.3,hz=GP.hz+1.8;
+    const xIn=G0.weldTableEnd!=null?G0.weldTableEnd-g.position.x:cx+1,xP=Math.max(xIn+hx+1.5,cx+12),xc=xP+hx+GP.L/2+1.2,xEnd=xc+GP.L/2+1;
     const fr=paint('#2F5E7A'),blk=mat('#2a2f33',{roughness:0.5,metalness:0.35}),chrome=mat('#e9ecee',{metalness:0.9,roughness:0.15});
     // mesa de transferência com roletes
-    const Lt=xEnd-xIn,tab=P(bx(Lt,0.4,12,steel));tab.position.set(xIn+Lt/2,yP-0.85,zc);
-    for(let px=1;px<Lt;px+=Lt/6)[-5.4,5.4].forEach(z=>{const lg=P(bx(0.4,yP-0.85-yF,0.4,dark));lg.position.set(xIn+px,(yF+yP-0.85)/2,zc+z)});
-    for(let x=xIn+1.5;x<xEnd-1;x+=3){if(Math.abs(x-xP)<11)continue;const rl=P(cyl(0.22,0.22,11.6,steel,12));rl.rotation.x=Math.PI/2;rl.position.set(x,yP-0.45,zc)}
+    const Lt=xEnd-xIn,tab=P(bx(Lt,0.4,2*GP.zt,steel));tab.position.set(xIn+Lt/2,yP-0.85,zc);
+    for(let px=1;px<Lt;px+=Lt/6)[-GP.zt+0.6,GP.zt-0.6].forEach(z=>{const lg=P(bx(0.4,yP-0.85-yF,0.4,dark));lg.position.set(xIn+px,(yF+yP-0.85)/2,zc+z)});
+    for(let x=xIn+1.5;x<xEnd-1;x+=3){if(Math.abs(x-xP)<hx)continue;const rl=P(cyl(0.22,0.22,2*GP.zt-0.4,steel,12));rl.rotation.x=Math.PI/2;rl.position.set(x,yP-0.45,zc)}
     // estrutura da prensa: 4 colunas, travessa superior, 2 cilindros hidráulicos, martelo móvel com punções em V e matrizes inferiores
-    [-11.2,11.2].forEach(dx=>[-7.2,7.2].forEach(z=>{const c=P(bx(1.2,yP+10.5-yF,1.2,fr));c.position.set(xP+dx,(yF+yP+10.5)/2,zc+z)}));
-    const crown=P(bx(23.6,1.8,16,fr));crown.position.set(xP,yP+10.2,zc);
-    const bed=P(bx(23.6,yP-0.7-yF,16,fr));bed.position.set(xP,(yF+yP-0.7)/2,zc);
+    [-hx,hx].forEach(dx=>[-hz,hz].forEach(z=>{const c=P(bx(1.2,yP+10.5-yF,1.2,fr));c.position.set(xP+dx,(yF+yP+10.5)/2,zc+z)}));
+    const crown=P(bx(2*hx+1.2,1.8,2*hz+1.6,fr));crown.position.set(xP,yP+10.2,zc);
+    const bed=P(bx(2*hx+1.2,yP-0.7-yF,2*hz+1.6,fr));bed.position.set(xP,(yF+yP-0.7)/2,zc);
     const ram=new THREE.Group();ram.position.set(xP,yP+5,zc);g.add(ram);
-    const rb=bx(22,1.1,13,mat('#4a5258',{metalness:0.5,roughness:0.4}));rb.castShadow=true;ram.add(rb);
-    GR_F.forEach(f=>{const pu=bx(21,0.55,0.55,chrome);pu.rotation.x=Math.PI/4;pu.position.set(0,-0.95,-f);ram.add(pu);const hold=bx(21,0.6,0.9,blk);hold.position.set(0,-0.5,-f);ram.add(hold);
-      const die=P(bx(21,0.35,1.4,blk));die.position.set(xP,yP-0.7,zc-f)});
-    const rods=[];[-6,6].forEach(dx=>{const body=P(cyl(0.9,0.9,4,mat('#c3302a',{roughness:0.4,metalness:0.3}),20));body.position.set(xP+dx,yP+13.1,zc);
+    const rb=bx(2*hx-1.4,1.1,2*GP.hz+2.7,mat('#4a5258',{metalness:0.5,roughness:0.4}));rb.castShadow=true;ram.add(rb);
+    GR_F.forEach(f=>{const pu=bx(GP.L+1,0.55,0.55,chrome);pu.rotation.x=Math.PI/4;pu.position.set(0,-0.95,-f);ram.add(pu);const hold=bx(GP.L+1,0.6,0.9,blk);hold.position.set(0,-0.5,-f);ram.add(hold);
+      const die=P(bx(GP.L+1,0.35,1.4,blk));die.position.set(xP,yP-0.7,zc-f)});
+    const rods=[];[-hx*0.55,hx*0.55].forEach(dx=>{const body=P(cyl(0.9,0.9,4,mat('#c3302a',{roughness:0.4,metalness:0.3}),20));body.position.set(xP+dx,yP+13.1,zc);
       const rod=cyl(0.38,0.38,1,chrome,16);g.add(rod);rods.push({rod,dx})});
     // unidade hidráulica (tanque, bomba e válvulas) ao lado
-    const tank=P(bx(5,3.2,3.6,paint('#3a4a58')));tank.position.set(xP-6,yF+1.6,zc+10.6);
-    const pump=P(cyl(0.7,0.7,2,paint('#2F5E7A'),16));pump.rotation.z=Math.PI/2;pump.position.set(xP-6,yF+3.9,zc+10.6);
-    const vb=P(bx(2,1.2,1.4,mat('#c8a030',{metalness:0.6,roughness:0.3})));vb.position.set(xP-3,yF+3.6,zc+10.6);
-    [-6,6].forEach(dx=>[-0.4,0.4].forEach((o,j)=>hose(g,[[xP-3+o,yF+4.1,zc+10.4],[xP-3+o,yP+6,zc+9.6],[xP+dx*0.6,yP+12.4+j*1.2,zc+6],[xP+dx,yP+12.3+j*1.2,zc+0.95]],0.13,PCOL.hyd)));
-    hose(g,[[xP-6,yF+4.6,zc+10.6],[xP-4.5,yF+5.4,zc+10.6],[xP-3,yF+4.2,zc+10.6]],0.14,PCOL.hyd);
+    const zU=zc+hz+3.6;
+    const tank=P(bx(5,3.2,3.6,paint('#3a4a58')));tank.position.set(xP-6,yF+1.6,zU);
+    const pump=P(cyl(0.7,0.7,2,paint('#2F5E7A'),16));pump.rotation.z=Math.PI/2;pump.position.set(xP-6,yF+3.9,zU);
+    const vb=P(bx(2,1.2,1.4,mat('#c8a030',{metalness:0.6,roughness:0.3})));vb.position.set(xP-3,yF+3.6,zU);
+    [-hx*0.55,hx*0.55].forEach(dx=>[-0.4,0.4].forEach((o,j)=>hose(g,[[xP-3+o,yF+4.1,zU-0.2],[xP-3+o,yP+6,zU-1],[xP+dx*0.6,yP+12.4+j*1.2,zc+hz-1],[xP+dx,yP+12.3+j*1.2,zc+0.95]],0.13,PCOL.hyd)));
+    hose(g,[[xP-6,yF+4.6,zU],[xP-4.5,yF+5.4,zU],[xP-3,yF+4.2,zU]],0.14,PCOL.hyd);
     // proteções NR-12: grades laterais e cortina de luz na entrada e saída
     const gm=new THREE.MeshStandardMaterial({map:gradilTex(),color:'#E8B80E',transparent:true,alphaTest:0.4,side:THREE.DoubleSide});
-    [-8,8].forEach(z=>{const gd=P(new THREE.Mesh(new THREE.BoxGeometry(21.6,7,0.12),gm));gd.position.set(xP,yP+3.6,zc+z)});
-    [xP-11.9,xP+11.9].forEach(x=>[-6.8,6.8].forEach(z=>{const cp=P(bx(0.35,4,0.35,mat(z<0?'#1d2327':'#c3302a',{roughness:0.5})));cp.position.set(x,yP+1.8,zc+z)}));
+    [-hz-0.8,hz+0.8].forEach(z=>{const gd=P(new THREE.Mesh(new THREE.BoxGeometry(2*hx,7,0.12),gm));gd.position.set(xP,yP+3.6,zc+z)});
+    [xP-hx-0.7,xP+hx+0.7].forEach(x=>[-hz+0.4,hz-0.4].forEach(z=>{const cp=P(bx(0.35,4,0.35,mat(z<0?'#1d2327':'#c3302a',{roughness:0.5})));cp.position.set(x,yP+1.8,zc+z)}));
     const lbl=canvasTex(120,30,(x,cw,ch)=>{x.fillStyle='#15212C';x.fillRect(0,0,cw,ch);x.fillStyle='#E8B80E';x.font=`700 ${ch*0.6}px "Barlow Condensed",sans-serif`;x.fillText('VINCADEIRA 3D',cw*0.08,ch*0.72)},4);
-    const sg=new THREE.Mesh(new THREE.PlaneGeometry(9,2.3),new THREE.MeshStandardMaterial({map:lbl.t}));sg.position.set(xP,yP+10.2,zc+8.05);g.add(sg);
+    const sg=new THREE.Mesh(new THREE.PlaneGeometry(9,2.3),new THREE.MeshStandardMaterial({map:lbl.t}));sg.position.set(xP,yP+10.2,zc+hz+0.85);g.add(sg);
     // pórtico de transferência para o trilho
-    const zg=zc+5.15,yPark=yP+13,yHook=yr-2.45+0.3;
+    const zg=zc+GP.hz,yPark=yP+13,yHook=yr-2.45+0.3;
     const gp=gripGantry(g,{xc,floor:yF,topY:yr+3,z0:zc,z1:zg,folded:true});gp.set(zg,yPark,0,false);
-    const stop=P(bx(0.4,1.2,10,mat('#c3302a',{roughness:0.5})));stop.position.set(xEnd-0.3,yP-0.2,zc);
+    const stop=P(bx(0.4,1.2,2*GP.hz,mat('#c3302a',{roughness:0.5})));stop.position.set(xEnd-0.3,yP-0.2,zc);
     // gradil na prensa: plano ao entrar, vincado depois do golpe
     const pf=new THREE.Mesh(gradilGeo(false),gradilMat());pf.rotation.x=-Math.PI/2;pf.visible=false;pf.castShadow=true;g.add(pf);
     const pv=new THREE.Mesh(gradilGeo(true),gradilMat());pv.rotation.x=Math.PI/2;   // vincos para baixo, sobre as matrizes
@@ -4367,10 +4385,10 @@ function buildDriven(l,g,r,len){
     R.gl.press={receive:x=>{queue.push({x:x-g.position.x})}};R.gl.weldX1=g.position.x+xEnd;R.gl.folded=true;
     upd=(dt,sp)=>{if(!cur&&queue.length){cur=queue.shift();cur.i=0;cur.t=0;pf.visible=true;pf.position.set(cur.x,yP,zc)}
       if(cur&&sp>0.02){cur.t+=dt*Math.max(0.6,sp);const [dur,fn]=S[cur.i];fn(ease(Math.min(1,cur.t/dur)),cur);if(cur.t>=dur){cur.i++;cur.t=0;if(cur.i>=S.length)cur=null}}};
-    ext=xEnd+0.6;top=yr+4;depth=24;
+    ext=xEnd+0.6;top=yr+4;depth=2*hz+12;
   }else if(type==='transp_aereo'){
     // Estação de acionamento do transportador aéreo (monovia); o trilho e os gradis são montados depois (buildOverhead)
-    const zc=-g.position.z,yr=yF+24,xs=cx+1.5;
+    const zc=-g.position.z,yr=yF+GP.yr,xs=cx+1.5;
     [-1,1].forEach(sd=>{const c=P(bx(0.6,yr-yF+1.2,0.6,paint('#3b4a56')));c.position.set(xs+sd*1.6,(yF+yr+1.2)/2,zc-3.2)});
     const beam=P(bx(4,0.5,4,paint('#3b4a56')));beam.position.set(xs,yr+1.3,zc-1.6);
     const wheel=P(cyl(2.4,2.4,0.35,steel,28));wheel.position.set(xs,yr+0.4,zc);
@@ -4382,7 +4400,7 @@ function buildDriven(l,g,r,len){
     ext=xs+3;top=yr+3.2;depth=8;
   }else if(type==='cabine_pintura'){
     // Cabine de pintura a pó robotizada (dois robôs em eixo vertical, um de cada lado do gradil) com recuperação por filtros de cartucho
-    const zc=-g.position.z,Lb=34,x0=cx+4,yb=yF+10,yt=yF+23.6,wall=mat('#e8ecee',{roughness:0.55,metalness:0.1}),fr=paint('#2F5E7A');
+    const zc=-g.position.z,Lb=38,x0=cx+4,yb=yF+8.5,yt=yF+GP.yr-1,wall=mat('#e8ecee',{roughness:0.55,metalness:0.1}),fr=paint('#2F5E7A');
     const glass=new THREE.MeshStandardMaterial({color:'#dfe9ee',roughness:0.1,metalness:0.1,transparent:true,opacity:0.28,side:THREE.DoubleSide,depthWrite:false});
     [-6,6].forEach(z=>{const w=new THREE.Mesh(new THREE.BoxGeometry(Lb,yt-yb,0.15),glass);w.position.set(x0+Lb/2,(yb+yt)/2,zc+z);g.add(w);
       [yb+0.6,yt-0.4].forEach(y=>{const r2=P(bx(Lb,0.8,0.3,wall));r2.position.set(x0+Lb/2,y,zc+z)});
@@ -4394,7 +4412,7 @@ function buildDriven(l,g,r,len){
     const sprayM=new THREE.MeshBasicMaterial({color:new THREE.Color(paintHex()).lerp(new THREE.Color('#ffffff'),0.3),transparent:true,opacity:0,depthWrite:false});
     [-1,1].forEach((sd,i)=>{const z=zc+sd*5.5;
       const col=P(bx(0.7,yt-yb,0.7,rj));col.position.set(xm,(yb+yt)/2,z+sd*0.6);   // eixo vertical (7º eixo)
-      const car=new THREE.Group();car.position.set(xm,yb+6,z);car.scale.setScalar(1.3);g.add(car);
+      const car=new THREE.Group();car.position.set(xm,yb+6,z);car.scale.setScalar(1.45);g.add(car);
       const sled=bx(1.4,1.2,0.5,rj);sled.position.z=sd*0.4;car.add(sled);
       const j1=new THREE.Group();j1.rotation.y=sd*Math.PI/2;car.add(j1);           // base giratória voltada para o gradil
       const tur=bx(1.1,1,1.1,rw);tur.position.set(0.3,0,0);j1.add(tur);
@@ -4412,7 +4430,7 @@ function buildDriven(l,g,r,len){
       j2.rotation.z=-0.35;j3.rotation.z=0.35-1.2;
       robots.push({car,j1,j2,j3,wr,sd,i})});
     const pw=[];const pm=new THREE.MeshBasicMaterial({color:new THREE.Color(paintHex()).lerp(new THREE.Color('#ffffff'),0.35),transparent:true,opacity:0});
-    for(let i=0;i<40;i++){const s2=new THREE.Mesh(new THREE.SphereGeometry(0.22,6,4),pm);s2.position.set(x0+Lb*0.38+(Math.random()-0.5)*4,yF+12+Math.random()*9,zc+(Math.random()-0.5)*9);g.add(s2);pw.push(s2)}
+    for(let i=0;i<40;i++){const s2=new THREE.Mesh(new THREE.SphereGeometry(0.22,6,4),pm);s2.position.set(x0+Lb*0.38+(Math.random()-0.5)*4,yb+2+Math.random()*(yt-yb-4),zc+(Math.random()-0.5)*9);g.add(s2);pw.push(s2)}
     const fb=P(bx(6,14,5,paint('#c7ccd0')));fb.position.set(x0+Lb*0.8,yF+7,zc-9.2);
     // central de pó (tremonha fluidizada) alimentada pela rede de ar, com mangueiras de pó até os robôs
     const pc=P(bx(4,4,3.2,paint('#d9dde0')));pc.position.set(x0+Lb*0.2,yF+2,zc-9.6);const hp=P(cyl(1.4,0.9,2.2,paint('#e3e6e8'),18));hp.position.set(x0+Lb*0.2,yF+5.1,zc-9.6);
@@ -4420,18 +4438,18 @@ function buildDriven(l,g,r,len){
     [-1,1].forEach(sd=>hose(g,[[x0+Lb*0.2+1,yF+4.5,zc-8],[x0+Lb*0.32,yF+3,zc-6.6],[x0+Lb*0.42,yb+0.5,zc+sd*5.5-sd*0.9],[x0+Lb*0.42,yb+2,zc+sd*5.5]],0.1,'#d9dde0'));
     [0,1,2].forEach(k=>{const ct=P(cyl(0.9,0.9,5,mat('#6d7479',{roughness:0.7}),16));ct.position.set(x0+Lb*0.8-2+k*2,yF+9,zc-9.2)});
     const duct=P(bx(4,4,3.2,paint('#c7ccd0')));duct.position.set(x0+Lb*0.8,yF+16,zc-7.2);
-    const stack=P(cyl(1,1,6,steel,18));stack.position.set(x0+Lb*0.8,yF+17+3,zc-9.2);
+    const stack=P(cyl(1,1,yt-yF-14,steel,18));stack.position.set(x0+Lb*0.8,(yF+14+yt)/2+1,zc-9.2);
     let t=0;upd=(dt,sp)=>{t+=dt*Math.min(1,sp*1.4);const on=sp>0.05;
-      robots.forEach(r=>{r.car.position.y=yb+6.4+4.2*Math.sin(t*0.9+r.i*Math.PI);         // percorre a altura do gradil
+      robots.forEach(r=>{r.car.position.y=(yb+yt)/2-2+((yt-yb)/2-5)*Math.sin(t*0.9+r.i*Math.PI);   // percorre a altura do gradil
         r.j1.rotation.y=r.sd*Math.PI/2+0.5*Math.sin(t*2.2+r.i);                           // varredura horizontal
         r.j3.rotation.z=-0.85+0.12*Math.sin(t*3.1+r.i);r.wr.rotation.z=0.85-r.j3.rotation.z-0.35+0.1*Math.sin(t*4+r.i)});
       sprayM.opacity=on?0.32:0;pm.opacity=Math.min(0.35,sp*0.4);
-      if(sp>0.05)pw.forEach(s2=>{s2.position.y+=dt*(0.6+Math.random());if(s2.position.y>yF+22)s2.position.y=yF+12})};
+      if(sp>0.05)pw.forEach(s2=>{s2.position.y+=dt*(0.6+Math.random());if(s2.position.y>yt-1)s2.position.y=yb+2})};
     if(!R.gl)R.gl={};R.gl.booth=[g.position.x+x0,g.position.x+x0+Lb];R.gl.robotX=g.position.x+xm;
-    ext=x0+Lb+1.2;top=yF+23;depth=24;
+    ext=x0+Lb+1.2;top=yt+1;depth=24;
   }else if(type==='estufa'){
     // Estufa de cura (túnel isolado) com queimador a gás, chaminé e ventilador de recirculação no teto
-    const zc=-g.position.z,Le=52,x0=cx+4,yb=yF+9.2,yt=yF+24.6,fr=paint('#3b4a56');
+    const zc=-g.position.z,Le=58,x0=cx+4,yb=yF+8.5,yt=yF+GP.yr+1.6,fr=paint('#3b4a56');
     const pt=texOnce('ovenpanel',64,64,(x,w,h)=>{x.fillStyle='#c9cfd3';x.fillRect(0,0,w,h);x.fillStyle='#aab1b6';x.fillRect(0,0,2,h);x.fillStyle='#d8dde0';x.fillRect(3,0,2,h)},[Le/6,2]);
     const panel=new THREE.MeshStandardMaterial({map:pt,metalness:0.55,roughness:0.4});
     [-6.6,6.6].forEach(z=>{const w=P(bx(Le,yt-yb,1.2,panel));w.position.set(x0+Le/2,(yb+yt)/2,zc+z)});
@@ -4754,9 +4772,11 @@ function buildAir(floorY){const G=R.gl;if(!G||!G.air||!G.air.length)return;
 // Painel 2,00 × 1,03 m: 40 arames verticais (transversais, já cortados) a cada 50 mm com pontas de 60 mm,
 // 7 arames horizontais (longitudinais, das bobinas) e 3 vincos em V (em cima, no meio e embaixo) com um horizontal no vértice.
 // Coordenadas do painel: x = comprimento, y = altura, z = profundidade do vinco.
-const GR_H=[4.55,3.0,1.5,0,-1.5,-3.0,-4.55],GR_F=[4.55,0,-4.55],GRGEO={};
+// Gradil 2500 × 2030 mm, malha 50 × 200 mm, arame 3,8 mm: 51 verticais, 11 horizontais, pontas de 15 mm e 4 vincos em V
+const GP={L:25,H:20.3,pv:0.5,ph:2,r:0.019,yr:33};GP.hz=GP.H/2;GP.nv=Math.round(GP.L/GP.pv)+1;GP.zt=GP.hz+1.2;
+const GR_H=Array.from({length:11},(_,i)=>10-i*2),GR_F=[6,2,-2,-6],GRGEO={};
 function gradilGeo(folded){const k=folded?'v':'p';if(GRGEO[k])return GRGEO[k];
-  const pos=[],idx=[],r=0.045,dv=folded?0.45:0,hv=0.7,Y0=-5.15,Y1=5.15;
+  const pos=[],idx=[],r=GP.r,dv=folded?0.45:0,hv=0.7,Y0=-GP.hz,Y1=GP.hz;
   const seg=(a,b)=>{const d=new THREE.Vector3(b[0]-a[0],b[1]-a[1],b[2]-a[2]).normalize();
     const u=Math.abs(d.z)>0.9?new THREE.Vector3(1,0,0):new THREE.Vector3(0,0,1);
     const s=new THREE.Vector3().crossVectors(d,u).normalize().multiplyScalar(r),t=new THREE.Vector3().crossVectors(d,s).normalize().multiplyScalar(r);
@@ -4764,8 +4784,8 @@ function gradilGeo(folded){const k=folded?'v':'p';if(GRGEO[k])return GRGEO[k];
     [[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]].forEach(([a1,b1,c1,d1])=>idx.push(base+a1,base+b1,base+c1,base+a1,base+c1,base+d1))};
   const zAt=y=>{for(const f of GR_F){const e=Math.abs(y-f);if(e<hv)return dv*(1-e/hv)}return 0};
   const ys=[Y0,Y1];GR_F.forEach(f=>[f-hv,f,f+hv].forEach(y=>{if(y>Y0&&y<Y1)ys.push(y)}));ys.sort((a,b)=>a-b);
-  for(let i=0;i<40;i++){const x=-9.75+i*0.5;for(let j=0;j<ys.length-1;j++)seg([x,ys[j],zAt(ys[j])],[x,ys[j+1],zAt(ys[j+1])])}
-  GR_H.forEach(y=>seg([-10,y,zAt(y)],[10,y,zAt(y)]));
+  for(let i=0;i<GP.nv;i++){const x=-GP.L/2+i*GP.pv;for(let j=0;j<ys.length-1;j++)seg([x,ys[j],zAt(ys[j])],[x,ys[j+1],zAt(ys[j+1])])}
+  GR_H.forEach(y=>seg([-GP.L/2,y,zAt(y)],[GP.L/2,y,zAt(y)]));
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setIndex(idx);geo.computeVertexNormals();
   return GRGEO[k]=geo}
 const gradilMat=c=>new THREE.MeshStandardMaterial({color:c||'#c9d0d4',metalness:0.8,roughness:0.35,side:THREE.DoubleSide});
@@ -4775,7 +4795,7 @@ const gradilMat=c=>new THREE.MeshStandardMaterial({color:c||'#c9d0d4',metalness:
 function gripGantry(parent,o){
   const yel=mat('#E8B80E',{roughness:0.45,metalness:0.1}),dk=mat('#2a2f33',{roughness:0.5,metalness:0.35}),al=mat('#c7ccd0',{metalness:0.7,roughness:0.3}),blu=mat('#2F5E7A',{roughness:0.45,metalness:0.2});
   const B=(w,h,d,m)=>{const b=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),m);b.castShadow=true;return b};
-  const {xc,floor,topY,z0,z1}=o,hx=11.6,root=new THREE.Group();parent.add(root);
+  const {xc,floor,topY,z0,z1}=o,hx=GP.L/2+1.6,root=new THREE.Group();parent.add(root);
   // estrutura fixa: 4 colunas e 2 vigas de rolamento ao longo de Z
   [-hx,hx].forEach(dx=>{[z0-2.4,z1+2.4].forEach(z=>{const c=B(0.8,topY-floor,0.8,yel);c.position.set(xc+dx,(floor+topY)/2,z);root.add(c)});
     const rw=B(0.9,0.9,z1-z0+5.6,yel);rw.position.set(xc+dx,topY,(z0+z1)/2);root.add(rw);
@@ -4800,14 +4820,14 @@ function gripGantry(parent,o){
   // cabeçote: atuador rotativo + barra de garras
   const pivot=new THREE.Group();root.add(pivot);
   const rot=new THREE.Mesh(new THREE.CylinderGeometry(0.75,0.75,1.4,20),dk);rot.rotation.z=Math.PI/2;pivot.add(rot);
-  const bar=B(19,0.55,0.7,yel);bar.position.set(0,0,0);pivot.add(bar);
-  const fingers=[];[-8.6,-4.3,0,4.3,8.6].forEach(dx=>{const fg=new THREE.Group();fg.position.set(dx,-0.3,0);pivot.add(fg);
+  const bar=B(GP.L-1.5,0.55,0.7,yel);bar.position.set(0,0,0);pivot.add(bar);
+  const FX=[-11,-5.5,0,5.5,11],fingers=[];FX.forEach(dx=>{const fg=new THREE.Group();fg.position.set(dx,-0.3,0);pivot.add(fg);
     const pc=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.9,10),al);pc.rotation.x=Math.PI/2;pc.position.z=0.5;fg.add(pc);
     [-1,1].forEach(sd=>{const j=new THREE.Group();j.position.z=sd*0.25;fg.add(j);const f=B(0.25,1,0.2,dk);f.position.y=-0.5;j.add(f);fingers.push({j,sd})})});
-  [-8.6,-4.3,0,4.3,8.6].forEach(dx=>hose(pivot,[[0,0.5,0.2],[dx*0.6,0.45,0.45],[dx,0.1,0.55]],0.03,PCOL.hose));
+  FX.forEach(dx=>hose(pivot,[[0,0.5,0.2],[dx*0.6,0.45,0.45],[dx,0.1,0.55]],0.03,PCOL.hose));
   // gradil preso na garra (deslocado meia largura a partir da borda presa)
   const held=new THREE.Mesh(gradilGeo(!!o.folded),gradilMat());
-  held.rotation.x=o.folded?Math.PI/2:-Math.PI/2;held.position.set(0,-0.3,-5.15);   // vincado: vincos para baixo quando deitado
+  held.rotation.x=o.folded?Math.PI/2:-Math.PI/2;held.position.set(0,-0.3,-GP.hz);   // vincado: vincos para baixo quando deitado
   held.castShadow=true;held.visible=false;pivot.add(held);
   const g={root,pivot,held,set(z,y,theta,closed){bridge.position.z=z;const L=Math.max(0.5,topY-1.6-y);rod.scale.y=L;rod.position.set(xc,topY-1.6-L/2,0);prod.scale.y=Math.max(0.3,L*0.6);prod.position.set(xc+1.2,topY-1.9-L*0.3,0);
     const zt=(zA+z)/2;lowRun.scale.z=Math.max(0.05,zt-zA);lowRun.position.set(xch,yc0,(zA+zt)/2);upRun.scale.z=Math.max(0.05,z-zt);upRun.position.set(xch,yc1,(zt+z)/2);bend.position.set(xch,(yc0+yc1)/2,zt);
@@ -4818,7 +4838,7 @@ function gripGantry(parent,o){
 // no fim, a estação de descarga desengancha, vira o gradil para a horizontal e empilha sobre o palete
 function buildOverhead(floorY){
   const G=R.gl;if(!G||!G.conv)return;
-  const x0=(G.weldX1!=null?G.weldX1-24:G.conv.x-4),x1=Math.max(G.oven?G.oven[1]:0,G.booth?G.booth[1]:0,G.conv.x)+34,yr=floorY+24,L=x1-x0;
+  const x0=(G.weldX1!=null?G.weldX1-GP.L-3:G.conv.x-4),x1=Math.max(G.oven?G.oven[1]:0,G.booth?G.booth[1]:0,G.conv.x)+40,yr=floorY+GP.yr,L=x1-x0,yPl=-(2.45+GP.hz);
   const grp=new THREE.Group();R.root.add(grp);
   const dark=mat('#2a2f33',{roughness:0.6,metalness:0.3}),stl=mat('#3b4a56',{roughness:0.5,metalness:0.4}),yel=mat('#E8B80E',{roughness:0.45,metalness:0.1});
   const rail=new THREE.Mesh(new THREE.BoxGeometry(L,0.55,0.35),dark);rail.position.set(x0+L/2,yr,0);rail.castShadow=true;grp.add(rail);
@@ -4828,16 +4848,16 @@ function buildOverhead(floorY){
     const post=new THREE.Mesh(new THREE.BoxGeometry(0.6,yr-floorY+1.2,0.6),stl);post.position.set(x,(floorY+yr+1.2)/2,-8.2);post.castShadow=true;grp.add(post);
     const arm=new THREE.Mesh(new THREE.BoxGeometry(0.5,0.5,8.6),stl);arm.position.set(x,yr+0.9,-4);grp.add(arm)}
   // ---- estação de descarga automática (virador + palete) ----
-  const xU=x1-12,pal=new THREE.Group();pal.position.set(xU,floorY,0);grp.add(pal);
+  const xU=x1-15,pal=new THREE.Group();pal.position.set(xU,floorY,0);grp.add(pal);
   const wood=mat('#a07a4a',{roughness:0.9});
-  [-5.5,0,5.5].forEach(z=>{const b=new THREE.Mesh(new THREE.BoxGeometry(22,1.1,1.2),wood);b.position.set(0,0.55,z);b.castShadow=true;pal.add(b)});
-  for(let i=-10;i<=10;i+=2.5){const t=new THREE.Mesh(new THREE.BoxGeometry(1.6,0.25,12.4),wood);t.position.set(i,1.22,0);pal.add(t)}
-  const fork=[];[-3.2,3.2].forEach(z=>{const f=new THREE.Mesh(new THREE.BoxGeometry(14,0.25,0.9),mat('#3a3f44',{roughness:0.5,metalness:0.4}));f.position.set(-13,0.6,z);f.visible=false;grp.add(f);fork.push(f)});
+  [-GP.hz,0,GP.hz].forEach(z=>{const b=new THREE.Mesh(new THREE.BoxGeometry(GP.L+1,1.1,1.2),wood);b.position.set(0,0.55,z);b.castShadow=true;pal.add(b)});
+  for(let i=-GP.L/2;i<=GP.L/2;i+=2.5){const t=new THREE.Mesh(new THREE.BoxGeometry(1.6,0.25,2*GP.hz+1),wood);t.position.set(i,1.22,0);pal.add(t)}
+  const fork=[];[-GP.hz*0.6,GP.hz*0.6].forEach(z=>{const f=new THREE.Mesh(new THREE.BoxGeometry(18,0.25,0.9),mat('#3a3f44',{roughness:0.5,metalness:0.4}));f.position.set(-16,0.6,z);f.visible=false;grp.add(f);fork.push(f)});
   // manipulador de pórtico da descarga: pega o gradil pendurado, desloca, gira para a horizontal e assenta na pilha
-  const zS=5.15,yHook=yr-2.45+0.3,yParkU=yHook+2.2;
+  const zS=GP.hz,yHook=yr-2.45+0.3,yParkU=yHook+2.2;
   const gpU=gripGantry(grp,{xc:xU,floor:floorY,topY:yr+3,z0:0,z1:zS,folded:!!G.folded});gpU.set(0,yParkU,-Math.PI/2,false);
   const lbl=canvasTex(140,40,(x,cw,ch)=>{x.fillStyle='#15212C';x.fillRect(0,0,cw,ch);x.fillStyle='#E8B80E';x.font=`700 ${ch*0.5}px "Barlow Condensed",sans-serif`;x.fillText('DESCARGA E EMPILHAMENTO',cw*0.05,ch*0.68)},4);
-  const sg=new THREE.Mesh(new THREE.PlaneGeometry(14,4),new THREE.MeshStandardMaterial({map:lbl.t}));sg.position.set(xU,yr+5.4,7.9);grp.add(sg);
+  const sg=new THREE.Mesh(new THREE.PlaneGeometry(14,4),new THREE.MeshStandardMaterial({map:lbl.t}));sg.position.set(xU,yr+5.4,GP.hz+2.75);grp.add(sg);
   // ---- cores: cru → recebe a cor durante a pintura (fosca) → curada na estufa (brilhante) ----
   const cRaw=new THREE.Color('#c9d0d4'),cPaint=new THREE.Color(paintHex()),tex=gradilTex();
   const b0=G.booth?G.booth[0]:null,rX=G.robotX!=null?G.robotX+3:(G.booth?(G.booth[0]+G.booth[1])/2:null),o0=G.oven?G.oven[0]:null,o1=G.oven?G.oven[1]:null;
@@ -4851,14 +4871,14 @@ function buildOverhead(floorY){
   const pool=[];
   const make=()=>{const pg=new THREE.Group();grp.add(pg);
     const m=gradilMat();m.color.copy(cRaw);
-    const pl=new THREE.Mesh(gradilGeo(!!G.folded),m);pl.position.y=-7.6;pl.castShadow=true;pg.add(pl);
+    const pl=new THREE.Mesh(gradilGeo(!!G.folded),m);pl.position.y=yPl;pl.castShadow=true;pg.add(pl);
     const tr=new THREE.Mesh(new THREE.BoxGeometry(1.2,0.5,0.8),stl);tr.position.y=-0.2;pg.add(tr);
-    const hooks=[];[-8,8].forEach(dx=>{const h=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,2.4,6),dark);h.position.set(dx,-1.4,0);pg.add(h);hooks.push(h)});
-    const bar=new THREE.Mesh(new THREE.BoxGeometry(17,0.18,0.18),dark);bar.position.set(0,-2.5,0);pg.add(bar);
+    const hooks=[];[-GP.L*0.4,GP.L*0.4].forEach(dx=>{const h=new THREE.Mesh(new THREE.CylinderGeometry(0.06,0.06,2.4,6),dark);h.position.set(dx,-1.4,0);pg.add(h);hooks.push(h)});
+    const bar=new THREE.Mesh(new THREE.BoxGeometry(GP.L*0.8+1,0.18,0.18),dark);bar.position.set(0,-2.5,0);pg.add(bar);
     pg.position.y=yr;const p={g:pg,m,pl,bar,hooks,x:0,on:false};pool.push(p);return p};
-  const put=(p,x)=>{p.x=x;p.on=true;p.g.visible=true;p.g.position.set(x,yr,0);p.pl.position.set(0,-7.6,0);p.pl.rotation.set(0,0,0);p.bar.visible=true;p.pl.material=p.m;colorAt(x,p.m)};
+  const put=(p,x)=>{p.x=x;p.on=true;p.g.visible=true;p.g.position.set(x,yr,0);p.pl.position.set(0,yPl,0);p.pl.rotation.set(0,0,0);p.bar.visible=true;p.pl.material=p.m;colorAt(x,p.m)};
   G.spawn=x=>{const p=pool.find(q=>!q.on&&!q.busy)||make();put(p,Math.max(x0+2,x))};
-  for(let x=x0+40;x<xU-14;x+=30)put(make(),x);
+  for(let x=x0+48;x<xU-GP.L/2-2;x+=GP.L+10)put(make(),x);
   // descarga em etapas: [duração, função(f)]
   let job=null,palOut=null;const ease=x=>x<0?0:x>1?1:x*x*(3-2*x),lerp=(a,b,f)=>a+(b-a)*f;
   const topS=()=>floorY+1.6+nStack*0.22+0.35;
@@ -4877,9 +4897,9 @@ function buildOverhead(floorY){
       p.x=nx;p.g.position.x=p.x;colorAt(p.x,p.m);
       if(p.x>=xU&&!job&&!palOut){p.on=false;p.busy=true;p.x=xU;p.g.position.x=xU;job={p,t:0,i:0}}});
     if(job&&s>0.02){job.t+=dt*Math.max(0.6,s);const [dur,fn]=U[job.i];fn(ease(Math.min(1,job.t/dur)),job.p);if(job.t>=dur){job.i++;job.t=0;if(job.i>=U.length)job=null}}
-    if(palOut){palOut.t+=dt;const t=palOut.t;fork.forEach(f=>{f.visible=true;f.position.x=xU-13+Math.min(1,t/1.2)*13});
-      const lift=t>1.2&&t<3.6;if(t>1.2){const f=ease((t-1.2)/2.4);stack.forEach(sk=>{sk.position.x=xU-f*26});pal.position.x=xU-f*26}
-      if(t>3.6){nStack=0;showStack();stack.forEach(sk=>sk.position.x=xU);pal.position.x=xU;fork.forEach(f=>{f.visible=false;f.position.x=xU-13});palOut=null}}};
+    if(palOut){palOut.t+=dt;const t=palOut.t;fork.forEach(f=>{f.visible=true;f.position.x=xU-16+Math.min(1,t/1.2)*16});
+      const lift=t>1.2&&t<3.6;if(t>1.2){const f=ease((t-1.2)/2.4);stack.forEach(sk=>{sk.position.x=xU-f*32});pal.position.x=xU-f*32}
+      if(t>3.6){nStack=0;showStack();stack.forEach(sk=>sk.position.x=xU);pal.position.x=xU;fork.forEach(f=>{f.visible=false;f.position.x=xU-16});palOut=null}}};
 }
 // Arames longitudinais contínuos: do topo de cada carretel, pelo endireitador, até a linha dos eletrodos da solda
 function buildWires(){
@@ -4887,12 +4907,12 @@ function buildWires(){
   const W=G.weldLine,yF=W.y,zs=GR_H.map(y=>-y).sort((a,b)=>a-b),reels=[...G.reels].sort((a,b)=>a.z-b.z),segs=[];
   const xIn=G.str?G.str.x0-1.2:W.x-8;
   const mk=(A,B)=>{const d=new THREE.Vector3().subVectors(B,A),Lw=d.length();const tx=texOnce('wiremark',8,32,(x,w,h)=>{x.fillStyle='#c4cbd0';x.fillRect(0,0,w,h);x.fillStyle='#7d868b';x.fillRect(0,0,w,4)},[1,Lw/0.6]);
-    const m=new THREE.Mesh(new THREE.CylinderGeometry(0.055,0.055,Lw,6),new THREE.MeshStandardMaterial({map:tx,metalness:0.85,roughness:0.3}));
+    const m=new THREE.Mesh(new THREE.CylinderGeometry(GP.r,GP.r,Lw,6),new THREE.MeshStandardMaterial({map:tx,metalness:0.85,roughness:0.3}));
     m.position.copy(A).addScaledVector(d,0.5);m.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),d.normalize());R.root.add(m);segs.push(tx)};
   zs.forEach((z,i)=>{const r=reels[Math.min(i,reels.length-1)],A=new THREE.Vector3(r.x,r.y,r.z),B=new THREE.Vector3(xIn,yF,z),C=new THREE.Vector3(W.x,yF,z);
     mk(A,B);mk(B,C);
     const pul=new THREE.Mesh(new THREE.CylinderGeometry(0.45,0.45,0.25,16),mat('#5b6268',{metalness:0.6,roughness:0.35}));pul.rotation.x=Math.PI/2;pul.position.set(xIn,yF+0.45,z);R.root.add(pul)});
-  const comb=new THREE.Mesh(new THREE.BoxGeometry(0.5,1.6,12),mat('#2a2f33',{roughness:0.6}));comb.position.set(xIn-0.6,yF,0);R.root.add(comb);
+  const comb=new THREE.Mesh(new THREE.BoxGeometry(0.5,1.6,2*GP.zt),mat('#2a2f33',{roughness:0.6}));comb.position.set(xIn-0.6,yF,0);R.root.add(comb);
   G.wireTick=dv=>segs.forEach(tx=>{tx.offset.y-=dv/0.6})}
 function buildMotor(l,x,floorY){
   const r=(55+42*Math.cbrt(l.kw))*S,len=r*2.4;
@@ -5025,6 +5045,54 @@ function pressAnim(m){if(m.userData.noPress)return;R.press.push({m,t:performance
 function doAct(m){const u=m.userData;if(u.alt){pressAnim(m);altCmd(u.act,u.id||undefined);return}if(u.act==='bimdoor'){log('Esta máquina usa comando bimanual: segure os dois botões no pedestal junto à máquina',true);return}
   if(u.act==='bim')return;pressAnim(m);cmd(u.act,u.id||undefined)}
 function stepPress(){if(!R.press||!R.press.length)return;const now=performance.now();R.press=R.press.filter(p=>{const k=(now-p.t)/180;const d=k<1?Math.sin(Math.min(1,k)*Math.PI)*5*S:0;p.m.position.z=p.m.userData.z0-d;if(k>=1){p.m.position.z=p.m.userData.z0;return false}return true})}
+/* ============ Tela cheia da vista 3D (apresentação do projeto funcionando) ============ */
+const FS={on:false,tour:null};
+const fsEl=()=>$('#viewer');
+function fsNative(){return document.fullscreenElement||document.webkitFullscreenElement}
+function fsToggle(force){const on=force!==undefined?force:!FS.on;if(on===FS.on)return;
+  if(on){if(ui.tab!=='3d'){const t=document.querySelector('[data-act=tab][data-v="3d"]');if(t)t.click()}
+    const v=fsEl(),rq=v.requestFullscreen||v.webkitRequestFullscreen;
+    if(rq){try{const p=rq.call(v,{navigationUI:'hide'});if(p&&p.catch)p.catch(()=>fsApply(true,true))}catch(e){fsApply(true,true);return}fsApply(true,false)}else fsApply(true,true)}
+  else{if(fsNative()){const ex=document.exitFullscreen||document.webkitExitFullscreen;if(ex)ex.call(document)}fsApply(false)}}
+// pseudo: sem API de tela cheia (iPhone) a vista ocupa a página inteira
+function fsApply(on,pseudo){FS.on=on;const v=fsEl();v.classList.toggle('fs',on);v.classList.toggle('fs-pseudo',on&&!!pseudo);document.body.classList.toggle('fs-lock',on&&!!pseudo);
+  const b=$('#navFs');if(b){b.setAttribute('aria-pressed',String(on));b.title=on?'Sair da tela cheia (Esc)':'Tela cheia (F)'}
+  if(!on)fsTour(false);fsBarUpd();setTimeout(()=>{resize3D();if(on&&!R.goal)setView('persp')},120);
+  if(on&&innerHeight>innerWidth*1.2&&model&&model.loads.length>2)setTimeout(()=>toast('Gire o celular na horizontal para ver a linha inteira.'),600)}
+document.addEventListener('fullscreenchange',()=>{if(!fsNative()&&FS.on&&!fsEl().classList.contains('fs-pseudo'))fsApply(false)});
+document.addEventListener('webkitfullscreenchange',()=>{if(!fsNative()&&FS.on&&!fsEl().classList.contains('fs-pseudo'))fsApply(false)});
+// barra de comandos da apresentação
+function buildFsBar(){const v=fsEl();if(!v||$('#fsbar'))return;const d=document.createElement('div');d.id='fsbar';d.className='fsbar';d.setAttribute('role','toolbar');d.setAttribute('aria-label','Comandos da apresentação');
+  const I=p=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`;
+  d.innerHTML=`<span class="fst" id="fsTitle"></span>
+    <button class="btn small run" data-act="fsrun">${I('<path d="M7 4v16l13-8z"/>')}<span>Ligar linha</span></button>
+    <button class="btn small stop" data-act="fsstop">${I('<rect x="6" y="6" width="12" height="12" rx="1"/>')}<span>Parar</span></button>
+    <button class="btn small" data-act="emerg" id="fsEm">${I('<circle cx="12" cy="12" r="8"/><path d="M12 8v5M12 16h.01"/>')}<span>Emergência</span></button>
+    <button class="btn small" data-act="fstour" aria-pressed="false" id="fsTour">${I('<path d="M2 12s4-7 10-7 10 7 10 7-4 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>')}<span>Tour automático</span></button>
+    <button class="btn small" data-act="fstele" aria-pressed="true" id="fsTele">${I('<path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/>')}<span>Medições</span></button>
+    <button class="btn small icbtn" data-act="fsexit" title="Sair da tela cheia (Esc)" aria-label="Sair da tela cheia">${I('<path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/>')}</button>
+    <span class="fss" id="fsStat"></span>`;
+  v.appendChild(d)}
+function fsBarUpd(){const t=$('#fsTitle');if(!t)return;const pj=PJ();t.textContent=pj.projeto.nome||(isAlt()?(AM&&AM.kind==='primaria'?'Cabine primária':'Quadro de força'):'Simulação da linha');
+  const alt=isAlt();document.querySelectorAll('#fsbar [data-act=fsrun],#fsbar [data-act=fsstop],#fsbar #fsEm').forEach(b=>b.hidden=alt);
+  const st=$('#fsStat');if(st&&!alt&&model){const n=model.loads.filter(l=>isRun(S_(l.id))).length;st.textContent=`${sim.q0?'Energizado':'Desenergizado'} · ${n}/${model.loads.length} em operação · ${fmtA(sim.tot||0)}`;st.dataset.s=sim.emerg?'e':sim.q0?'on':'off'}
+  const em=$('#fsEm');if(em){em.classList.toggle('stop',!!sim.emerg);em.querySelector('span').textContent=sim.emerg?'Destravar emergência':'Emergência'}}
+function fsRun(){if(isAlt()||!model)return;if(sim.emerg)cmd('emerg');if(sim.loto)cmd('loto');if(sim.q0trip||!sim.q0)cmd('q0');
+  model.loads.forEach(l=>{const s=S_(l.id);s.guardOpen=false;if(s.state==='tripped')cmd('reset',l.id)});if(NR())cmd('sreset');
+  model.loads.forEach((l,i)=>setTimeout(()=>{const s=S_(l.id);if(!isRun(s))cmd(l.twohand?'bimdown':'start',l.id);if(l.twohand)setTimeout(()=>cmd('bimup',l.id),400)},300+i*450));
+  toast('Linha em partida: as máquinas ligam uma a uma.')}
+function fsStop(){if(isAlt()||!model)return;model.loads.forEach(l=>{if(isRun(S_(l.id)))cmd('stop',l.id)})}
+// tour: visita a vista geral e cada máquina, girando devagar ao redor
+function fsTour(on){const b=$('#fsTour');if(on===undefined)on=!FS.tour;
+  if(!on){if(FS.tour){clearTimeout(FS.tour.t);FS.tour=null;NAV.vth=0}if(b)b.setAttribute('aria-pressed','false');return}
+  const stops=[null,...(model&&!isAlt()?model.loads.map(l=>l.id).filter(id=>R.motors[id]):[])];
+  FS.tour={i:0,stops};if(b)b.setAttribute('aria-pressed','true');
+  const next=()=>{const T=FS.tour;if(!T)return;const id=T.stops[T.i%T.stops.length];T.i++;
+    if(id===null)setView('persp');else{const m=R.motors[id];navFocus(m.g,{th:R.orb.th,ph:1.05});const l=model.loads.find(x=>x.id===id);if(l)toast(`${l.tag} · ${l.name}`)}
+    setTimeout(()=>{if(FS.tour)NAV.vth=-0.12},1500);T.t=setTimeout(next,id===null?6000:7000)};
+  next()}
+function fsAct(a){if(a==='fsrun')fsRun();else if(a==='fsstop')fsStop();else if(a==='fstour')fsTour();else if(a==='fsexit')fsToggle(false);else if(a==='navfs')fsToggle();
+  else if(a==='fstele'){const t=$('#tele'),b=$('#fsTele');const hide=!fsEl().classList.contains('fs-notele');fsEl().classList.toggle('fs-notele',hide);if(b)b.setAttribute('aria-pressed',String(!hide))}}
 /* ============ Navegação 3D ============ */
 // Girar (arrastar), mover pelo chão (botão direito/meio, Shift+arrastar ou dois dedos), zoom na direção do cursor (roda/pinça),
 // duplo clique para aproximar, teclado (WASD/setas, Q/E, +/−, PgUp/PgDn, Home) e inércia ao soltar.
@@ -5056,7 +5124,7 @@ function setupControls(){
   c.tabIndex=0;c.setAttribute('aria-label','Vista 3D: arraste para girar, botão direito ou dois dedos para mover, roda para aproximar, teclas WASD e setas para andar');
   c.addEventListener('pointerenter',()=>NAV.hover=true);c.addEventListener('pointerleave',()=>NAV.hover=false);
   c.addEventListener('pointerdown',e=>{if(!PH.img&&R.clk&&R.clk.length){const h=rayAt(e,R.clk);if(h&&h.object.userData.hold){e.preventDefault();c.setPointerCapture(e.pointerId);R.holding=h.object;h.object.position.y=h.object.userData.y0-0.012;cmd('bimdown',h.object.userData.id);return}}
-    c.setPointerCapture(e.pointerId);pts.set(e.pointerId,{x:e.clientX,y:e.clientY});down={x:e.clientX,y:e.clientY,btn:e.button};moved=0;R.goal=null;NAV.vth=NAV.vph=0;c.classList.add('dragging');
+    c.setPointerCapture(e.pointerId);pts.set(e.pointerId,{x:e.clientX,y:e.clientY});down={x:e.clientX,y:e.clientY,btn:e.button};moved=0;R.goal=null;NAV.vth=NAV.vph=0;if(FS.tour)fsTour(false);c.classList.add('dragging');
     if(PH.img){const h=floorHit(e);down.hit=h;down.px=PH.x;down.pz=PH.z;down.rot=PH.rot}
     if(pts.size===2){const [a,b]=[...pts.values()];pinch=Math.hypot(a.x-b.x,a.y-b.y);cen={x:(a.x+b.x)/2,y:(a.y+b.y)/2}}});
   c.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId)){hoverCursor(e);return}const p=pts.get(e.pointerId),dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;moved+=Math.abs(dx)+Math.abs(dy);
@@ -5083,9 +5151,11 @@ function setupControls(){
   c.addEventListener('dblclick',e=>{if(PH.img)return;const p=navHit(e,true);if(!p)return;const b=navBase();R.goal={tx:p.x,ty:p.y,tz:p.z,r:Math.max(6,Math.min(b.r*0.5,30))};NAV.vth=NAV.vph=0});
   const NK=['w','a','s','d','q','e','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','PageUp','PageDown','+','=','-','_','Shift'];
   window.addEventListener('keydown',e=>{if(ui.tab!=='3d'||PH.img)return;const t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='SELECT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
-    if(document.activeElement!==c&&!NAV.hover)return;if(document.querySelector('dialog[open]'))return;
+    if(document.activeElement!==c&&!NAV.hover&&!FS.on)return;if(document.querySelector('dialog[open]'))return;
     const k=e.key.length===1?e.key.toLowerCase():e.key;
     if(k==='Home'||k==='0'){e.preventDefault();setView('persp');return}
+    if(k==='f'){e.preventDefault();fsToggle();return}
+    if(k==='Escape'&&FS.on){fsToggle(false);return}
     if(NK.includes(k)){NAV.keys.add(k);if(k!=='Shift')e.preventDefault()}});
   window.addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;NAV.keys.delete(k);if(k==='Shift')NAV.keys.delete('Shift')});
   window.addEventListener('blur',()=>NAV.keys.clear());
@@ -5097,9 +5167,9 @@ function buildNavCtl(){const v=$('#viewer');if(!v||$('#navctl'))return;const d=d
   d.innerHTML=`<div class="menu navgo"><button class="btn small mbtn" data-menu aria-haspopup="menu" aria-expanded="false" title="Ir até uma máquina">${I('<circle cx="12" cy="10" r="3"/><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/>')}<span>Ir para</span></button><div class="mlist right" role="menu" hidden id="navGoList"></div></div>
     <div class="navgrp"><button class="btn small icbtn" data-act="navzin" title="Aproximar (+)" aria-label="Aproximar">${I('<path d="M12 5v14M5 12h14"/>')}</button><button class="btn small icbtn" data-act="navzout" title="Afastar (−)" aria-label="Afastar">${I('<path d="M5 12h14"/>')}</button></div>
     <div class="navgrp"><button class="btn small icbtn" data-act="navrl" title="Girar para a esquerda (Q)" aria-label="Girar para a esquerda">${I('<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>')}</button><button class="btn small icbtn" data-act="navrr" title="Girar para a direita (E)" aria-label="Girar para a direita">${I('<path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/>')}</button></div>
-    <div class="navgrp"><button class="btn small icbtn" data-act="navtop" title="Vista de cima" aria-label="Vista de cima">${I('<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h16M12 4v16"/>')}</button><button class="btn small icbtn" data-act="navhome" title="Vista geral (Home)" aria-label="Vista geral">${I('<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/>')}</button>
+    <div class="navgrp"><button class="btn small icbtn" data-act="navtop" title="Vista de cima" aria-label="Vista de cima">${I('<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h16M12 4v16"/>')}</button><button class="btn small icbtn" data-act="navfs" id="navFs" aria-pressed="false" title="Tela cheia (F)" aria-label="Tela cheia">${I('<path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/>')}</button><button class="btn small icbtn" data-act="navhome" title="Vista geral (Home)" aria-label="Vista geral">${I('<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/>')}</button>
     <button class="btn small icbtn" data-act="navhelp" title="Comandos de navegação" aria-label="Comandos de navegação">${I('<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17h.01"/>')}</button></div>`;
-  v.appendChild(d)}
+  v.appendChild(d);buildFsBar()}
 function navGoHTML(){const L=[`<button role="menuitem" data-act="navgo" data-v="__panel">Quadro elétrico</button>`];
   if(model&&!isAlt())model.loads.forEach(l=>{if(R.motors[l.id])L.push(`<button role="menuitem" data-act="navgo" data-v="${esc(l.id)}">${esc(l.tag)} · ${esc(l.name)}</button>`)});
   if(R.gl&&R.gl.conv)L.push(`<button role="menuitem" data-act="navgo" data-v="__line">Linha inteira</button>`);return L.join('')}
@@ -5199,7 +5269,7 @@ let last=performance.now(),uiAcc=0,diaAcc=0;
 function loop(now){
   const dt=Math.min(0.1,(now-last)/1000);last=now;
   if(model){if(isAlt())altStep(dt);else step(dt);uiAcc+=dt;diaAcc+=dt;
-    if(uiAcc>0.1){uiAcc=0;updateSimUI()}
+    if(uiAcc>0.1){uiAcc=0;updateSimUI();if(FS.on)fsBarUpd()}
     if(diaAcc>0.25&&ui.tab==='dia'){diaAcc=0;renderDiagram()}
     if(diaAcc>0.25&&ui.tab==='wir'){diaAcc=0;renderWiring(false)}
     if(diaAcc>0.25&&ui.tab==='full'){diaAcc=0;renderFull(false)}
@@ -5322,6 +5392,7 @@ document.addEventListener('click',e=>{
     case 'quote':openQuote();break;
     case 'pipes':{state.showPipes=state.showPipes===false;save();(R&&R.pipes||[]).forEach(m=>m.visible=state.showPipes!==false);b.setAttribute('aria-pressed',String(state.showPipes!==false));break}
     case 'navzin':case 'navzout':case 'navrl':case 'navrr':case 'navtop':case 'navhome':case 'navhelp':case 'navgo':navAct(a,b.dataset.v);break;
+    case 'navfs':case 'fsrun':case 'fsstop':case 'fstour':case 'fsexit':case 'fstele':fsAct(a);break;
     case 'tpl':openTpl();break;
     case 'tplsave':case 'tpldel':case 'tpluse':case 'tplclose':tplAct(a,b.dataset.v);break;
     case 'dxf':exportDxf(b);break;
