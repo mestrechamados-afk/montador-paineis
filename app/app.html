@@ -4768,18 +4768,32 @@ function buildFieldCables(E,floorY,xEnd){
   if(R.dl){const span=Math.max(20,(xEnd+E.W*S)/2+6);R.dl.shadow.camera.left=-span;R.dl.shadow.camera.right=span;R.dl.shadow.camera.top=span;R.dl.shadow.camera.bottom=-span;R.dl.shadow.camera.far=90;R.dl.position.set(xEnd/2+6,24,18);R.dl.target.position.set(xEnd/2-4,0,0);R.scene.add(R.dl.target);R.dl.shadow.camera.updateProjectionMatrix()}
 }
 function buildEnv(E,floorY,xEnd){
+  // mede tudo o que já está na cena (quadro, máquinas, trilho, tubulações) para a parede e as luminárias ficarem acima e atrás
+  const bb=new THREE.Box3();R.root.children.forEach(o=>{if(o===R.floor||o===R.catcher||o===R.grid||o.isLight)return;const b2=new THREE.Box3().setFromObject(o);if(!b2.isEmpty()&&isFinite(b2.max.y))bb.union(b2)});
+  const top=bb.isEmpty()?floorY+20:bb.max.y,zMin=bb.isEmpty()?-10:bb.min.z,xMin=bb.isEmpty()?-E.W/2*S:bb.min.x,xMax=bb.isEmpty()?xEnd:bb.max.x;
   const grp=new THREE.Group();R.root.add(grp);R.wall=grp;
-  const L=Math.max(90,xEnd+50),cx=(xEnd-(E.W/2)*S)/2,zb=(-E.D/2)*S-7,H=30;
-  const wc=THEME.envWall||'#c9ccc8';const wt=texOnce('wall'+wc,256,256,(x,w,h)=>{x.fillStyle=wc;x.fillRect(0,0,w,h);x.strokeStyle='rgba(90,95,95,.35)';x.lineWidth=2;for(let y=0;y<h;y+=32){x.beginPath();x.moveTo(0,y);x.lineTo(w,y);x.stroke();for(let xx=((y/32)%2)*32;xx<w;xx+=64){x.beginPath();x.moveTo(xx,y);x.lineTo(xx,y+32);x.stroke()}}for(let i=0;i<2500;i++){x.fillStyle=Math.random()<0.5?'rgba(255,255,255,.12)':'rgba(0,0,0,.08)';x.fillRect(Math.random()*w,Math.random()*h,2,2)}},[L/7,H/7]);
+  // pé-direito: 2 m acima da máquina mais alta (mínimo 6 m); parede 3 m atrás do equipamento mais recuado
+  const H=Math.max(60,Math.ceil((top-floorY+20)/5)*5),L=Math.max(90,(xMax-xMin)+60),cx=(xMin+xMax)/2,zb=Math.min((-E.D/2)*S-7,zMin-3),zLamp=zb+Math.min(24,(-zb)*0.6+4);
+  const wc=THEME.envWall||'#c9ccc8';const wt=texOnce('wall'+wc,256,256,(x,w,h)=>{x.fillStyle=wc;x.fillRect(0,0,w,h);x.strokeStyle='rgba(90,95,95,.35)';x.lineWidth=2;for(let y=0;y<h;y+=32){x.beginPath();x.moveTo(0,y);x.lineTo(w,y);x.stroke();for(let xx=((y/32)%2)*32;xx<w;xx+=64){x.beginPath();x.moveTo(xx,y);x.lineTo(xx,y+32);x.stroke()}}for(let i=0;i<2500;i++){x.fillStyle=Math.random()<0.5?'rgba(255,255,255,.05)':'rgba(0,0,0,.05)';x.fillRect(Math.random()*w,Math.random()*h,2,2)}},[L/30,H/30]);
   const wm=new THREE.MeshStandardMaterial({map:wt,color:new THREE.Color(0.82,0.82,0.82),roughness:0.95,envMapIntensity:0.2});
   const back=new THREE.Mesh(new THREE.PlaneGeometry(L,H),wm);back.position.set(cx,floorY+H/2,zb);back.receiveShadow=true;grp.add(back);
+  // faixa de alvenaria pintada na base e faixa amarela de segurança
+  const base=new THREE.Mesh(new THREE.PlaneGeometry(L,12),new THREE.MeshStandardMaterial({color:new THREE.Color(wc).multiplyScalar(0.78),roughness:0.9}));base.position.set(cx,floorY+6,zb+0.005);grp.add(base);
   const st=new THREE.Mesh(new THREE.PlaneGeometry(L,1.2),new THREE.MeshStandardMaterial({color:THEME.envStripe||'#e3b21a',roughness:0.8}));st.position.set(cx,floorY+0.6,zb+0.01);grp.add(st);
-  const cm=mat(THEME.envSteel||'#3b6c93',{roughness:0.5,metalness:0.3});for(let x=cx-L/2+8;x<cx+L/2;x+=18){const col=new THREE.Mesh(new THREE.BoxGeometry(1.4,H,1.4),cm);col.position.set(x,floorY+H/2,zb+0.7);col.castShadow=true;col.receiveShadow=true;grp.add(col);
-    const ft=new THREE.Mesh(new THREE.BoxGeometry(1.4,1.2,1.4),mat(THEME.envStripe||'#e3b21a'));ft.position.set(x,floorY+0.6,zb+1.45);grp.add(ft)}
-  const beam=new THREE.Mesh(new THREE.BoxGeometry(L,1.0,1.0),cm);beam.position.set(cx,floorY+H-2,zb+0.7);grp.add(beam);
-  for(let x=cx-L/2+12;x<cx+L/2;x+=18){const lamp=new THREE.Mesh(new THREE.BoxGeometry(5,0.25,1.2),new THREE.MeshStandardMaterial({color:'#f4f6f8',emissive:'#ffffff',emissiveIntensity:0.9}));lamp.position.set(x,floorY+H-3.2,zb+6);grp.add(lamp);
-    const cb=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,2.6,6),mat('#555'));cb.position.set(x,floorY+H-1.9,zb+6);grp.add(cb)}
-  const sw=new THREE.Mesh(new THREE.PlaneGeometry(40,H),wm);sw.rotation.y=Math.PI/2;sw.position.set(cx-L/2,floorY+H/2,zb+20);sw.receiveShadow=true;grp.add(sw);
+  // pilares metálicos até a cobertura e viga de cobertura; tesouras sobre a área das máquinas
+  const cm=mat(THEME.envSteel||'#3b6c93',{roughness:0.5,metalness:0.3});const span=Math.max(18,Math.round(H*0.45/3)*3);
+  for(let x=cx-L/2+8;x<cx+L/2;x+=span){const col=new THREE.Mesh(new THREE.BoxGeometry(1.4,H,1.4),cm);col.position.set(x,floorY+H/2,zb+0.7);col.castShadow=true;col.receiveShadow=true;grp.add(col);
+    const ft=new THREE.Mesh(new THREE.BoxGeometry(1.4,1.2,1.4),mat(THEME.envStripe||'#e3b21a'));ft.position.set(x,floorY+0.6,zb+1.45);grp.add(ft);
+    const tr=new THREE.Mesh(new THREE.BoxGeometry(0.9,1.2,-zb+14),cm);tr.position.set(x,floorY+H-0.6,(zb+14)/2);grp.add(tr)}
+  const beam=new THREE.Mesh(new THREE.BoxGeometry(L,1.2,1.2),cm);beam.position.set(cx,floorY+H-0.6,zb+0.7);grp.add(beam);
+  // luminárias industriais (campânulas LED) penduradas acima das máquinas, em duas fileiras
+  const yL=Math.max(top+3,floorY+H-6),cord=floorY+H-1.2-yL,lm=new THREE.MeshStandardMaterial({color:'#f4f6f8',emissive:'#ffffff',emissiveIntensity:0.95}),hm=mat('#2f353a',{metalness:0.5,roughness:0.4});
+  [zLamp,Math.min(-2,zLamp+span*0.6)].forEach(zl=>{for(let x=cx-L/2+12;x<cx+L/2;x+=span*0.75){const g2=new THREE.Group();g2.position.set(x,yL,zl);grp.add(g2);
+    const hood=new THREE.Mesh(new THREE.CylinderGeometry(0.6,1.6,1.2,20,1,true),hm);hood.material.side=THREE.DoubleSide;g2.add(hood);
+    const led=new THREE.Mesh(new THREE.CircleGeometry(1.5,20),lm);led.rotation.x=Math.PI/2;led.position.y=-0.58;g2.add(led);
+    const cb=new THREE.Mesh(new THREE.CylinderGeometry(0.03,0.03,cord,6),mat('#555'));cb.position.y=0.6+cord/2;g2.add(cb)}});
+  // parede lateral
+  const sw=new THREE.Mesh(new THREE.PlaneGeometry(-zb+30,H),wm);sw.rotation.y=Math.PI/2;sw.position.set(cx-L/2,floorY+H/2,(zb+30)/2);sw.receiveShadow=true;grp.add(sw);
   if(PH.img)grp.visible=false;
 }
 /* ============ Linha de gradil: malha soldada e transportador aéreo ============ */
