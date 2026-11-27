@@ -728,7 +728,7 @@ const PSU=[2.5,5,10,20];
 // NBR 5410 Tab. 36, método B1, cobre/PVC 70 °C. CABLE = 2 condutores carregados (mono/bifásico); CABLE3 = 3 condutores carregados (trifásico)
 const CABLE3=[[1.5,15.5],[2.5,21],[4,28],[6,36],[10,50],[16,68],[25,89],[35,110],[50,134],[70,171],[95,207],[120,239],[150,275],[185,314],[240,370]];
 const CABLE=[[1.5,17.5],[2.5,24],[4,32],[6,41],[10,57],[16,76],[25,101],[35,125],[50,151],[70,192],[95,232],[120,269],[150,309],[185,353],[240,415]];
-const FANS=[25,55,105,160,230,300,550,700];
+const FANS=[25,55,105,160,230,300,550,700,900,1000];
 const START={direta:'Partida direta',estrela:'Estrela-triângulo',soft:'Soft-starter',inversor:'Inversor de frequência',servo:'Servoacionamento'};
 const SERVO=[0.1,0.2,0.4,0.75,1,1.5,2,3,5,7.5,11,15];
 const DRV=l=>l.start==='inversor'||l.start==='servo';
@@ -826,7 +826,7 @@ const MDEF={
   solda_gradil:{name:'Avanço da malha e solda',kw:3,start:'servo'},
   vincadeira:{name:'Unidade hidráulica da vincadeira',kw:7.5,start:'estrela'},
   transp_aereo:{name:'Transportador aéreo',kw:1.5,start:'inversor'},
-  cabine_pintura:{name:'Exaustor da cabine de pintura',kw:5.5,start:'inversor'},
+  cabine_pintura:{name:'Exaustor de recuperação de pó da cabine',kw:11,start:'inversor'},
   estufa:{name:'Ventilador de recirculação da estufa',kw:7.5,start:'inversor'}};
 const XDEF={
   rele:{pre:'K',desc:'Relé auxiliar com base',spec:'24 Vcc · 2 reversíveis',local:'placa',ic:'⎍'},
@@ -883,7 +883,7 @@ const PRESETS={
     {id:uid(),name:'Avanço da malha e solda',kw:3,start:'servo',tp:0.3,mtype:'solda_gradil',guard:true,curtain:true,estop:1},
     {id:uid(),name:'Unidade hidráulica da vincadeira',kw:7.5,start:'estrela',tp:4,mtype:'vincadeira',guard:true,curtain:true,estop:1},
     {id:uid(),name:'Transportador aéreo',kw:1.5,start:'inversor',tp:4,mtype:'transp_aereo',guard:true,estop:1},
-    {id:uid(),name:'Exaustor da cabine de pintura',kw:5.5,start:'inversor',tp:6,mtype:'cabine_pintura',guard:true,estop:1},
+    {id:uid(),name:'Exaustor de recuperação de pó da cabine',kw:11,start:'inversor',tp:6,mtype:'cabine_pintura',guard:true,estop:1},
     {id:uid(),name:'Ventilador de recirculação da estufa',kw:7.5,start:'inversor',tp:8,mtype:'estufa',guard:true,estop:1}],
     weld:{on:true,kva:150,duty:20,tipo:'mfdc'},paint:{ral:'6005',hex:'#1E4D2B'},inst:{tloops:2,sensor:'PT100',mode:'porta'},hmi:true,encl:'2000x1200x600',
     extras:[{id:uid(),tag:'-A21',tipo:'controlador',desc:'Programador de chama do queimador a gás da estufa',spec:'220 Vca · supervisão UV',qty:1,local:'placa'},
@@ -896,7 +896,12 @@ const PRESETS={
       {id:uid(),tag:'-A32',tipo:'controlador',desc:'Unidade de controle das pistolas eletrostáticas (alta tensão e fluxo de pó)',spec:'220 Vca',qty:1,local:'placa'},
       {id:uid(),tag:'-Y40',tipo:'outro',desc:'Ilha de válvulas pneumáticas 24 Vcc (solda, pórticos e cabine), ligada ao CLP',spec:'4 a 8 válvulas 5/2 · conector multipolar',qty:4,local:'campo'},
       {id:uid(),tag:'-Y41',tipo:'outro',desc:'Válvula de partida suave e despressurização com bloqueio por cadeado (energia pneumática, NR-12)',spec:'24 Vcc',qty:5,local:'campo'},
-      {id:uid(),tag:'-B40',tipo:'sensor',desc:'Pressostato da rede de ar comprimido (falta de ar)',spec:'6 bar',qty:1,local:'campo'}]}),
+      {id:uid(),tag:'-B40',tipo:'sensor',desc:'Pressostato da rede de ar comprimido (falta de ar)',spec:'6 bar',qty:1,local:'campo'},
+      {id:uid(),tag:'-A34',tipo:'controlador',desc:'Sequenciador de limpeza por pulso do filtro de cartuchos (6 válvulas)',spec:'24 Vcc · pulso 100 ms',qty:1,local:'placa'},
+      {id:uid(),tag:'-B34',tipo:'sensor',desc:'Pressostato diferencial do filtro de cartuchos (filtro saturado)',spec:'0–2500 Pa',qty:1,local:'campo'},
+      {id:uid(),tag:'-Y34',tipo:'outro',desc:'Válvulas solenoides de pulso (limpeza dos cartuchos)',spec:'24 Vcc · 1"',qty:6,local:'campo'},
+      {id:uid(),tag:'-Q35',tipo:'disjuntor',desc:'Disjuntor-motor da válvula rotativa do ciclone',spec:'0,37 kW · 1–1,6 A',qty:1,local:'placa'},
+      {id:uid(),tag:'-K35',tipo:'contator',desc:'Contator da válvula rotativa do ciclone',spec:'9 A · 24 Vcc',qty:1,local:'placa'}]}),
  bomba:()=>({loads:[{id:uid(),name:'Bomba principal',kw:22,start:'estrela',tp:5},{id:uid(),name:'Bomba reserva',kw:22,start:'estrela',tp:5},{id:uid(),name:'Ventilador torre',kw:5.5,start:'inversor',tp:8}],encl:'1800x800x500',hmi:true})
 };
 let state;
@@ -1228,6 +1233,7 @@ function build(){
   if(weld){alerts.push({lv:'i',t:`Solda: ${fmt(weld.kva)} kVA ${weld.mf?'em média frequência (trifásica)':'CA (entre duas fases)'} · pico ${fmtA(weld.Ip)} · corrente térmica equivalente ${fmtA(weld.Ieq)} com fator de serviço de ${fmt(weld.duty)}% · cabo ${fmt(weld.cable)} mm².`});
     if(!weld.mf&&weld.kva>=100)alerts.push({lv:'w',t:`Solda CA de ${fmt(weld.kva)} kVA entre duas fases desequilibra a rede e provoca cintilação (flicker). Para 100 kVA ou mais, prefira solda em média frequência, que carrega as três fases por igual.`});
     const q0w=comps.find(c=>c.key==='Q0');if(q0w&&weld.Ip>q0w.val*4)alerts.push({lv:'i',t:'O pico de corrente da solda é alto em relação ao disjuntor geral: confirme a curva do -Q0 e a queda de tensão com a concessionária.'});}
+  if(loads.some(l=>mtypeOf(l)==='cabine_pintura'))alerts.push({lv:'i',t:'Cabine de pintura a pó: o pó é combustível. A área do ciclone e do filtro é classificada (zona 22, ABNT NBR IEC 60079-10-2); use motores e sensores adequados, aterramento de dutos e peças, painel de alívio de explosão e intertravamento: pistolas só liberam com o exaustor em operação.'});
   if(!alerts.some(a=>a.lv==='e'||a.lv==='w')) alerts.unshift({lv:'ok',t:'Dimensionamento consistente: nenhuma incompatibilidade encontrada.'});
   return {E,V,loads,comps,acc,Itot,lay,P,Pnat,A,Tint,flow,fan,mainCable,q0,plcInfo,alerts,nr,icc,weld};
 }
@@ -4172,7 +4178,7 @@ function plateLabel(g,txt,x,y,fz,w=60,bold,h=16){
   const p=new THREE.Mesh(new THREE.PlaneGeometry(w*S,h*S),new THREE.MeshBasicMaterial({map:t.t}));p.position.set(x,y,(fz+0.6)*S);g.add(p);
 }
 /* ============ Máquinas acionadas (ilustração 3D realista) ============ */
-const MTYPES={auto:'Automático (pelo nome)',bomba:'Bomba centrífuga',tanque_v:'Tanque vertical de armazenamento (líquidos)',tanque_comb:'Tanque aéreo de combustível (diesel)',ibc:'Bomba dosadora + IBC 1000 L',compressor:'Compressor de ar + reservatório',esteira:'Esteira transportadora',ventilador:'Ventilador / exaustor',misturador:'Misturador (tanque)',rosca:'Rosca transportadora',eixo:'Eixo linear (servo)',redutor:'Redutor + tambor',desbobinador:'Desbobinador de arames',alimentador:'Endireitador e alimentador de arames',solda_gradil:'Máquina de solda de malha (gradil)',vincadeira:'Vincadeira (prensa de vincos em V)',transp_aereo:'Transportador aéreo (monovia)',cabine_pintura:'Cabine de pintura a pó robotizada',estufa:'Estufa de cura'};
+const MTYPES={auto:'Automático (pelo nome)',bomba:'Bomba centrífuga',tanque_v:'Tanque vertical de armazenamento (líquidos)',tanque_comb:'Tanque aéreo de combustível (diesel)',ibc:'Bomba dosadora + IBC 1000 L',compressor:'Compressor de ar + reservatório',esteira:'Esteira transportadora',ventilador:'Ventilador / exaustor',misturador:'Misturador (tanque)',rosca:'Rosca transportadora',eixo:'Eixo linear (servo)',redutor:'Redutor + tambor',desbobinador:'Desbobinador de arames',alimentador:'Endireitador e alimentador de arames',solda_gradil:'Máquina de solda de malha (gradil)',vincadeira:'Vincadeira (prensa de vincos em V)',transp_aereo:'Transportador aéreo (monovia)',cabine_pintura:'Cabine de pintura a pó robotizada com recuperação',estufa:'Estufa de cura'};
 function mtypeOf(l){if(l.mtype&&l.mtype!=='auto'&&MTYPES[l.mtype])return l.mtype;const n=(l.name||'').toLowerCase();
   if(/desbobin/.test(n))return 'desbobinador';if(/endireit|alimentador de arame/.test(n))return 'alimentador';if(/vinc|dobr|prensa/.test(n))return 'vincadeira';if(/solda|malha/.test(n))return 'solda_gradil';
   if(/a[ée]reo|suspens|monovia/.test(n))return 'transp_aereo';if(/cabine|pintura/.test(n))return 'cabine_pintura';if(/estufa|forno|cura/.test(n))return 'estufa';
@@ -4431,22 +4437,85 @@ function buildDriven(l,g,r,len){
       robots.push({car,j1,j2,j3,wr,sd,i})});
     const pw=[];const pm=new THREE.MeshBasicMaterial({color:new THREE.Color(paintHex()).lerp(new THREE.Color('#ffffff'),0.35),transparent:true,opacity:0});
     for(let i=0;i<40;i++){const s2=new THREE.Mesh(new THREE.SphereGeometry(0.22,6,4),pm);s2.position.set(x0+Lb*0.38+(Math.random()-0.5)*4,yb+2+Math.random()*(yt-yb-4),zc+(Math.random()-0.5)*9);g.add(s2);pw.push(s2)}
-    const fb=P(bx(6,14,5,paint('#c7ccd0')));fb.position.set(x0+Lb*0.8,yF+7,zc-9.2);
     // central de pó (tremonha fluidizada) alimentada pela rede de ar, com mangueiras de pó até os robôs
     const pc=P(bx(4,4,3.2,paint('#d9dde0')));pc.position.set(x0+Lb*0.2,yF+2,zc-9.6);const hp=P(cyl(1.4,0.9,2.2,paint('#e3e6e8'),18));hp.position.set(x0+Lb*0.2,yF+5.1,zc-9.6);
     valveIsland(g,3,new THREE.Vector3(x0+Lb*0.2-0.6,yF+4.3,zc-8.1));airUse(g,new THREE.Vector3(x0+Lb*0.2-2,yF+4.4,zc-8.1),'Cabine');
     [-1,1].forEach(sd=>hose(g,[[x0+Lb*0.2+1,yF+4.5,zc-8],[x0+Lb*0.32,yF+3,zc-6.6],[x0+Lb*0.42,yb+0.5,zc+sd*5.5-sd*0.9],[x0+Lb*0.42,yb+2,zc+sd*5.5]],0.1,'#d9dde0'));
-    [0,1,2].forEach(k=>{const ct=P(cyl(0.9,0.9,5,mat('#6d7479',{roughness:0.7}),16));ct.position.set(x0+Lb*0.8-2+k*2,yF+9,zc-9.2)});
-    const duct=P(bx(4,4,3.2,paint('#c7ccd0')));duct.position.set(x0+Lb*0.8,yF+16,zc-7.2);
-    const stack=P(cyl(1,1,yt-yF-14,steel,18));stack.position.set(x0+Lb*0.8,(yF+14+yt)/2+1,zc-9.2);
-    let t=0;upd=(dt,sp)=>{t+=dt*Math.min(1,sp*1.4);const on=sp>0.05;
+    // ===== Exaustão e recuperação de pó: plenum com grelha → ciclone (recupera o pó) → filtro de cartuchos (pó fino) → exaustor → chaminé =====
+    const galv=mat('#b9c0c5',{metalness:0.75,roughness:0.35}),grey=paint('#c7ccd0'),dkG=mat('#5b6268',{metalness:0.5,roughness:0.4});
+    const duct=(pts,r)=>{const v=pts.map(q=>new THREE.Vector3(...q));for(let i=0;i<v.length-1;i++){const a=v[i],b2=v[i+1],L=a.distanceTo(b2);if(L<1e-3)continue;const c=P(cyl(r,r,L,galv,20));c.position.copy(a).add(b2).multiplyScalar(0.5);c.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),b2.clone().sub(a).normalize())}
+      for(let i=1;i<v.length-1;i++){const e=P(new THREE.Mesh(new THREE.SphereGeometry(r*1.02,20,12),galv));e.position.copy(v[i])}
+      for(let i=0;i<v.length-1;i++)for(const f of [0.02,0.98]){const fl=P(new THREE.Mesh(new THREE.TorusGeometry(r*1.04,0.06,6,20),dkG));const d=v[i+1].clone().sub(v[i]).normalize();fl.position.copy(v[i]).lerp(v[i+1],f);fl.quaternion.setFromUnitVectors(new THREE.Vector3(0,0,1),d)}
+      return new THREE.CatmullRomCurve3(v,false,'chordal',0.1)};
+    const zR=zc-6.6,zX=zc-17;
+    // plenum de captação na parede traseira, atrás do gradil, com grelha voltada para dentro
+    const pW=Lb*0.42,pX=x0+Lb*0.5,pH=yt-yb-3;
+    const plen=P(bx(pW,pH,1.1,grey));plen.position.set(pX,yb+1+pH/2,zR);
+    const grT=texOnce('grelha',64,64,(x,w,h)=>{x.fillStyle='#3a4046';x.fillRect(0,0,w,h);x.fillStyle='#9aa3a8';for(let i=0;i<h;i+=8)x.fillRect(0,i,w,4)},[pW/1.5,pH/1.5]);
+    const gr=new THREE.Mesh(new THREE.PlaneGeometry(pW-0.6,pH-0.6),new THREE.MeshStandardMaterial({map:grT,metalness:0.4,roughness:0.6}));gr.position.set(pX,yb+1+pH/2,zR+0.56);g.add(gr);
+    // ciclone separador (cilindro + cone) com válvula rotativa e retorno do pó à central
+    const xC=x0+Lb*0.48,cyR=2.1,cyT=yF+24,cyB=cyT-5.5,coB=yF+9.5;
+    const cyc=P(cyl(cyR,cyR,cyT-cyB,grey,32));cyc.position.set(xC,(cyT+cyB)/2,zX);
+    const cone=P(cyl(cyR,0.45,cyB-coB,grey,32));cone.position.set(xC,(cyB+coB)/2,zX);
+    const lid=P(cyl(cyR*1.04,cyR*1.04,0.3,dkG,32));lid.position.set(xC,cyT+0.15,zX);
+    [[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([a,b2])=>{const lg=P(bx(0.35,cyB-yF,0.35,fr));lg.position.set(xC+a*cyR*0.8,(yF+cyB)/2,zX+b2*cyR*0.8)});
+    const ring=P(bx(cyR*1.9,0.3,cyR*1.9,fr));ring.position.set(xC,cyB-0.2,zX);
+    const rv=new THREE.Group();rv.position.set(xC,coB-0.6,zX);g.add(rv);
+    const rvb=cyl(0.7,0.7,0.9,mat('#2F5E7A'),20);rvb.rotation.x=Math.PI/2;rv.add(rvb);const rvm=cyl(0.35,0.35,1,mat('#2F5E7A'),14);rvm.rotation.x=Math.PI/2;rvm.position.z=1;rv.add(rvm);
+    const rvVanes=new THREE.Group();rv.add(rvVanes);for(let i=0;i<6;i++){const vn=bx(1.25,0.08,0.95,dkG);vn.rotation.z=i*Math.PI/6;rvVanes.add(vn)}
+    hose(g,[[xC,coB-1.3,zX],[xC-2,yF+3,zX+2],[x0+Lb*0.2+1.2,yF+5.6,zc-9.6]],0.18,'#d9dde0');     // retorno do pó recuperado à central
+    // filtro final de cartuchos com limpeza por pulso, tremonha e tambor
+    const xF=x0+Lb*0.8,fW=6,fD=5,fB=yF+8,fT=yF+17;
+    const fb=P(bx(fW,fT-fB,fD,grey));fb.position.set(xF,(fB+fT)/2,zX);
+    const hop=P(cyl(fW*0.45,0.6,3.2,grey,4));hop.rotation.y=Math.PI/4;hop.position.set(xF,fB-1.6,zX);
+    [[1,1],[1,-1],[-1,1],[-1,-1]].forEach(([a,b2])=>{const lg=P(bx(0.35,fB-yF,0.35,fr));lg.position.set(xF+a*(fW/2-0.2),(yF+fB)/2,zX+b2*(fD/2-0.2))});
+    const drum=P(cyl(0.9,0.9,1.8,mat('#2a5d9c',{roughness:0.5}),18));drum.position.set(xF,yF+0.9,zX);
+    [-1.5,0,1.5].forEach(dz=>{const dr=P(bx(fW-0.6,0.12,0.12,dkG));dr.position.set(xF,fT-0.6,zX+dz)});                              // portas de acesso aos cartuchos
+    const vent=P(bx(0.08,2.4,2.4,mat('#c3302a',{roughness:0.5})));vent.position.set(xF+fW/2+0.05,fT-2.2,zX);                          // painel de alívio de explosão
+    const vl=canvasTex(60,60,(x,cw,ch)=>{x.fillStyle='#c3302a';x.fillRect(0,0,cw,ch);x.fillStyle='#fff';x.font=`700 ${ch*0.17}px "Barlow Condensed",sans-serif`;x.textAlign='center';x.fillText('ALÍVIO DE',cw/2,ch*0.44);x.fillText('EXPLOSÃO',cw/2,ch*0.64)},3);
+    const vlp=new THREE.Mesh(new THREE.PlaneGeometry(2.2,2.2),new THREE.MeshStandardMaterial({map:vl.t}));vlp.rotation.y=Math.PI/2;vlp.position.set(xF+fW/2+0.1,fT-2.2,zX);g.add(vlp);
+    // manômetro diferencial (perda de carga dos cartuchos)
+    const mg=P(cyl(0.45,0.45,0.2,mat('#e9ecee'),20));mg.rotation.x=Math.PI/2;mg.position.set(xF-1.6,fB+2.2,zX+fD/2+0.12);
+    const mgN=new THREE.Mesh(new THREE.BoxGeometry(0.04,0.38,0.02),new THREE.MeshBasicMaterial({color:'#c3302a'}));mgN.geometry.translate(0,0.16,0);mgN.position.set(xF-1.6,fB+2.2,zX+fD/2+0.24);g.add(mgN);
+    // limpeza por pulso: reservatório de ar, 6 válvulas solenoides e tubos sopradores sobre os cartuchos
+    rigid(g,[[xF-fW/2+0.4,fT+0.6,zX-fD/2+0.6],[xF+fW/2-0.4,fT+0.6,zX-fD/2+0.6]],0.32,PCOL.air);
+    const puffs=[];for(let i=0;i<6;i++){const x=xF-fW/2+0.8+i*(fW-1.6)/5;const sv=P(bx(0.35,0.5,0.35,mat('#2a2f33')));sv.position.set(x,fT+1.1,zX-fD/2+0.6);regPipe(sv);
+      rigid(g,[[x,fT+1.3,zX-fD/2+0.6],[x,fT+1.3,zX+fD/2-0.6]],0.07,'#9aa3a8');
+      const pf=new THREE.Mesh(new THREE.SphereGeometry(0.6,10,8),new THREE.MeshBasicMaterial({color:'#ffffff',transparent:true,opacity:0}));pf.position.set(x,fT+0.4,zX);g.add(pf);puffs.push(pf)}
+    airUse(g,new THREE.Vector3(xF-fW/2+0.4,fT+0.6,zX-fD/2+0.6),'Filtro de pó');
+    // exaustor centrífugo com motor e chaminé com chapéu
+    const xV=x0+Lb+4.2,vR=2.3,yV=yF+4.2;
+    const vol=P(cyl(vR,vR,1.6,grey,32));vol.rotation.x=Math.PI/2;vol.position.set(xV,yV,zX);
+    const vOut=P(bx(1.8,vR+1.2,1.6,grey));vOut.position.set(xV+vR-0.9,yV+(vR+1.2)/2,zX);
+    const vMot=P(cyl(0.9,0.9,2.2,mat('#2F5E7A'),20));vMot.rotation.x=Math.PI/2;vMot.position.set(xV,yV,zX-2);
+    const vBase=P(bx(vR*2.4,0.5,4.6,fr));vBase.position.set(xV,yF+0.25,zX-0.6);
+    const imp=new THREE.Group();imp.position.set(xV,yV,zX+0.82);g.add(imp);for(let i=0;i<8;i++){const bl=bx(vR*1.6,0.1,0.06,dkG);bl.rotation.z=i*Math.PI/8;imp.add(bl)}
+    const sx=xV+vR-0.9,stTop=yt+4;const stk=P(cyl(0.85,0.85,stTop-(yV+vR+1.2),galv,20));stk.position.set(sx,(stTop+yV+vR+1.2)/2,zX);
+    const cap=P(new THREE.Mesh(new THREE.ConeGeometry(1.5,0.9,20),dkG));cap.position.set(sx,stTop+1.1,zX);
+    [0,2.1,4.2].forEach(a=>{const st=P(cyl(0.05,0.05,0.8,dkG,6));st.position.set(sx+Math.cos(a)*0.8,stTop+0.4,zX+Math.sin(a)*0.8)});
+    // dutos: plenum → ciclone (entrada tangencial) → filtro → exaustor
+    const p1=duct([[pX,yt-1.4,zR-0.4],[pX,yt-1.4,zX+cyR+1.4],[xC-cyR+0.7,cyT-1.2,zX+cyR+0.2]],0.75);
+    const p2=duct([[xC,cyT+0.3,zX],[xC,cyT+2.2,zX],[xF,cyT+2.2,zX],[xF,fT,zX]],0.6);
+    const p3=duct([[xF+fW/2,fB+2.4,zX],[xV-2.6,fB+2.4,zX],[xV-2.6,yV,zX+1.4],[xV,yV,zX+1.4]],0.6);
+    // pó fluindo pelos dutos (na cor da tinta) e partículas dentro do ciclone
+    const flowM=new THREE.MeshBasicMaterial({color:new THREE.Color(paintHex()).lerp(new THREE.Color('#ffffff'),0.25),transparent:true,opacity:0});
+    const flow=[];[[p1,1],[p2,0.45],[p3,0.2]].forEach(([c,den])=>{const n=Math.round(26*den)+4;for(let i=0;i<n;i++){const s3=new THREE.Mesh(new THREE.SphereGeometry(0.14,6,4),flowM);g.add(s3);flow.push({s:s3,c,u:i/n,o:(Math.random()-0.5)*0.5})}});
+    const swirl=[];for(let i=0;i<24;i++){const s3=new THREE.Mesh(new THREE.SphereGeometry(0.12,6,4),flowM);g.add(s3);swirl.push({s:s3,a:Math.random()*6.3,h:Math.random()})}
+    let ex=0,pulse=0,dp=0.2;
+    const exUpd=(dt,sp)=>{const on=sp>0.05;ex+=dt*sp;imp.rotation.z-=dt*sp*22;rvVanes.rotation.z+=dt*sp*2.5;flowM.opacity=on?0.75:0;
+      if(on){flow.forEach(f=>{f.u=(f.u+dt*sp*0.35)%1;const q=f.c.getPointAt(f.u);f.s.position.set(q.x,q.y+f.o*0.6,q.z+f.o)});
+        swirl.forEach(w=>{w.a+=dt*sp*7;w.h=(w.h+dt*sp*0.25)%1;const rr=cyR*0.85*(w.h<0.45?1:1-(w.h-0.45)/0.55*0.8),y=cyT-0.4-w.h*(cyT-coB-0.6);w.s.position.set(xC+Math.cos(w.a)*rr,y,zX+Math.sin(w.a)*rr)})}
+      dp=Math.min(0.85,dp+dt*(on?0.02:-0.01));pulse+=dt;const k=Math.floor(pulse/0.6)%6;
+      puffs.forEach((pf,i)=>{const act=on&&i===k&&(pulse%0.6)<0.25;pf.material.opacity=act?0.5:Math.max(0,pf.material.opacity-dt*3);pf.scale.setScalar(act?1+(pulse%0.6)*3:1)});
+      if(on&&k===5&&(pulse%0.6)<dt*1.5)dp=Math.max(0.3,dp-0.25);mgN.rotation.z=1.2-dp*2.4};
+    let t=0;upd=(dt,sp)=>{exUpd(dt,sp);t+=dt*Math.min(1,sp*1.4);const on=sp>0.05;
       robots.forEach(r=>{r.car.position.y=(yb+yt)/2-2+((yt-yb)/2-5)*Math.sin(t*0.9+r.i*Math.PI);   // percorre a altura do gradil
         r.j1.rotation.y=r.sd*Math.PI/2+0.5*Math.sin(t*2.2+r.i);                           // varredura horizontal
         r.j3.rotation.z=-0.85+0.12*Math.sin(t*3.1+r.i);r.wr.rotation.z=0.85-r.j3.rotation.z-0.35+0.1*Math.sin(t*4+r.i)});
       sprayM.opacity=on?0.32:0;pm.opacity=Math.min(0.35,sp*0.4);
       if(sp>0.05)pw.forEach(s2=>{s2.position.y+=dt*(0.6+Math.random());if(s2.position.y>yt-1)s2.position.y=yb+2})};
     if(!R.gl)R.gl={};R.gl.booth=[g.position.x+x0,g.position.x+x0+Lb];R.gl.robotX=g.position.x+xm;
-    ext=x0+Lb+1.2;top=yt+1;depth=24;
+    ext=x0+Lb+8;top=yt+6;depth=44;
   }else if(type==='estufa'){
     // Estufa de cura (túnel isolado) com queimador a gás, chaminé e ventilador de recirculação no teto
     const zc=-g.position.z,Le=58,x0=cx+4,yb=yF+8.5,yt=yF+GP.yr+1.6,fr=paint('#3b4a56');
