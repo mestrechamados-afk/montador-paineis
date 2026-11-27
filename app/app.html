@@ -657,6 +657,7 @@ aside .btn.block,aside .row2 .btn{white-space:normal;line-height:1.2}
             <button role="menuitemcheckbox" class="chk" id="btnMach" data-act="mach" aria-pressed="true">Ocultar máquinas</button>
             <button role="menuitemcheckbox" class="chk" id="btnEnv" data-act="env" aria-pressed="false">Mostrar ambiente</button>
             <button role="menuitemcheckbox" class="chk" id="btnRoute" data-act="route" aria-pressed="false">Rota da fiação da porta</button>
+            <button role="menuitemcheckbox" class="chk" id="btnPipes" data-act="pipes" aria-pressed="true">Tubulações (ar, água, óleo e gás)</button>
           </div></div>
         <button class="btn small" id="btnDoor" data-act="door" aria-pressed="false">Fechar porta</button>
         <button class="btn small" id="btnPhoto" data-act="photo" aria-pressed="false"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 8a2 2 0 0 1 2-2h2l2-2h6l2 2h2a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><circle cx="12" cy="13" r="4"/></svg>Foto do local</button>
@@ -860,7 +861,8 @@ const PRESETS={
  celula:()=>({loads:[{id:uid(),name:'Eixo X',kw:0.75,start:'servo',tp:0.5,guard:true},{id:uid(),name:'Eixo Y',kw:0.75,start:'servo',tp:0.5,guard:true},{id:uid(),name:'Eixo Z',kw:0.4,start:'servo',tp:0.5,guard:true},{id:uid(),name:'Bomba de refrigeração',kw:0.75,start:'direta',tp:0,guard:true},{id:uid(),name:'Transportador de cavacos',kw:0.37,start:'direta',tp:0,guard:true},{id:uid(),name:'Exaustor',kw:0.55,start:'direta',tp:0,guard:true},{id:uid(),name:'Fuso principal',kw:7.5,start:'inversor',tp:3,guard:true}],encl:'1200x800x300',hmi:true,plate:'laranja'}),
  util:()=>({loads:[{id:uid(),name:'Bomba de recalque do tanque',kw:7.5,start:'direta',tp:0,mtype:'tanque_v'},{id:uid(),name:'Transferência de diesel',kw:2.2,start:'direta',tp:0,mtype:'tanque_comb'},{id:uid(),name:'Bomba dosadora de cloro',kw:0.37,start:'inversor',tp:0.5,mtype:'ibc'},{id:uid(),name:'Compressor de ar',kw:15,start:'estrela',tp:5,mtype:'compressor'}],encl:'1200x800x300',hmi:true}),
  nivel:()=>({loads:[],plc:false,hmi:false,nr12:{...defaultState().nr12,on:false},extras:[...[1,2,3].map(n=>({id:uid(),tag:'-F'+n,tipo:'fusivel',desc:'Fusível do controle de nível TQ 0'+n,spec:'2 A',qty:1,local:'placa'})),...[1,2,3].map(n=>({id:uid(),tag:'-A'+n,tipo:'controlador',desc:'Controlador de nível TQ 0'+n,spec:'24 Vcc',qty:1,local:'placa'})),...[1,2,3].map(n=>({id:uid(),tag:'-K'+n,tipo:'rele',desc:'Relé de sinal de nível TQ 0'+n,spec:'24 Vcc',qty:1,local:'placa'})),{id:uid(),tag:'-B1',tipo:'sensor',desc:'Eletrodos de nível (3 hastes)',spec:'',qty:3,local:'campo'}],extraTerms:33,encl:'600x500x250'}),
-  gradil:()=>({loads:[{id:uid(),name:'Desbobinador de arames',kw:2.2,start:'inversor',tp:3,mtype:'desbobinador',guard:true,estop:1},
+  gradil:()=>({loads:[{id:uid(),name:'Compressor de ar',kw:15,start:'estrela',tp:5,mtype:'compressor',guard:true,estop:1},
+    {id:uid(),name:'Desbobinador de arames',kw:2.2,start:'inversor',tp:3,mtype:'desbobinador',guard:true,estop:1},
     {id:uid(),name:'Endireitador e alimentador de arames',kw:4,start:'inversor',tp:2,mtype:'alimentador',guard:true,estop:0},
     {id:uid(),name:'Avanço da malha e solda',kw:3,start:'servo',tp:0.3,mtype:'solda_gradil',guard:true,curtain:true,estop:1},
     {id:uid(),name:'Unidade hidráulica da vincadeira',kw:7.5,start:'estrela',tp:4,mtype:'vincadeira',guard:true,curtain:true,estop:1},
@@ -875,7 +877,10 @@ const PRESETS={
       {id:uid(),tag:'-Q30',tipo:'disjuntor',desc:'Disjuntor de alimentação do controlador do robô de pintura',spec:'3P · 16 A · curva C',qty:2,local:'placa'},
       {id:uid(),tag:'-K30',tipo:'rele',desc:'Relés de interface CLP ↔ robôs (liberação, pronto, falha, programa)',spec:'24 Vcc · 2 reversíveis',qty:8,local:'placa'},
       {id:uid(),tag:'-A30',tipo:'outro',desc:'Robô de pintura 6 eixos em eixo vertical, com controlador próprio e pistola eletrostática',spec:'380 V 3F · rede industrial com o CLP',qty:2,local:'campo'},
-      {id:uid(),tag:'-A32',tipo:'controlador',desc:'Unidade de controle das pistolas eletrostáticas (alta tensão e fluxo de pó)',spec:'220 Vca',qty:1,local:'placa'}]}),
+      {id:uid(),tag:'-A32',tipo:'controlador',desc:'Unidade de controle das pistolas eletrostáticas (alta tensão e fluxo de pó)',spec:'220 Vca',qty:1,local:'placa'},
+      {id:uid(),tag:'-Y40',tipo:'outro',desc:'Ilha de válvulas pneumáticas 24 Vcc (solda, pórticos e cabine), ligada ao CLP',spec:'4 a 8 válvulas 5/2 · conector multipolar',qty:4,local:'campo'},
+      {id:uid(),tag:'-Y41',tipo:'outro',desc:'Válvula de partida suave e despressurização com bloqueio por cadeado (energia pneumática, NR-12)',spec:'24 Vcc',qty:5,local:'campo'},
+      {id:uid(),tag:'-B40',tipo:'sensor',desc:'Pressostato da rede de ar comprimido (falta de ar)',spec:'6 bar',qty:1,local:'campo'}]}),
  bomba:()=>({loads:[{id:uid(),name:'Bomba principal',kw:22,start:'estrela',tp:5},{id:uid(),name:'Bomba reserva',kw:22,start:'estrela',tp:5},{id:uid(),name:'Ventilador torre',kw:5.5,start:'inversor',tp:8}],encl:'1800x800x500',hmi:true})
 };
 let state;
@@ -3861,8 +3866,8 @@ function rebuild3D(keepView){
   buildDoor(E);
   // Motores
   let mx=(E.W/2+260)*S;
-  R.gl={};model.loads.forEach(l=>{const w=buildMotor(l,mx,floorY);mx+=w+0.5});
-  buildOverhead(floorY);buildWires();
+  R.gl={};R.pipes=[];model.loads.forEach(l=>{const w=buildMotor(l,mx,floorY);mx+=w+0.5});
+  buildOverhead(floorY);buildWires();buildAir(floorY);
   // linhas longas (ex.: fábrica de gradil): o piso acompanha o comprimento das máquinas
   if(mx>90&&R.floor){const Wf=mx+130,cxF=(mx-130)/2+50,mp=R.floor.material.map;R.floor.geometry.dispose();R.floor.geometry=new THREE.PlaneGeometry(Wf,200);R.floor.position.x=cxF;
     if(mp&&mp.repeat){mp.repeat.x=mp.repeat.y*Wf/200;mp.needsUpdate=true}}
@@ -3940,7 +3945,7 @@ function doorBackWiring(g,E){
   const midY=0;ymin=Math.min(ymin,midY);
   const hl=ymax-ymin;const har=new THREE.Mesh(new THREE.CylinderGeometry(7*S,7*S,hl,12),mat('#1b1e21',{roughness:0.7}));har.position.set(hx,(ymax+ymin)/2,hz);g.add(har);
   R.harness={x:hx,z:hz,ymin,ymax,ymid:ymin};R.harnessMesh=har;R.harnessMat=har.material;
-  for(let y=ymin+0.1;y<ymax;y+=0.12){const r=new THREE.Mesh(new THREE.TorusGeometry(7.8*S,1.3*S,6,14),mat('#3a3f44'));r.rotation.x=Math.PI/2;r.position.set(hx,y,hz);g.add(r)}
+  const rgG=new THREE.TorusGeometry(7.8*S,1.3*S,6,14),rgM=mat('#3a3f44');for(let y=ymin+0.1;y<ymax;y+=0.12){const r=new THREE.Mesh(rgG,rgM);r.rotation.x=Math.PI/2;r.position.set(hx,y,hz);g.add(r)}
   // laço flexível até a canaleta lateral
   // abraçadeiras de fixação
   [ymax-0.05,(ymax+ymin)/2,ymin+0.05].forEach(y=>{const c=new THREE.Mesh(new THREE.BoxGeometry(22*S,10*S,6*S),mat('#e9e9e6'));c.position.set(hx,y,-3*S);g.add(c)});
@@ -4242,6 +4247,19 @@ function buildDriven(l,g,r,len){
     for(let i=0;i<8;i++){const n=bx(0.22,0.22,11.3,dark);const a=i/8*Math.PI*2;n.position.set(Math.cos(a)*0.6,Math.sin(a)*0.6,0);n.rotation.z=a;drum.add(n)}
     const chute=P(bx(2.6,0.12,11,steel));chute.position.set((x0+2.9+ex)/2,yW+0.95,zc);chute.rotation.z=-0.42;
     const dmot=P(cyl(0.5,0.5,1.4,paint('#2F5E7A'),16));dmot.rotation.x=Math.PI/2;dmot.position.set(x0+2.9,yW+1.85,zc+6.4);
+    // pneumática: ilha de válvulas no lado da rede de ar, feixe pela coluna, distribuidor na viga e espirais até os cilindros dos eletrodos
+    valveIsland(g,8,new THREE.Vector3(x0+2.4,yF+H+0.25,zc-7.4));airUse(g,new THREE.Vector3(x0+2.4-2.3,yF+H+0.4,zc-7.4),'Solda');
+    hose(g,[[x0+2.4,yF+H+1,zc-7.6],[ex-1.6,yF+H+2.4,zc-9],[ex-1.4,yF+15,zc-9.1],[ex+1.4,yF+15.6,zc-7.6],[ex+1.4,yF+15.6,zc-5.4]],0.16,PCOL.hoseB);
+    rigid(g,[[ex+1.4,yF+15.6,zc-5.4],[ex+1.4,yF+15.6,zc+5.4]],0.14,'#9aa3a8');
+    const coils=[];GR_H.forEach(y=>{const z=zc-y;hose(g,[[ex+1.4,yF+15.6,z],[ex+0.9,yF+15.5,z],[ex+0.55,yF+15.3,z]],0.035,PCOL.hose);const cH=coilHose(g,0.16,5,0.03,PCOL.hose);cH.position.set(ex+0.55,yF+15.3,z);coils.push(cH)});
+    const setCoils=hy=>coils.forEach(cH=>cH.scale.y=Math.max(0.25,1.1-hy));setCoils(0);
+    // guilhotina: dois cilindros pneumáticos com mangueiras
+    [-4,4].forEach(dz=>{const cb=P(cyl(0.3,0.3,1.5,mat('#c9cdd0',{metalness:0.6,roughness:0.3}),14));cb.position.set(ex+1.2,yW+3.2,zc+dz);
+      hose(g,[[x0+3.6,yF+H+0.9,zc-7.4],[ex+1.2,yF+H+4.6,zc-6],[ex+1.2,yW+4,zc+dz]],0.035,PCOL.hose)});
+    // água de refrigeração (ida azul, retorno vermelho) para eletrodos e transformador
+    [[PCOL.water,0],[PCOL.hot,0.35]].forEach(([c,o])=>{hose(g,[[x0+3.6+o,yF+H+1.4,zc+8.1],[ex-1,yF+H+0.8,zc+7.2],[ex-0.75,yW-0.35,zc+5.6+o]],0.08,c);
+      hose(g,[[x0+3+o,yF+H+2.9,zc+9.2],[ex-0.4,yF+17.4,zc+8.3],[ex-1.2,yF+17.6,zc+6.4]],0.08,c);
+      hose(g,[[x0+2.2+o,yF+0.2,zc+12.5],[x0+2.2+o,yF+1.5,zc+11.5],[x0+2.6+o,yF+H+1.2,zc+9]],0.09,c)});
     // faíscas
     const sparks=[];const sm=new THREE.MeshBasicMaterial({color:'#ffd27a',transparent:true,opacity:0});
     for(let i=0;i<28;i++){const s2=new THREE.Mesh(new THREE.SphereGeometry(0.09,6,4),sm);s2.position.set(ex,yW,zc-GR_H[i%7]);g.add(s2);sparks.push(s2)}
@@ -4271,7 +4289,7 @@ function buildDriven(l,g,r,len){
         [0.5,f=>{gp.set(zc,yHook-0.3*f,-Math.PI/2,f<0.6);if(f>=0.6&&gp.held.visible){gp.held.visible=false;if(R.gl&&R.gl.spawn)R.gl.spawn(g.position.x+xc)}}],
         [1.4,f=>gp.set(lerp(zc,zg,f),lerp(yHook,yPark,f),-Math.PI/2*(1-f),false)]]}
     let t=0,k=0,mode=null,mt=0,prevStep=0,gi=-1,gt=0,drumA=0;
-    const goHead=down=>{head.position.y=down?-1.3:0;sm.opacity=down?0.95:0;if(down)sparks.forEach((s2,i)=>{s2.position.set(ex+(Math.random()-0.5)*0.9,yW+Math.random()*0.9,zc-GR_H[i%7]+(Math.random()-0.5)*0.5)})};
+    const goHead=down=>{head.position.y=down?-1.3:0;setCoils(head.position.y);sm.opacity=down?0.95:0;if(down)sparks.forEach((s2,i)=>{s2.position.set(ex+(Math.random()-0.5)*0.9,yW+Math.random()*0.9,zc-GR_H[i%7]+(Math.random()-0.5)*0.5)})};
     upd=(dt,sp)=>{const d=dt*sp;t+=d*2.5;
       const step=Math.floor(t),ph=t-step;
       // ciclo: 0–0,35 avanço de 50 mm; 0,35–0,55 tambor libera um arame cortado que desce pela calha; 0,55–0,8 solda; 0,8–1 subida
@@ -4315,7 +4333,8 @@ function buildDriven(l,g,r,len){
     const tank=P(bx(5,3.2,3.6,paint('#3a4a58')));tank.position.set(xP-6,yF+1.6,zc+10.6);
     const pump=P(cyl(0.7,0.7,2,paint('#2F5E7A'),16));pump.rotation.z=Math.PI/2;pump.position.set(xP-6,yF+3.9,zc+10.6);
     const vb=P(bx(2,1.2,1.4,mat('#c8a030',{metalness:0.6,roughness:0.3})));vb.position.set(xP-3,yF+3.6,zc+10.6);
-    const hose=P(cyl(0.12,0.12,yP+11-yF,blk,8));hose.position.set(xP-3,(yF+3.6+yP+11)/2,zc+9.6);
+    [-6,6].forEach(dx=>[-0.4,0.4].forEach((o,j)=>hose(g,[[xP-3+o,yF+4.1,zc+10.4],[xP-3+o,yP+6,zc+9.6],[xP+dx*0.6,yP+12.4+j*1.2,zc+6],[xP+dx,yP+12.3+j*1.2,zc+0.95]],0.13,PCOL.hyd)));
+    hose(g,[[xP-6,yF+4.6,zc+10.6],[xP-4.5,yF+5.4,zc+10.6],[xP-3,yF+4.2,zc+10.6]],0.14,PCOL.hyd);
     // proteções NR-12: grades laterais e cortina de luz na entrada e saída
     const gm=new THREE.MeshStandardMaterial({map:gradilTex(),color:'#E8B80E',transparent:true,alphaTest:0.4,side:THREE.DoubleSide});
     [-8,8].forEach(z=>{const gd=P(new THREE.Mesh(new THREE.BoxGeometry(21.6,7,0.12),gm));gd.position.set(xP,yP+3.6,zc+z)});
@@ -4387,11 +4406,18 @@ function buildDriven(l,g,r,len){
       const wj=cyl(0.28,0.28,0.4,rj,12);wj.rotation.x=Math.PI/2;wr.add(wj);
       const gun=cyl(0.14,0.2,0.9,mat('#c9cdd0',{metalness:0.6,roughness:0.3}),12);gun.rotation.z=Math.PI/2;gun.position.x=0.45;wr.add(gun);
       const cone=new THREE.Mesh(new THREE.ConeGeometry(0.9,1.6,16,1,true),sprayM);cone.rotation.z=Math.PI/2;cone.position.x=1.7;wr.add(cone);
+      hose(j2,[[0.3,0.2,0.32],[0.36,1,0.34],[0.3,1.85,0.32]],0.07,PCOL.hoseB);hose(j3,[[0.1,0.3,0.3],[1.1,0.36,0.3],[2.05,0.25,0.25]],0.07,PCOL.hoseB);
+      hose(j3,[[0.1,0.3,-0.3],[1.1,0.36,-0.32],[2.1,0.1,-0.2]],0.05,'#d9dde0');
+      hose(car,[[0,0.6,sd*0.5],[0,2.2,sd*0.9],[0,3.4,sd*0.75]],0.09,PCOL.hoseB);
       j2.rotation.z=-0.35;j3.rotation.z=0.35-1.2;
       robots.push({car,j1,j2,j3,wr,sd,i})});
     const pw=[];const pm=new THREE.MeshBasicMaterial({color:new THREE.Color(paintHex()).lerp(new THREE.Color('#ffffff'),0.35),transparent:true,opacity:0});
     for(let i=0;i<40;i++){const s2=new THREE.Mesh(new THREE.SphereGeometry(0.22,6,4),pm);s2.position.set(x0+Lb*0.38+(Math.random()-0.5)*4,yF+12+Math.random()*9,zc+(Math.random()-0.5)*9);g.add(s2);pw.push(s2)}
     const fb=P(bx(6,14,5,paint('#c7ccd0')));fb.position.set(x0+Lb*0.8,yF+7,zc-9.2);
+    // central de pó (tremonha fluidizada) alimentada pela rede de ar, com mangueiras de pó até os robôs
+    const pc=P(bx(4,4,3.2,paint('#d9dde0')));pc.position.set(x0+Lb*0.2,yF+2,zc-9.6);const hp=P(cyl(1.4,0.9,2.2,paint('#e3e6e8'),18));hp.position.set(x0+Lb*0.2,yF+5.1,zc-9.6);
+    valveIsland(g,3,new THREE.Vector3(x0+Lb*0.2-0.6,yF+4.3,zc-8.1));airUse(g,new THREE.Vector3(x0+Lb*0.2-2,yF+4.4,zc-8.1),'Cabine');
+    [-1,1].forEach(sd=>hose(g,[[x0+Lb*0.2+1,yF+4.5,zc-8],[x0+Lb*0.32,yF+3,zc-6.6],[x0+Lb*0.42,yb+0.5,zc+sd*5.5-sd*0.9],[x0+Lb*0.42,yb+2,zc+sd*5.5]],0.1,'#d9dde0'));
     [0,1,2].forEach(k=>{const ct=P(cyl(0.9,0.9,5,mat('#6d7479',{roughness:0.7}),16));ct.position.set(x0+Lb*0.8-2+k*2,yF+9,zc-9.2)});
     const duct=P(bx(4,4,3.2,paint('#c7ccd0')));duct.position.set(x0+Lb*0.8,yF+16,zc-7.2);
     const stack=P(cyl(1,1,6,steel,18));stack.position.set(x0+Lb*0.8,yF+17+3,zc-9.2);
@@ -4416,6 +4442,12 @@ function buildDriven(l,g,r,len){
     [-5.9,5.9].forEach(z=>{const gp=new THREE.Mesh(new THREE.PlaneGeometry(Le-1,yt-yb-1.2),glow);gp.position.set(x0+Le/2,(yb+yt)/2,zc+z);g.add(gp)});
     const burner=P(bx(5,5,4,paint('#b0302a')));burner.position.set(x0+Le*0.3,yF+5,zc+9.4);
     const bdu=P(bx(2,4,2,steel));bdu.position.set(x0+Le*0.3,yF+9.5,zc+8.4);
+    // linha de gás natural: entrada, válvula de bloqueio, regulador e trem de válvulas até o queimador
+    const gx=x0+Le*0.3;rigid(g,[[gx-7,yF,zc+12.4],[gx-7,yF+3.2,zc+12.4],[gx-2.6,yF+3.2,zc+12.4],[gx-2.6,yF+3.2,zc+10.6]],0.16,PCOL.gas,false);
+    [[gx-6,'#c3302a'],[gx-4.6,'#2a2f33'],[gx-3.4,'#2a2f33']].forEach(([x,c])=>{const vb2=P(bx(0.7,0.7,0.6,mat(c,{roughness:0.5})));vb2.position.set(x,yF+3.2,zc+12.4);regPipe(vb2)});
+    const reg=P(cyl(0.55,0.55,0.4,mat('#c8a030',{metalness:0.6})));reg.rotation.x=Math.PI/2;reg.position.set(gx-5.3,yF+3.9,zc+12.4);regPipe(reg);
+    const gtag=canvasTex(60,24,(x,cw,ch)=>{x.fillStyle='#f2b705';x.fillRect(0,0,cw,ch);x.fillStyle='#111';x.font=`700 ${ch*0.6}px "Barlow Condensed",sans-serif`;x.fillText('GÁS',cw*0.2,ch*0.72)},4);
+    const gl2=new THREE.Mesh(new THREE.PlaneGeometry(1.6,0.65),new THREE.MeshStandardMaterial({map:gtag.t}));gl2.position.set(gx-7,yF+2,zc+12.6);g.add(gl2);regPipe(gl2);
     const chim=P(cyl(0.9,0.9,14,steel,18));chim.position.set(x0+Le*0.7,yt+7,zc+3.7);
     const fan=P(cyl(2.4,2.4,1.6,mat('#aeb5ba',{metalness:0.75,roughness:0.35}),28));fan.position.set(x0+Le*0.45,yt+1.4,zc-3.7);
     const imp=new THREE.Group();imp.position.set(x0+Le*0.45,yt+2.3,zc-3.7);g.add(imp);for(let k=0;k<3;k++){const b=bx(3.6,0.15,0.5,dark);b.rotation.y=k*Math.PI/3;imp.add(b)}
@@ -4578,7 +4610,7 @@ function buildDriven(l,g,r,len){
       const ndl=new THREE.Mesh(new THREE.BoxGeometry(0.06,0.7,0.02),new THREE.MeshBasicMaterial({color:'#111'}));ndl.geometry.translate(0,0.3,0);ndl.position.set(gp.x,gp.y,gp.z+0.24);g.add(ndl);
       const sv=P(cyl(0.22,0.22,1,mat('#c9a14a',{metalness:0.8,roughness:0.3}),10));sv.position.set(tx+Rr*0.4,yb+Hr+Rr*0.4+0.4,0);const dr=P(cyl(0.12,0.12,0.9,steel,8));dr.position.set(tx,yb-Rr*0.4-0.45,0);
       pipe([V3(cx+r*0.95,r*0.85,0),V3(cx+r*0.95,yb+Hr*0.3+0.6,0),V3(tx-Rr,yb+Hr*0.3+0.6,0)],0.22,mat('#9aa3a8',{metalness:0.7,roughness:0.3}));
-      pipe([V3(tx,yb+Hr+Rr*0.4,0),V3(tx,yb+Hr+Rr*0.4+1.6,0),V3(tx+Rr+3,yb+Hr+Rr*0.4+1.6,0)],0.2,mat('#9aa3a8',{metalness:0.7,roughness:0.3}));valve(V3(tx+Rr+1.5,yb+Hr+Rr*0.4+1.6,0),0.2);
+      pipe([V3(tx,yb+Hr+Rr*0.4,0),V3(tx,yb+Hr+Rr*0.4+1.6,0),V3(tx+Rr+3,yb+Hr+Rr*0.4+1.6,0)],0.2,mat('#9aa3a8',{metalness:0.7,roughness:0.3}));valve(V3(tx+Rr+1.5,yb+Hr+Rr*0.4+1.6,0),0.2);if(!R.gl)R.gl={};R.gl.compOut=g.position.clone().add(V3(tx+Rr+3,yb+Hr+Rr*0.4+1.6,0));
       plate(Rr*1.3,Rr*0.75,['VASO DE PRESSÃO',`${Math.round(Math.PI*(Rr/10)**2*(Hr/10)*1000/50)*50} L · PMTA 10 bar`,'NR-13 · Categoria V'],'#f7f7f4','#1d2327',V3(tx,yb+Hr*0.38,Rr+0.04));
       let pr=0.35;upd=(dt,sp)=>{pr=Math.min(0.95,Math.max(0.05,pr+(sp>0.05?0.06*sp:-0.015)*dt));ndl.rotation.z=-(Math.PI*0.75+Math.PI*1.5*pr)+Math.PI*1.5-Math.PI*0.25;ndl.rotation.z=Math.PI*0.75-Math.PI*1.5*pr};upd(0,0);
       ext=tx+Rr+3.5;top=yb+Hr+Rr*0.4+2.4;depth=Rr*2+4;
@@ -4669,6 +4701,55 @@ function gradilTex(){return texOnce('gradil',256,132,(x,w,h)=>{x.clearRect(0,0,w
   for(let i=0;i<=40;i++)x.fillRect(Math.round(i*(w-2)/40),0,2,h);
   for(let j=0;j<=5;j++)x.fillRect(0,Math.round(j*(h-3)/5),w,3);
   [0.32,0.68].forEach(f=>{x.fillRect(0,Math.round(h*f)-3,w,6)})})}
+/* ============ Tubulações: ar comprimido, água de refrigeração, hidráulica e gás ============ */
+const PCOL={air:'#2b6cb0',hose:'#1e88e5',hoseB:'#18191b',water:'#1565c0',hot:'#c62828',gas:'#f2b705',hyd:'#141516',chain:'#202326'};
+const pMat=(c,metal)=>mat(c,metal?{roughness:0.3,metalness:0.65}:{roughness:0.55,metalness:0.08});
+function regPipe(m){m.userData.pipe=true;m.castShadow=false;m.traverse&&m.traverse(o=>{o.castShadow=false});(R.pipes=R.pipes||[]).push(m);if(state.showPipes===false)m.visible=false;return m}
+// mangueira flexível por pontos (curva suave)
+function hose(parent,pts,r,color,seg){const v=pts.map(p=>p.isVector3?p:new THREE.Vector3(p[0],p[1],p[2]));
+  const c=new THREE.CatmullRomCurve3(v,false,'centripetal');const m=new THREE.Mesh(new THREE.TubeGeometry(c,seg||Math.max(12,v.length*10),r,8,false),pMat(color));parent.add(m);return regPipe(m)}
+// mangueira entre dois pontos com barriga (catenária aproximada)
+function sagHose(parent,a,b,r,color,dip){const A=a.isVector3?a:new THREE.Vector3(...a),B=b.isVector3?b:new THREE.Vector3(...b),d=dip??Math.max(0.6,A.distanceTo(B)*0.12);
+  const m1=A.clone().lerp(B,0.33),m2=A.clone().lerp(B,0.67);m1.y=Math.min(A.y,B.y)-d*0.8;m2.y=Math.min(A.y,B.y)-d*0.8;return hose(parent,[A,m1,m2,B],r,color)}
+// tubo rígido com curvas a 90° (conexões nas emendas)
+function rigid(parent,pts,r,color,metal){const v=pts.map(p=>p.isVector3?p:new THREE.Vector3(p[0],p[1],p[2])),mt=pMat(color,metal!==false);
+  for(let i=0;i<v.length-1;i++){const a=v[i],b=v[i+1],L=a.distanceTo(b);if(L<1e-3)continue;const c=new THREE.Mesh(new THREE.CylinderGeometry(r,r,L,12),mt);c.position.copy(a).add(b).multiplyScalar(0.5);
+    c.quaternion.setFromUnitVectors(new THREE.Vector3(0,1,0),b.clone().sub(a).normalize());parent.add(c);regPipe(c)}
+  for(let i=1;i<v.length-1;i++){const f=new THREE.Mesh(new THREE.SphereGeometry(r*1.35,12,8),mt);f.position.copy(v[i]);parent.add(f);regPipe(f)}}
+// mangueira espiral (estica no eixo Y local): topo em y=0, base em y=-1; ajuste com scale.y
+function coilHose(parent,R0,turns,r,color){const pts=[];const N=turns*16;for(let i=0;i<=N;i++){const a=i/16*Math.PI*2;pts.push(new THREE.Vector3(Math.cos(a)*R0,-i/N,Math.sin(a)*R0))}
+  const m=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),N*2,r,6,false),pMat(color));parent.add(m);return regPipe(m)}
+// ilha de válvulas pneumáticas (corpo + válvulas + bobinas com LED)
+function valveIsland(parent,n,pos,rotY){const g=new THREE.Group();g.position.copy(pos);g.rotation.y=rotY||0;parent.add(g);
+  const base=new THREE.Mesh(new THREE.BoxGeometry(0.6+n*0.42,0.5,0.9),mat('#9aa3a8',{metalness:0.6,roughness:0.35}));base.castShadow=true;g.add(base);
+  for(let i=0;i<n;i++){const v=new THREE.Mesh(new THREE.BoxGeometry(0.36,0.55,0.8),mat('#2a2f33',{roughness:0.5}));v.position.set(-n*0.21+0.21+i*0.42,0.52,0);g.add(v);
+    const led=new THREE.Mesh(new THREE.BoxGeometry(0.1,0.06,0.06),new THREE.MeshBasicMaterial({color:i%2?'#3cc474':'#f2b53a'}));led.position.set(v.position.x,0.82,0.3);g.add(led)}
+  const conn=new THREE.Mesh(new THREE.BoxGeometry(0.4,0.35,0.5),mat('#1d2327'));conn.position.set(-(0.6+n*0.42)/2-0.2,0.1,0);g.add(conn);
+  regPipe(g);g.userData.out=i=>g.localToWorld(new THREE.Vector3(-n*0.21+0.21+i*0.42,0.8,-0.45));return g}
+// registra um consumidor de ar (ponto de entrada da ilha de válvulas, em coordenadas do mundo)
+function airUse(obj,local,label){obj.updateWorldMatrix(true,false);if(!R.gl)R.gl={};(R.gl.air=R.gl.air||[]).push({p:obj.localToWorld(local.clone()),label})}
+// unidade de conservação (FRL): válvula de bloqueio com cadeado, filtro, regulador com manômetro, lubrificador e partida suave
+function frlUnit(parent,p){const g=new THREE.Group();g.position.copy(p);parent.add(g);
+  const body=mat('#4f5a63',{metalness:0.5,roughness:0.35}),bowl=new THREE.MeshStandardMaterial({color:'#d8e3ea',transparent:true,opacity:0.55,roughness:0.1});
+  const bar=new THREE.Mesh(new THREE.BoxGeometry(3.6,0.5,0.5),body);g.add(bar);
+  [-1.2,0,1.2].forEach((x,i)=>{const b=new THREE.Mesh(new THREE.CylinderGeometry(0.28,0.22,0.9,14),bowl);b.position.set(x,-0.7,0);g.add(b);const hd=new THREE.Mesh(new THREE.BoxGeometry(0.75,0.6,0.7),body);hd.position.set(x,0,0);g.add(hd)});
+  const gc=new THREE.Mesh(new THREE.CylinderGeometry(0.3,0.3,0.12,20),mat('#e9ecee',{metalness:0.6}));gc.rotation.x=Math.PI/2;gc.position.set(0,0.15,0.45);g.add(gc);
+  const ss=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.6,0.7),mat('#2F5E7A'));ss.position.set(2.2,0,0);g.add(ss);
+  const lv=new THREE.Mesh(new THREE.BoxGeometry(0.16,0.16,0.9),mat('#E8B80E'));lv.position.set(-2.2,0.35,0.2);g.add(lv);   // válvula de bloqueio (alavanca amarela)
+  const lk=new THREE.Mesh(new THREE.TorusGeometry(0.13,0.04,6,12),mat('#c3302a'));lk.position.set(-2.2,0.35,0.7);g.add(lk);
+  regPipe(g);return g}
+// rede principal de ar: do compressor (ou entrada de fábrica) ao longo da linha, com descidas para cada consumidor
+function buildAir(floorY){const G=R.gl;if(!G||!G.air||!G.air.length)return;
+  const C=G.air,yM=floorY+19,zM=-12.6,xs=Math.min(...C.map(c=>c.p.x),G.compOut?G.compOut.x:1e9)-3,xe=Math.max(...C.map(c=>c.p.x))+3,grp=new THREE.Group();R.root.add(grp);
+  rigid(grp,[[xs,yM,zM],[xe,yM,zM]],0.24,PCOL.air);
+  for(let x=xs+2;x<xe;x+=24){const post=new THREE.Mesh(new THREE.BoxGeometry(0.35,yM-floorY+0.6,0.35),mat('#5d6d78',{metalness:0.4}));post.position.set(x,(floorY+yM+0.6)/2,zM-0.5);grp.add(post);regPipe(post);
+    const br=new THREE.Mesh(new THREE.BoxGeometry(0.3,0.3,1),mat('#5d6d78'));br.position.set(x,yM+0.1,zM-0.1);grp.add(br);regPipe(br)}
+  if(G.compOut){const o=G.compOut;rigid(grp,[[o.x,o.y,o.z],[o.x,yM,o.z],[o.x,yM,zM]],0.2,PCOL.air)}
+  else{rigid(grp,[[xs,floorY,zM],[xs,yM,zM]],0.24,PCOL.air);const tg=canvasTex(90,30,(x,cw,ch)=>{x.fillStyle='#2b6cb0';x.fillRect(0,0,cw,ch);x.fillStyle='#fff';x.font=`700 ${ch*0.55}px "Barlow Condensed",sans-serif`;x.fillText('AR 7 bar',cw*0.12,ch*0.7)},4);
+    const pl=new THREE.Mesh(new THREE.PlaneGeometry(3,1),new THREE.MeshStandardMaterial({map:tg.t}));pl.position.set(xs,floorY+6,zM+0.3);grp.add(pl);regPipe(pl)}
+  C.forEach(c=>{const x=c.p.x,yF2=floorY+12.5;rigid(grp,[[x,yM,zM],[x,yF2+0.6,zM]],0.12,PCOL.air);frlUnit(grp,new THREE.Vector3(x,yF2,zM));
+    sagHose(grp,new THREE.Vector3(x+2.6,yF2,zM),c.p,0.07,PCOL.hose)});
+}
 /* ============ Gradil 3D (painel com vincos em V) ============ */
 // Painel 2,00 × 1,03 m: 40 arames verticais (transversais, já cortados) a cada 50 mm com pontas de 60 mm,
 // 7 arames horizontais (longitudinais, das bobinas) e 3 vincos em V (em cima, no meio e embaixo) com um horizontal no vértice.
@@ -4706,6 +4787,14 @@ function gripGantry(parent,o){
   const mot=new THREE.Mesh(new THREE.CylinderGeometry(0.45,0.45,1.4,16),blu);mot.rotation.z=Math.PI/2;mot.position.set(xc+hx-1.6,topY+1.9,0);bridge.add(mot);
   const slv=B(1.6,3.2,1.6,dk);slv.position.set(xc,topY-0.6,0);bridge.add(slv);       // guia do eixo vertical
   const cylB=new THREE.Mesh(new THREE.CylinderGeometry(0.35,0.35,3,14),al);cylB.position.set(xc+1.2,topY-0.4,0);bridge.add(cylB);
+  // esteira porta-cabos (estica e encolhe com a ponte), ilha de válvulas na ponte e mangueira espiral no eixo vertical
+  const chM=mat(PCOL.chain,{roughness:0.6}),zA=z0-2.2,yc0=topY+0.95,yc1=topY+1.7,xch=xc+hx-0.1;
+  const lowRun=B(0.7,0.4,1,chM),upRun=B(0.7,0.4,1,chM),bend=new THREE.Mesh(new THREE.TorusGeometry(0.375,0.2,6,12,Math.PI),chM);bend.rotation.y=Math.PI/2;
+  [lowRun,upRun,bend].forEach(m=>{root.add(m);regPipe(m)});
+  valveIsland(bridge,4,new THREE.Vector3(xc-3.4,topY+1.85,0));
+  hose(bridge,[[xch,yc1,0],[xch-1,topY+2.2,0],[xc-3.4+1.2,topY+2.3,0.2]],0.06,PCOL.hose);
+  const coil=coilHose(bridge,0.28,7,0.035,PCOL.hose);coil.position.set(xc-1.15,topY-2.2,0);
+  airUse(root,new THREE.Vector3(xch,yc0,zA),'Pórtico');
   // haste vertical telescópica e haste do cilindro
   const rod=B(0.8,1,0.8,al);bridge.add(rod);const prod=new THREE.Mesh(new THREE.CylinderGeometry(0.14,0.14,1,10),mat('#e9ecee',{metalness:0.9,roughness:0.15}));bridge.add(prod);
   // cabeçote: atuador rotativo + barra de garras
@@ -4715,11 +4804,14 @@ function gripGantry(parent,o){
   const fingers=[];[-8.6,-4.3,0,4.3,8.6].forEach(dx=>{const fg=new THREE.Group();fg.position.set(dx,-0.3,0);pivot.add(fg);
     const pc=new THREE.Mesh(new THREE.CylinderGeometry(0.2,0.2,0.9,10),al);pc.rotation.x=Math.PI/2;pc.position.z=0.5;fg.add(pc);
     [-1,1].forEach(sd=>{const j=new THREE.Group();j.position.z=sd*0.25;fg.add(j);const f=B(0.25,1,0.2,dk);f.position.y=-0.5;j.add(f);fingers.push({j,sd})})});
+  [-8.6,-4.3,0,4.3,8.6].forEach(dx=>hose(pivot,[[0,0.5,0.2],[dx*0.6,0.45,0.45],[dx,0.1,0.55]],0.03,PCOL.hose));
   // gradil preso na garra (deslocado meia largura a partir da borda presa)
   const held=new THREE.Mesh(gradilGeo(!!o.folded),gradilMat());
   held.rotation.x=o.folded?Math.PI/2:-Math.PI/2;held.position.set(0,-0.3,-5.15);   // vincado: vincos para baixo quando deitado
   held.castShadow=true;held.visible=false;pivot.add(held);
   const g={root,pivot,held,set(z,y,theta,closed){bridge.position.z=z;const L=Math.max(0.5,topY-1.6-y);rod.scale.y=L;rod.position.set(xc,topY-1.6-L/2,0);prod.scale.y=Math.max(0.3,L*0.6);prod.position.set(xc+1.2,topY-1.9-L*0.3,0);
+    const zt=(zA+z)/2;lowRun.scale.z=Math.max(0.05,zt-zA);lowRun.position.set(xch,yc0,(zA+zt)/2);upRun.scale.z=Math.max(0.05,z-zt);upRun.position.set(xch,yc1,(zt+z)/2);bend.position.set(xch,(yc0+yc1)/2,zt);
+    coil.scale.y=Math.max(0.3,topY-2.2-(y+0.9));
     pivot.position.set(xc,y,z);pivot.rotation.x=theta;fingers.forEach(f=>f.j.rotation.x=f.sd*(closed?0.05:0.55))}};
   return g}
 // Trilho do transportador aéreo: recebe os gradis virados na saída da solda, leva pela cabine robotizada e pela estufa;
@@ -5130,6 +5222,11 @@ function loop(now){
     if(PH.img)photoCam();
     else{R.cam.position.set(o.tx+o.r*Math.sin(o.ph)*Math.sin(o.th),o.ty+o.r*Math.cos(o.ph),o.tz+o.r*Math.sin(o.ph)*Math.cos(o.th));
     R.cam.lookAt(o.tx,o.ty,o.tz);}
+    {const Q=R.q||(R.q={n:0,acc:0,lvl:0,f:0});Q.n++;Q.acc+=dt;Q.f++;
+     if(Q.n>=90){const avg=Q.acc/Q.n;Q.n=0;Q.acc=0;
+       if(avg>0.04&&Q.lvl<2){Q.lvl++;if(Q.lvl===1){R.renderer.setPixelRatio(1);resize3D()}else{R.renderer.shadowMap.autoUpdate=false}
+         if(!Q.told){Q.told=true;toast('Qualidade do 3D ajustada automaticamente para manter a navegação fluida.')}}}
+     if(Q.lvl>=2&&Q.f%4===0)R.renderer.shadowMap.needsUpdate=true}
     R.renderer.render(R.scene,R.cam);
   }
   requestAnimationFrame(loop);
@@ -5223,6 +5320,7 @@ document.addEventListener('click',e=>{
     case 'fpdf':makePDF(b);break;
     case 'proj':openProj();break;
     case 'quote':openQuote();break;
+    case 'pipes':{state.showPipes=state.showPipes===false;save();(R&&R.pipes||[]).forEach(m=>m.visible=state.showPipes!==false);b.setAttribute('aria-pressed',String(state.showPipes!==false));break}
     case 'navzin':case 'navzout':case 'navrl':case 'navrr':case 'navtop':case 'navhome':case 'navhelp':case 'navgo':navAct(a,b.dataset.v);break;
     case 'tpl':openTpl();break;
     case 'tplsave':case 'tpldel':case 'tpluse':case 'tplclose':tplAct(a,b.dataset.v);break;
