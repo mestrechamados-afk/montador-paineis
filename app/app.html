@@ -584,6 +584,18 @@ aside .btn.block,aside .row2 .btn{white-space:normal;line-height:1.2}
 .tplnew{display:flex;gap:8px;margin:6px 0 8px}.tplnew input{flex:1}
 .tplrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line)}
 .tplrow:first-of-type{border-top:0}.tplrow small{display:block;color:var(--muted);font-size:12.5px}.tplrow .a{display:flex;gap:6px;flex:0 0 auto}
+
+/* Navegação 3D */
+.navctl{position:absolute;top:10px;right:10px;z-index:4;display:flex;flex-direction:column;align-items:flex-end;gap:6px;pointer-events:none}
+.navctl>*{pointer-events:auto}
+.navctl .navgrp{display:flex;flex-direction:column;border-radius:10px;overflow:hidden;box-shadow:var(--sh-2);background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(6px);border:1px solid var(--line)}
+.navctl .navgrp .btn{border:0;border-radius:0;box-shadow:none;background:transparent;width:36px;height:34px;min-height:34px;padding:0;justify-content:center}
+.navctl .navgrp .btn+.btn{border-top:1px solid var(--line)}
+.navctl .navgrp .btn:hover{background:var(--surface2)}
+.navctl .navgo .mbtn{box-shadow:var(--sh-2);background:color-mix(in srgb,var(--surface) 92%,transparent);backdrop-filter:blur(6px)}
+.navctl .mlist{max-height:min(360px,60vh);overflow:auto}
+#c3d:focus-visible{outline:2px solid var(--focus);outline-offset:-2px}
+@media (max-width:760px){.navctl{top:8px;right:8px}.navctl .navgrp:nth-of-type(3){display:none}.navctl .navgo .mbtn span{display:none}}
 </style>
 </head>
 <body>
@@ -661,7 +673,7 @@ aside .btn.block,aside .row2 .btn{white-space:normal;line-height:1.2}
       </div>
       <div class="viewer" id="viewer">
         <canvas id="c3d" aria-label="Vista 3D do quadro de comando"></canvas>
-        <div class="hint" id="hint">Arraste para girar · role ou pince para aproximar · clique nos botões da porta para operar ou num componente para ver detalhes</div>
+        <div class="hint" id="hint">Arraste: girar · botão direito ou 2 dedos: mover · roda: zoom no cursor · duplo clique: aproximar · WASD: andar</div>
         <div class="pick" id="pick" hidden></div>
         <div class="tele" id="tele" hidden></div>
         <img id="photoImg" alt="Foto do local importada">
@@ -3661,7 +3673,7 @@ function init3D(){
   renderer.setPixelRatio(Math.min(2,devicePixelRatio||1));
   renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;renderer.toneMapping=THREE.ACESFilmicToneMapping;renderer.toneMappingExposure=1.08;
   const scene=new THREE.Scene();
-  const cam=new THREE.PerspectiveCamera(38,1,0.05,300);
+  const cam=new THREE.PerspectiveCamera(38,1,0.05,2500);
   const hemi=new THREE.HemisphereLight(0xffffff,0x707a80,0.45);scene.add(hemi);
   try{const pm=new THREE.PMREMGenerator(renderer);const es=new THREE.Scene();
     const dome=new THREE.Mesh(new THREE.SphereGeometry(50,32,16),new THREE.MeshBasicMaterial({side:THREE.BackSide,vertexColors:true}));
@@ -4921,28 +4933,91 @@ function pressAnim(m){if(m.userData.noPress)return;R.press.push({m,t:performance
 function doAct(m){const u=m.userData;if(u.alt){pressAnim(m);altCmd(u.act,u.id||undefined);return}if(u.act==='bimdoor'){log('Esta máquina usa comando bimanual: segure os dois botões no pedestal junto à máquina',true);return}
   if(u.act==='bim')return;pressAnim(m);cmd(u.act,u.id||undefined)}
 function stepPress(){if(!R.press||!R.press.length)return;const now=performance.now();R.press=R.press.filter(p=>{const k=(now-p.t)/180;const d=k<1?Math.sin(Math.min(1,k)*Math.PI)*5*S:0;p.m.position.z=p.m.userData.z0-d;if(k>=1){p.m.position.z=p.m.userData.z0;return false}return true})}
+/* ============ Navegação 3D ============ */
+// Girar (arrastar), mover pelo chão (botão direito/meio, Shift+arrastar ou dois dedos), zoom na direção do cursor (roda/pinça),
+// duplo clique para aproximar, teclado (WASD/setas, Q/E, +/−, PgUp/PgDn, Home) e inércia ao soltar.
+const NAV={vth:0,vph:0,keys:new Set(),hover:false};
+function navMaxR(){return Math.max(80,R&&R.span?(R.span[1]-R.span[0])*1.8:80)}
+function navBase(){const o=R.orb,g=R.goal||{};return{th:g.th??o.th,ph:g.ph??o.ph,r:g.r??o.r,tx:g.tx??o.tx,ty:g.ty??o.ty,tz:g.tz??o.tz}}
+function navHit(e,deep){const r=R.canvas.getBoundingClientRect(),v=new THREE.Vector2(((e.clientX-r.left)/r.width)*2-1,-((e.clientY-r.top)/r.height)*2+1),rc=new THREE.Raycaster();rc.setFromCamera(v,R.cam);
+  if(deep){const h=rc.intersectObject(R.root,true).find(h=>{let o=h.object;if(o.isLine||o.isPoints||(o.material&&o.material.opacity===0))return false;while(o){if(o.visible===false)return false;o=o.parent}return true});if(h)return h.point}
+  const fy=R.floorY!=null?R.floorY:-5,pl=new THREE.Plane(new THREE.Vector3(0,1,0),-(fy+4)),p=new THREE.Vector3();return rc.ray.intersectPlane(pl,p)?p:null}
+function navPan(dx,dy,instant){const b=navBase(),k=b.r*0.0019,c=Math.cos(b.th),s=Math.sin(b.th);
+  const g={tx:b.tx-c*dx*k-s*dy*k*1.35,tz:b.tz+s*dx*k-c*dy*k*1.35};if(instant){Object.assign(R.orb,g);if(R.goal){delete R.goal.tx;delete R.goal.tz}}else R.goal=Object.assign(R.goal||{},g)}
+function navZoom(f,e){const b=navBase(),r1=Math.min(navMaxR(),Math.max(1.5,b.r*f)),g={r:r1};
+  if(e&&f<1){const p=navHit(e,false);if(p){const k=1-r1/b.r;g.tx=b.tx+(p.x-b.tx)*k;g.tz=b.tz+(p.z-b.tz)*k}}
+  R.goal=Object.assign(R.goal||{},g)}
+function navRot(dth,dph){const b=navBase();R.goal=Object.assign(R.goal||{},{th:b.th+dth,ph:Math.min(Math.PI/2+0.05,Math.max(0.12,b.ph+dph))})}
+function navFocus(obj,extra){if(!obj)return;const bx=new THREE.Box3().setFromObject(obj);if(bx.isEmpty())return;const c=bx.getCenter(new THREE.Vector3()),sz=bx.getSize(new THREE.Vector3());
+  const tf=Math.tan(R.cam.fov*Math.PI/360),asp=Math.max(0.6,R.cam.aspect||1.6),w=Math.max(sz.x,sz.z),h=sz.y,r=Math.max(h/2/tf,w/2/(tf*asp))*1.25;
+  R.goal=Object.assign({tx:c.x,ty:c.y,tz:c.z,r:Math.min(navMaxR(),Math.max(4,r)),ph:1.12},extra||{});NAV.vth=NAV.vph=0}
+function navTick(dt){const o=R.orb;
+  if(NAV.vth||NAV.vph){o.th+=NAV.vth*dt;o.ph=Math.min(Math.PI/2+0.05,Math.max(0.12,o.ph+NAV.vph*dt));const d=Math.pow(0.03,dt);NAV.vth*=d;NAV.vph*=d;if(Math.abs(NAV.vth)+Math.abs(NAV.vph)<0.01)NAV.vth=NAV.vph=0}
+  if(!NAV.keys.size)return;const K=NAV.keys,fast=K.has('Shift')?2.5:1,mv=o.r*0.9*dt*fast,c=Math.cos(o.th),s=Math.sin(o.th);R.goal=null;
+  const f=(K.has('w')||K.has('ArrowUp')?1:0)-(K.has('s')||K.has('ArrowDown')?1:0),rr=(K.has('d')||K.has('ArrowRight')?1:0)-(K.has('a')||K.has('ArrowLeft')?1:0);
+  o.tx+=(-s*f+c*rr)*mv;o.tz+=(-c*f-s*rr)*mv;
+  if(K.has('q'))o.th+=1.2*dt*fast;if(K.has('e'))o.th-=1.2*dt*fast;
+  if(K.has('PageUp'))o.ty+=mv*0.6;if(K.has('PageDown'))o.ty-=mv*0.6;
+  if(K.has('+')||K.has('='))o.r=Math.max(1.5,o.r*(1-1.2*dt));if(K.has('-')||K.has('_'))o.r=Math.min(navMaxR(),o.r*(1+1.2*dt))}
 function setupControls(){
-  const c=R.canvas,pts=new Map();let down=null,moved=0,pinch=0;
+  const c=R.canvas,pts=new Map();let down=null,moved=0,pinch=0,cen=null,lastV={th:0,ph:0,t:0};
+  c.tabIndex=0;c.setAttribute('aria-label','Vista 3D: arraste para girar, botão direito ou dois dedos para mover, roda para aproximar, teclas WASD e setas para andar');
+  c.addEventListener('pointerenter',()=>NAV.hover=true);c.addEventListener('pointerleave',()=>NAV.hover=false);
   c.addEventListener('pointerdown',e=>{if(!PH.img&&R.clk&&R.clk.length){const h=rayAt(e,R.clk);if(h&&h.object.userData.hold){e.preventDefault();c.setPointerCapture(e.pointerId);R.holding=h.object;h.object.position.y=h.object.userData.y0-0.012;cmd('bimdown',h.object.userData.id);return}}
-    c.setPointerCapture(e.pointerId);pts.set(e.pointerId,{x:e.clientX,y:e.clientY});down={x:e.clientX,y:e.clientY,btn:e.button};moved=0;R.goal=null;c.classList.add('dragging');
+    c.setPointerCapture(e.pointerId);pts.set(e.pointerId,{x:e.clientX,y:e.clientY});down={x:e.clientX,y:e.clientY,btn:e.button};moved=0;R.goal=null;NAV.vth=NAV.vph=0;c.classList.add('dragging');
     if(PH.img){const h=floorHit(e);down.hit=h;down.px=PH.x;down.pz=PH.z;down.rot=PH.rot}
-    if(pts.size===2){const [a,b]=[...pts.values()];pinch=Math.hypot(a.x-b.x,a.y-b.y)}});
+    if(pts.size===2){const [a,b]=[...pts.values()];pinch=Math.hypot(a.x-b.x,a.y-b.y);cen={x:(a.x+b.x)/2,y:(a.y+b.y)/2}}});
   c.addEventListener('pointermove',e=>{if(!pts.has(e.pointerId)){hoverCursor(e);return}const p=pts.get(e.pointerId),dx=e.clientX-p.x,dy=e.clientY-p.y;p.x=e.clientX;p.y=e.clientY;moved+=Math.abs(dx)+Math.abs(dy);
     if(PH.img){
       if(pts.size===2){const [a,b]=[...pts.values()];const d=Math.hypot(a.x-b.x,a.y-b.y);if(pinch)PH.z-= (d-pinch)*0.05;pinch=d;syncPhotoUI();return}
       if(down&&(down.btn===2||e.shiftKey)){PH.rot+=dx*0.01;syncPhotoUI();return}
       const h=floorHit(e);if(down&&down.hit&&h){PH.x=down.px+(h.x-down.hit.x);PH.z=down.pz+(h.z-down.hit.z);syncPhotoUI()}return}
     const o=R.orb;
-    if(pts.size===2){const [a,b]=[...pts.values()];const d=Math.hypot(a.x-b.x,a.y-b.y);if(pinch)o.r=Math.min(80,Math.max(2,o.r*pinch/d));pinch=d;return}
-    if(down&&(down.btn===2||e.shiftKey)){const k=o.r*0.0016;o.tx-=(dx*Math.cos(o.th))*k;o.tz+=(dx*Math.sin(o.th))*k;o.ty+=dy*k}
-    else{o.th-=dx*0.006;o.ph=Math.min(Math.PI/2+0.05,Math.max(0.15,o.ph-dy*0.006))}});
+    if(pts.size===2){const [a,b]=[...pts.values()];const d=Math.hypot(a.x-b.x,a.y-b.y),cc={x:(a.x+b.x)/2,y:(a.y+b.y)/2};
+      if(pinch)o.r=Math.min(navMaxR(),Math.max(1.5,o.r*pinch/d));pinch=d;if(cen)navPan((cc.x-cen.x),(cc.y-cen.y),true);cen=cc;return}   // dois dedos: zoom + mover
+    if(down&&(down.btn===2||down.btn===1||e.shiftKey)){navPan(dx,dy,true);return}
+    if(down&&e.altKey){o.ty+=dy*o.r*0.0019;return}                                                      // Alt+arrastar: altura
+    const dth=-dx*0.006,dph=-dy*0.006;o.th+=dth;o.ph=Math.min(Math.PI/2+0.05,Math.max(0.12,o.ph+dph));
+    const n=performance.now(),dtm=Math.max(8,n-lastV.t)/1000;lastV={th:dth/dtm,ph:dph/dtm,t:n}});
   const up=e=>{if(R.holding){const m=R.holding;R.holding=null;m.position.y=m.userData.y0;cmd('bimup',m.userData.id);return}
-    pts.delete(e.pointerId);c.classList.remove('dragging');if(pts.size<2)pinch=0;
+    const wasRot=down&&down.btn===0&&!e.shiftKey&&pts.size===1&&moved>=6;
+    pts.delete(e.pointerId);c.classList.remove('dragging');if(pts.size<2){pinch=0;cen=null}
+    if(wasRot&&performance.now()-lastV.t<200&&!PH.img){NAV.vth=Math.max(-4,Math.min(4,lastV.th*0.6));NAV.vph=Math.max(-2,Math.min(2,lastV.ph*0.4))}  // inércia
     if(down&&moved<6&&e.type==='pointerup')pick(e);down=null};
   c.addEventListener('pointerup',up);c.addEventListener('pointercancel',up);
   c.addEventListener('contextmenu',e=>e.preventDefault());
-  c.addEventListener('wheel',e=>{e.preventDefault();if(PH.img){PH.z+=Math.sign(e.deltaY)*1.2;syncPhotoUI();return}R.goal=null;R.orb.r=Math.min(80,Math.max(2,R.orb.r*(1+Math.sign(e.deltaY)*0.1)))},{passive:false});
+  c.addEventListener('wheel',e=>{e.preventDefault();if(PH.img){PH.z+=Math.sign(e.deltaY)*1.2;syncPhotoUI();return}
+    const s=Math.max(-3,Math.min(3,e.deltaY/(e.deltaMode===1?3:100)));navZoom(Math.pow(1.15,s),e)},{passive:false});
+  c.addEventListener('dblclick',e=>{if(PH.img)return;const p=navHit(e,true);if(!p)return;const b=navBase();R.goal={tx:p.x,ty:p.y,tz:p.z,r:Math.max(6,Math.min(b.r*0.5,30))};NAV.vth=NAV.vph=0});
+  const NK=['w','a','s','d','q','e','ArrowUp','ArrowDown','ArrowLeft','ArrowRight','PageUp','PageDown','+','=','-','_','Shift'];
+  window.addEventListener('keydown',e=>{if(ui.tab!=='3d'||PH.img)return;const t=e.target;if(t&&(t.tagName==='INPUT'||t.tagName==='SELECT'||t.tagName==='TEXTAREA'||t.isContentEditable))return;
+    if(document.activeElement!==c&&!NAV.hover)return;if(document.querySelector('dialog[open]'))return;
+    const k=e.key.length===1?e.key.toLowerCase():e.key;
+    if(k==='Home'||k==='0'){e.preventDefault();setView('persp');return}
+    if(NK.includes(k)){NAV.keys.add(k);if(k!=='Shift')e.preventDefault()}});
+  window.addEventListener('keyup',e=>{const k=e.key.length===1?e.key.toLowerCase():e.key;NAV.keys.delete(k);if(k==='Shift')NAV.keys.delete('Shift')});
+  window.addEventListener('blur',()=>NAV.keys.clear());
+  buildNavCtl();
 }
+// Botões de navegação sobre a vista 3D
+function buildNavCtl(){const v=$('#viewer');if(!v||$('#navctl'))return;const d=document.createElement('div');d.id='navctl';d.className='navctl';
+  const I=p=>`<svg class="ic" viewBox="0 0 24 24" aria-hidden="true">${p}</svg>`;
+  d.innerHTML=`<div class="menu navgo"><button class="btn small mbtn" data-menu aria-haspopup="menu" aria-expanded="false" title="Ir até uma máquina">${I('<circle cx="12" cy="10" r="3"/><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11z"/>')}<span>Ir para</span></button><div class="mlist right" role="menu" hidden id="navGoList"></div></div>
+    <div class="navgrp"><button class="btn small icbtn" data-act="navzin" title="Aproximar (+)" aria-label="Aproximar">${I('<path d="M12 5v14M5 12h14"/>')}</button><button class="btn small icbtn" data-act="navzout" title="Afastar (−)" aria-label="Afastar">${I('<path d="M5 12h14"/>')}</button></div>
+    <div class="navgrp"><button class="btn small icbtn" data-act="navrl" title="Girar para a esquerda (Q)" aria-label="Girar para a esquerda">${I('<path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/>')}</button><button class="btn small icbtn" data-act="navrr" title="Girar para a direita (E)" aria-label="Girar para a direita">${I('<path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/>')}</button></div>
+    <div class="navgrp"><button class="btn small icbtn" data-act="navtop" title="Vista de cima" aria-label="Vista de cima">${I('<rect x="4" y="4" width="16" height="16" rx="2"/><path d="M4 12h16M12 4v16"/>')}</button><button class="btn small icbtn" data-act="navhome" title="Vista geral (Home)" aria-label="Vista geral">${I('<path d="m3 11 9-8 9 8"/><path d="M5 10v10h14V10"/>')}</button>
+    <button class="btn small icbtn" data-act="navhelp" title="Comandos de navegação" aria-label="Comandos de navegação">${I('<circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.6.3-1 .8-1 1.5V14M12 17h.01"/>')}</button></div>`;
+  v.appendChild(d)}
+function navGoHTML(){const L=[`<button role="menuitem" data-act="navgo" data-v="__panel">Quadro elétrico</button>`];
+  if(model&&!isAlt())model.loads.forEach(l=>{if(R.motors[l.id])L.push(`<button role="menuitem" data-act="navgo" data-v="${esc(l.id)}">${esc(l.tag)} · ${esc(l.name)}</button>`)});
+  if(R.gl&&R.gl.conv)L.push(`<button role="menuitem" data-act="navgo" data-v="__line">Linha inteira</button>`);return L.join('')}
+function navAct(a,v){const o=R.orb;
+  if(a==='navzin')navZoom(0.7);else if(a==='navzout')navZoom(1.45);else if(a==='navrl')navRot(0.5,0);else if(a==='navrr')navRot(-0.5,0);
+  else if(a==='navtop')R.goal=Object.assign(R.goal||{},{ph:0.14});
+  else if(a==='navhome')setView('persp');
+  else if(a==='navhelp')toast('Arraste: girar · botão direito, Shift ou dois dedos: mover · roda ou pinça: zoom no cursor · duplo clique: aproximar · WASD/setas: andar · Q/E: girar · PgUp/PgDn: subir/descer · Home: vista geral');
+  else if(a==='navgo'){closeMenus();if(v==='__panel'){const E=curE(),H=E.H*S;R.goal={th:-0.35,ph:1.35,r:Math.max(H,E.W*S)*2.3,tx:0,ty:-0.05*H,tz:E.D*S*0.5};NAV.vth=NAV.vph=0;return}
+    if(v==='__line'){setView('persp');return}const m=R.motors[v];if(m&&m.g)navFocus(m.g,{th:o.th})}}
 let hovT=0;function hoverCursor(e){const n=performance.now();if(n-hovT<60||!R||!R.clk||PH.img)return;hovT=n;const h=rayAt(e,[...R.clk,...R.picks]);const a=h&&h.object.userData.act;R.canvas.style.cursor=a?'pointer':'';R.canvas.title=a?ACT_TIP[a]||'':''}
 function pick(e){
   if(R.clk&&R.clk.length&&!PH.img){const h=rayAt(e,[...R.clk,...R.picks]);if(h&&h.object.userData.act){doAct(h.object);return}}
@@ -4992,7 +5067,7 @@ function applyPhotoLook(){
   const k=on?PH.light:1;R.hemi.intensity=0.75*k;R.dl.intensity=0.75*k;
   const a=(on?PH.sun:35)*Math.PI/180;R.dl.position.set(Math.sin(a)*13,12,Math.cos(a)*13);
   if(!on){R.root.position.set(0,0,0);R.root.rotation.y=0;R.root.scale.setScalar(1);R.cam.fov=38;R.cam.updateProjectionMatrix()}
-  $('#viewer').classList.toggle('photo',on);$('#hint').textContent=on?'Arraste o quadro sobre o piso da foto · role para aproximar ou afastar · Shift + arraste para girar':'Arraste para girar · role ou pince para aproximar · clique nos botões da porta para operar ou num componente para ver detalhes';
+  $('#viewer').classList.toggle('photo',on);$('#hint').textContent=on?'Arraste o quadro sobre o piso da foto · role para aproximar ou afastar · Shift + arraste para girar':'Arraste: girar · botão direito ou 2 dedos: mover · roda: zoom no cursor · duplo clique: aproximar · WASD: andar · clique nos botões da porta para operar';
 }
 const PR=[['x','Lateral',-40,40,0.1,v=>fmt(v/10,1)+' m'],['z','Profundidade',-80,30,0.1,v=>fmt(v/10,1)+' m'],['rot','Giro',-3.14,3.14,0.01,v=>Math.round(v*180/Math.PI)+'°'],['scale','Escala',0.5,2,0.01,v=>fmt(v,2)+'×'],
   ['camH','Altura câmera',0.3,3,0.05,v=>fmt(v,2)+' m'],['dist','Distância',1.5,15,0.1,v=>fmt(v,1)+' m'],['pitch','Inclinação',-10,40,0.5,v=>fmt(v,1)+'°'],['fov','Abertura lente',25,90,1,v=>v+'°'],
@@ -5039,7 +5114,8 @@ function loop(now){
     R_dedAcc=(typeof R_dedAcc==='number'?R_dedAcc:0)+dt;if(R_dedAcc>0.5){R_dedAcc=0;dedTick()}}
   if(R&&model&&ui.tab==='3d'){
     const o=R.orb;
-    if(R.goal){let done=true;for(const k in R.goal){o[k]+=(R.goal[k]-o[k])*Math.min(1,dt*6);if(Math.abs(R.goal[k]-o[k])>1e-3)done=false}if(done)R.goal=null}
+    if(R.goal){let done=true;for(const k in R.goal){o[k]+=(R.goal[k]-o[k])*Math.min(1,dt*7);if(Math.abs(R.goal[k]-o[k])>1e-3)done=false}if(done)R.goal=null}
+    navTick(dt);
     if(ui.doorGoal!==undefined){ui.door=ui.doorGoal===1;}
     const target=ui.door?1:0;ui.doorAng+=(target-ui.doorAng)*Math.min(1,dt*5);
     if(R.door)R.door.rotation.y=-1.85*ui.doorAng;
@@ -5147,6 +5223,7 @@ document.addEventListener('click',e=>{
     case 'fpdf':makePDF(b);break;
     case 'proj':openProj();break;
     case 'quote':openQuote();break;
+    case 'navzin':case 'navzout':case 'navrl':case 'navrr':case 'navtop':case 'navhome':case 'navhelp':case 'navgo':navAct(a,b.dataset.v);break;
     case 'tpl':openTpl();break;
     case 'tplsave':case 'tpldel':case 'tpluse':case 'tplclose':tplAct(a,b.dataset.v);break;
     case 'dxf':exportDxf(b);break;
@@ -5200,7 +5277,7 @@ function copyBom(btn){
 
 /* ============ Menus, aviso, tema rápido e seções recolhíveis ============ */
 function closeMenus(except){document.querySelectorAll('.menu .mlist:not([hidden])').forEach(l=>{if(l!==except){l.hidden=true;const b=l.parentNode.querySelector('.mbtn');if(b)b.setAttribute('aria-expanded','false')}})}
-document.addEventListener('click',e=>{const mb=e.target.closest('.mbtn');if(mb){const l=mb.parentNode.querySelector('.mlist');const open=l.hidden;closeMenus(l);l.hidden=!open;mb.setAttribute('aria-expanded',String(open));if(open){const f=l.querySelector('button:not([hidden])');if(f)setTimeout(()=>f.focus(),0)}return}
+document.addEventListener('click',e=>{const mb=e.target.closest('.mbtn');if(mb&&mb.closest('.navgo')){const gl=$('#navGoList');if(gl)gl.innerHTML=navGoHTML()}if(mb){const l=mb.parentNode.querySelector('.mlist');const open=l.hidden;closeMenus(l);l.hidden=!open;mb.setAttribute('aria-expanded',String(open));if(open){const f=l.querySelector('button:not([hidden])');if(f)setTimeout(()=>f.focus(),0)}return}
   const it=e.target.closest('.mlist button');if(it){if(it.hasAttribute('data-keep')){if(it.dataset.label)setTimeout(()=>{if(!it.disabled)it.innerHTML=it.innerHTML.replace(/[^>]*$/,it.dataset.label)},3800);return}setTimeout(()=>closeMenus(),0);if(it.hasAttribute('data-toast'))setTimeout(()=>toast(projMsg||'Projeto salvo'),60);return}
   if(!e.target.closest('.mlist'))closeMenus()},true);
 document.addEventListener('keydown',e=>{const l=e.target.closest&&e.target.closest('.mlist');if(e.key==='Escape'){const o=document.querySelector('.mlist:not([hidden])');if(o){closeMenus();const b=o.parentNode.querySelector('.mbtn');if(b)b.focus()}return}
