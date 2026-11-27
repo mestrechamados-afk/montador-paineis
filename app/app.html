@@ -4772,9 +4772,10 @@ function buildAir(floorY){const G=R.gl;if(!G||!G.air||!G.air.length)return;
 // Painel 2,00 × 1,03 m: 40 arames verticais (transversais, já cortados) a cada 50 mm com pontas de 60 mm,
 // 7 arames horizontais (longitudinais, das bobinas) e 3 vincos em V (em cima, no meio e embaixo) com um horizontal no vértice.
 // Coordenadas do painel: x = comprimento, y = altura, z = profundidade do vinco.
-// Gradil 2500 × 2030 mm, malha 50 × 200 mm, arame 3,8 mm: 51 verticais, 11 horizontais, pontas de 15 mm e 4 vincos em V
+// Gradil 2500 × 2030 mm, malha 50 × 200 mm, arame 3,8 mm: 51 verticais, 17 horizontais, pontas de 15 mm e 4 vincos em V
 const GP={L:25,H:20.3,pv:0.5,ph:2,r:0.019,yr:33};GP.hz=GP.H/2;GP.nv=Math.round(GP.L/GP.pv)+1;GP.zt=GP.hz+1.2;
-const GR_H=Array.from({length:11},(_,i)=>10-i*2),GR_F=[6,2,-2,-6],GRGEO={};
+// 4 vincos em V (±860 e ±300 mm); cada vinco tem 3 arames horizontais: um em cada borda do V (±70 mm) e um no vértice
+const GR_F=[8.6,3,-3,-8.6],GR_H=[10,...GR_F.flatMap(f=>[f+0.7,f,f-0.7]),5.8,0,-5.8,-10].sort((a,b)=>b-a),GRGEO={};
 function gradilGeo(folded){const k=folded?'v':'p';if(GRGEO[k])return GRGEO[k];
   const pos=[],idx=[],r=GP.r,dv=folded?0.45:0,hv=0.7,Y0=-GP.hz,Y1=GP.hz;
   const seg=(a,b)=>{const d=new THREE.Vector3(b[0]-a[0],b[1]-a[1],b[2]-a[2]).normalize();
