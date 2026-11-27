@@ -4291,9 +4291,11 @@ function buildDriven(l,g,r,len){
         const fr3=P(bx(10.2,0.3,0.3,ym));fr3.position.set(ex,yF+10,zc+z)})}
     // mesa de saída
     const PANEL=GP.L,STEPS=GP.nv-1,pitch=GP.pv,yr=yF+GP.yr,xt=ex+4,Lt=hasPress?24:32,xEnd=xt+Lt;
-    const tab=P(bx(Lt,0.4,2*GP.zt,steel));tab.position.set(xt+Lt/2,yW-0.85,zc);
+    // mesa grafite fosca: contraste com o arame claro do gradil
+    const tabM=mat('#24282c',{roughness:0.85,metalness:0.15}),rolM=mat('#3a4046',{roughness:0.5,metalness:0.5});
+    const tab=P(bx(Lt,0.4,2*GP.zt,tabM));tab.position.set(xt+Lt/2,yW-0.85,zc);
     [1,Lt/2,Lt-1].forEach(px=>[-GP.zt+0.6,GP.zt-0.6].forEach(z=>{const lg=P(bx(0.4,H-1.2,0.4,dark));lg.position.set(xt+px,yF+(H-1.2)/2,zc+z)}));
-    for(let i=0;i<Math.floor(Lt/3);i++){const rl=P(cyl(0.22,0.22,2*GP.zt-0.4,steel,12));rl.rotation.x=Math.PI/2;rl.position.set(xt+1.5+i*3,yW-0.45,zc)}
+    for(let i=0;i<Math.floor(Lt/3);i++){const rl=P(cyl(0.22,0.22,2*GP.zt-0.4,rolM,12));rl.rotation.x=Math.PI/2;rl.position.set(xt+1.5+i*3,yW-0.45,zc)}
     if(!R.renderer.localClippingEnabled)R.renderer.localClippingEnabled=true;
     const clip=new THREE.Plane(new THREE.Vector3(1,0,0),-(g.position.x+ex-0.05));
     const mkPanel=(c)=>{const m=new THREE.Mesh(gradilGeo(false),gradilMat());m.rotation.x=-Math.PI/2;m.castShadow=true;if(c)m.material.clippingPlanes=[clip];g.add(m);return m};
@@ -4339,9 +4341,10 @@ function buildDriven(l,g,r,len){
     const xIn=G0.weldTableEnd!=null?G0.weldTableEnd-g.position.x:cx+1,xP=Math.max(xIn+hx+1.5,cx+12),xc=xP+hx+GP.L/2+1.2,xEnd=xc+GP.L/2+1;
     const fr=paint('#2F5E7A'),blk=mat('#2a2f33',{roughness:0.5,metalness:0.35}),chrome=mat('#e9ecee',{metalness:0.9,roughness:0.15});
     // mesa de transferência com roletes
-    const Lt=xEnd-xIn,tab=P(bx(Lt,0.4,2*GP.zt,steel));tab.position.set(xIn+Lt/2,yP-0.85,zc);
+    const tabM=mat('#24282c',{roughness:0.85,metalness:0.15}),rolM=mat('#3a4046',{roughness:0.5,metalness:0.5});
+    const Lt=xEnd-xIn,tab=P(bx(Lt,0.4,2*GP.zt,tabM));tab.position.set(xIn+Lt/2,yP-0.85,zc);
     for(let px=1;px<Lt;px+=Lt/6)[-GP.zt+0.6,GP.zt-0.6].forEach(z=>{const lg=P(bx(0.4,yP-0.85-yF,0.4,dark));lg.position.set(xIn+px,(yF+yP-0.85)/2,zc+z)});
-    for(let x=xIn+1.5;x<xEnd-1;x+=3){if(Math.abs(x-xP)<hx)continue;const rl=P(cyl(0.22,0.22,2*GP.zt-0.4,steel,12));rl.rotation.x=Math.PI/2;rl.position.set(x,yP-0.45,zc)}
+    for(let x=xIn+1.5;x<xEnd-1;x+=3){if(Math.abs(x-xP)<hx)continue;const rl=P(cyl(0.22,0.22,2*GP.zt-0.4,rolM,12));rl.rotation.x=Math.PI/2;rl.position.set(x,yP-0.45,zc)}
     // estrutura da prensa: 4 colunas, travessa superior, 2 cilindros hidráulicos, martelo móvel com punções em V e matrizes inferiores
     [-hx,hx].forEach(dx=>[-hz,hz].forEach(z=>{const c=P(bx(1.2,yP+10.5-yF,1.2,fr));c.position.set(xP+dx,(yF+yP+10.5)/2,zc+z)}));
     const crown=P(bx(2*hx+1.2,1.8,2*hz+1.6,fr));crown.position.set(xP,yP+10.2,zc);
@@ -4872,7 +4875,8 @@ function gradilGeo(folded){const k=folded?'v':'p';if(GRGEO[k])return GRGEO[k];
   GR_H.forEach(y=>seg([-GP.L/2,y,zAt(y)],[GP.L/2,y,zAt(y)]));
   const geo=new THREE.BufferGeometry();geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));geo.setIndex(idx);geo.computeVertexNormals();
   return GRGEO[k]=geo}
-const gradilMat=c=>new THREE.MeshStandardMaterial({color:c||'#c9d0d4',metalness:0.8,roughness:0.35,side:THREE.DoubleSide});
+// arame cru claro e pouco metálico para destacar sobre as mesas escuras
+const gradilMat=c=>new THREE.MeshStandardMaterial({color:c||'#e4e9ec',metalness:0.45,roughness:0.4,side:THREE.DoubleSide});
 /* ============ Manipulador tipo pórtico com garra pneumática (entrada e saída da linha de gradil) ============ */
 // Pórtico com ponte que corre em Z, haste vertical (eixo Y) com cilindro, atuador rotativo e barra de garras ao longo de X.
 // set(z,y,theta,closed): z da ponte, altura da barra de garras, giro da barra (0 = gradil deitado; -90° = pendurado) e garras fechadas.
